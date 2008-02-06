@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="cclearn"
+   name="CC Learn Tagging Plugins"
+   version="0.0.1"
+   provider-name="learn.creativecommons.org">
+
+   <runtime>
+      <!-- As defined in build.xml this plugin will end up bundled as recommended.jar -->
+      <library name="cclearn.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+
+   <!-- The TagIndexer extends the IndexingFilter in order to add the
+        contents of tags stored in OER Cloud to the lucene index. 
+     -->
+
+   <extension id="org.creativecommons.learn.tagindexer"
+              name="OER Cloud Tag Indexer"
+              point="org.apache.nutch.indexer.IndexingFilter">
+      <implementation id="TagIndexer"
+                      class="org.creativecommons.learn.TagIndexer" />
+   </extension>
+
+   <!-- The TagQueryFilter is called when you perform a search; it
+        runs a search for the query against the OER Cloud tags for the
+        document.
+
+	In order to get add this to the list of filters that gets run
+	by default, you have to use "fields=DEFAULT". 
+     -->   
+
+   <extension id="org.creativecommons.learn.tagsearcher"
+              name="OER Cloud Tag Search Filter"
+              point="org.apache.nutch.searcher.QueryFilter">
+      <implementation id="TagQueryFilter"
+                      class="org.creativecommons.learn.TagQueryFilter">
+        <parameter name="fields" value="tags"/>
+      </implementation>
+   </extension>
+
+</plugin>
