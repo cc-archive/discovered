@@ -1,6 +1,7 @@
 package org.creativecommons.learn.oercloud;
 
 import java.sql.*;
+import java.util.*;
 
 public class TagLoader {
 
@@ -75,5 +76,37 @@ public class TagLoader {
 
 	    return result;
     } // tagsAsString
+
+    public Collection<String> tags(String url) {
+	// return the tags for a given URL as a Collection of Strings
+
+	ArrayList<String> result = new ArrayList<String>();
+
+	try {
+
+	    this.connect();
+
+	    // Get the bookmark ID for the given URL
+	    Integer url_id = this.urlId(url);
+	    if (url_id.intValue() == -1)
+		return result;
+
+	    Statement s = this.dbConn.createStatement();
+
+	    // Get the tags for the bookmark ID obtained above
+	    String sql_tags = "SELECT tag FROM sc_tags WHERE bId = '" + 
+		url_id.toString() + "'";
+	    ResultSet rs_tags = s.executeQuery(sql_tags);
+
+	    while ( rs_tags.next() ) {
+		result.add(rs_tags.getString("tag"));
+	    }
+
+	} catch (SQLException e) {
+	}
+
+	return result;
+
+    } // tags
 
 } // TagLoader

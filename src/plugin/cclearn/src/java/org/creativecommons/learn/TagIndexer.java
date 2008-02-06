@@ -2,6 +2,8 @@ package org.creativecommons.learn;
 
 // JDK import
 import java.util.logging.Logger;
+import java.util.Collection;
+import java.util.Iterator;
 
 // Commons imports
 import org.apache.commons.logging.Log;
@@ -44,23 +46,23 @@ public class TagIndexer implements IndexingFilter {
 			   CrawlDatum datum, Inlinks inlinks)
 	throws IndexingException {
 
-
-	try {
 	// load the tag list from the database
-	String allTags = tagLoader.tagsAsString(url.toString());
-	Field tagsField = new Field(Search.TAGS_FIELD, allTags, Field.Store.YES,
-				    Field.Index.TOKENIZED);
-	tagsField.setBoost(Search.TAGS_BOOST);
-	LOG.info("Adding tags (" + allTags + ") to resource (" + 
-		 url.toString() + ")");
-	doc.add(tagsField);
+	Collection<String> tags = tagLoader.tags(url.toString());
+	Iterator<String> tagIterator = tags.iterator();
 
-	} catch (SQLException e) {
-	    LOG.info(e.getMessage());
+	while (tagIterator.hasNext()) {
+	    String tag = tagIterator.next();
+
+	    Field tagsField = new Field(Search.TAGS_FIELD, tag, Field.Store.YES,
+				    Field.Index.TOKENIZED);
+	    tagsField.setBoost(Search.TAGS_BOOST);
+	    LOG.info("Adding tag (" + tag + ") to resource (" + 
+		     url.toString() + ")");
+	    doc.add(tagsField);
+
 	}
 
 	return doc;
-
 
     } // public Document filter
   
