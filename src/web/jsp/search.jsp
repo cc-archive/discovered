@@ -159,6 +159,7 @@
 <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
 <link rel="alternate" type="application/rss+xml" title="RSS" href="<%=rss%>"/>
 <jsp:include page="include/style.html"/>
+<jsp:include page="cc/style.html"/>
 <base href="<%= base  + "/" + language %>/">
 <script type="text/javascript">
 <!--

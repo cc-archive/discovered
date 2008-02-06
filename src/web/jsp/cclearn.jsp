@@ -28,7 +28,7 @@
 
 <% 
     if (license_uri != null) { %>
-<br/><span class="metadata_label">License:</span><%=license_uri%>
+<br/><span class="metadata_label">License:</span>&nbsp;<%=license_uri%>
 <%  }
 
     if (tags != null && tags.length > 0) { 
