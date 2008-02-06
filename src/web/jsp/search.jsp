@@ -261,8 +261,11 @@ out.flush();
       title = url;
     }
     %>
+    <div class="result_item">
+
     <b><a href="<%=url%>"><%=Entities.encode(title)%></a></b>
     <%@ include file="more.jsp" %>
+    <%@ include file="cclearn.jsp" %>
     <% if (!"".equals(summary) && showSummary) { %>
     <br><%=summary%>
     <% } %>
@@ -285,6 +288,7 @@ out.flush();
      <%=hit.getDedupValue()%></a>)
     <% } %>
     <br><br>
+    </div>
 <% } %>
 
 <% if (clustering.equals("yes") && length != 0) { %>

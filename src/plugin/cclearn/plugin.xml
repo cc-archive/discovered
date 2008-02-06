@@ -37,7 +37,7 @@
               point="org.apache.nutch.searcher.QueryFilter">
       <implementation id="TagQueryFilter"
                       class="org.creativecommons.learn.TagQueryFilter">
-        <parameter name="fields" value="tags"/>
+        <parameter name="fields" value="tag"/>
       </implementation>
    </extension>
 
