@@ -19,6 +19,9 @@
     // show cclearn-related meta info for each hit.
     // information indexed by ./src/plugin/cclearn.
 
+    // Currator
+    String currator = detail.getValue("currator");
+
     // License
     String license_uri = detail.getValue("license");
 
@@ -27,6 +30,10 @@
 %>
 
 <% 
+    if (currator != null) { %>
+<br/><span class="metadata_label">Currator:</span>&nbsp;<%=currator%>
+<%  }
+
     if (license_uri != null) { %>
 <br/><span class="metadata_label">License:</span>&nbsp;<%=license_uri%>
 <%  }
@@ -37,7 +44,8 @@
 
 <%     for (int i_tag = 0; i_tag < tags.length; i_tag++) { %>
 
-          <%=tags[i_tag]%>&nbsp;
+          <a href="<%=ResultHelper.getTagQueryHref(request,
+	  tags[i_tag])%>"><%=tags[i_tag]%></a>&nbsp;
 <%     } 
 
     }    %>

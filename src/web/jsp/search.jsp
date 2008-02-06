@@ -32,7 +32,12 @@
   import="org.apache.nutch.clustering.*"
   import="org.apache.hadoop.conf.*"
   import="org.apache.nutch.util.NutchConfiguration"
-%><%!
+
+  import="org.creativecommons.learn.ResultHelper"
+
+%><%
+  Configuration nutchConf = NutchConfiguration.get(application);
+  
   /**
    * Number of hits to retrieve and cluster if clustering extension is available
    * and clustering is on. By default, 100. Configurable via nutch-conf.xml.
@@ -262,7 +267,7 @@ out.flush();
       title = url;
     }
     %>
-    <div class="result_item">
+    <div class="result_item <%=ResultHelper.getLicenseCSS(detail.getValue("license"))%>">
 
     <b><a href="<%=url%>"><%=Entities.encode(title)%></a></b>
     <%@ include file="more.jsp" %>
