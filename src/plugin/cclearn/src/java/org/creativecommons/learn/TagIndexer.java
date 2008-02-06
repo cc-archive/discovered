@@ -29,7 +29,6 @@ import org.apache.lucene.document.Document;
 // CC Learn imports
 import org.creativecommons.learn.oercloud.TagLoader;
 import org.creativecommons.learn.Search;
-import java.sql.SQLException;
 
 public class TagIndexer implements IndexingFilter {
     
@@ -61,6 +60,18 @@ public class TagIndexer implements IndexingFilter {
 	    doc.add(tagsField);
 
 	}
+
+
+	// add the currator information
+	String currator = tagLoader.currator(url.toString());
+	
+	Field curratorField = new Field(Search.CURRATOR_FIELD, currator,
+					Field.Store.YES, 
+					Field.Index.UN_TOKENIZED);
+	curratorField.setBoost(Search.CURRATOR_BOOST);
+
+	doc.add(curratorField);
+
 
 	return doc;
 

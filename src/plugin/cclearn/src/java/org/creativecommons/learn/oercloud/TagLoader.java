@@ -109,4 +109,35 @@ public class TagLoader {
 
     } // tags
 
+    public String currator(String url)  {
+	// return the currator name for the URL
+
+	try {
+
+	    this.connect();
+
+	    // Get the bookmark ID for the given URL
+	    Integer url_id = this.urlId(url);
+	    if (url_id.intValue() == -1)
+		return null;
+
+	    Statement s = this.dbConn.createStatement();
+
+	    // Get the tags for the bookmark ID obtained above
+	    String sql_tags = "SELECT name FROM sc_users, sc_bookmarks " +
+		"WHERE sc_users.uId = sc_bookmarks.uId AND " + 
+		"bId = '" + url_id.toString() + "'";
+	    ResultSet rs_tags = s.executeQuery(sql_tags);
+
+	    if ( rs_tags.next() ) {
+		return rs_tags.getString("name");
+	    }
+
+	} catch (SQLException e) {
+	}
+
+	return "";
+
+    } // currator
+
 } // TagLoader
