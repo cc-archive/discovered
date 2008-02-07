@@ -178,7 +178,7 @@ function queryfocus() { document.search.query.focus(); }
 <jsp:include page="<%= language + \"/include/header.html\"%>"/>
 
 <div id="searchui" class="box">
- <form name="search" action="../search.jsp" method="get">
+ <form name="search" action="./search.jsp" method="get">
  <div id="search-base">
  <input id="q" name="query" size=44 value="<%=htmlQueryString%>">
  <input type="hidden" name="hitsPerPage" value="<%=hitsPerPage%>">
@@ -337,10 +337,6 @@ if ((!hits.totalIsExact() && (hits.getLength() <= start+hitsPerPage))) {
 </font></a></td></tr>
 </table>
 
-<p>
-<a href="http://wiki.apache.org/nutch/FAQ">
-<img border="0" src="../img/poweredbynutch_01.gif">
-</a>
 </div></div>
 
 <jsp:include page="/include/footer.html"/>
