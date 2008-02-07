@@ -46,15 +46,17 @@ public class CuratorIndexer implements IndexingFilter {
 			   CrawlDatum datum, Inlinks inlinks)
 	throws IndexingException {
 
-	// add the currator information
-	String currator = tagLoader.currator(url.toString());
+	// add the curator information
+	String curator = tagLoader.curator(url.toString());
 	
-	Field curratorField = new Field(Search.CURATOR_FIELD, currator,
-					Field.Store.YES, 
-					Field.Index.UN_TOKENIZED);
-	curratorField.setBoost(Search.CURATOR_BOOST);
-
-	doc.add(curratorField);
+	if (curator != null) {
+	    Field curatorField = new Field(Search.CURATOR_FIELD, curator,
+					    Field.Store.YES, 
+					    Field.Index.TOKENIZED);
+	    curatorField.setBoost(Search.CURATOR_BOOST);
+	    
+	    doc.add(curatorField);
+	}
 
 	return doc;
 
