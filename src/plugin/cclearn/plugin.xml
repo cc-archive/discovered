@@ -24,11 +24,11 @@
                       class="org.creativecommons.learn.TagIndexer" />
    </extension>
 
-   <extension id="org.creativecommons.learn.curatorindexer"
-              name="OER Cloud Curator Indexer"
+   <extension id="org.creativecommons.learn.sourceindexer"
+              name="OER Cloud Source Indexer"
               point="org.apache.nutch.indexer.IndexingFilter">
       <implementation id="TagIndexer"
-                      class="org.creativecommons.learn.CuratorIndexer" />
+                      class="org.creativecommons.learn.SourceIndexer" />
    </extension>
 
    <!-- The TagQueryFilter is called when you perform a search; it
@@ -49,12 +49,12 @@
    </extension>
 
 
-   <extension id="org.creativecommons.learn.curatorsearcher"
-              name="OER Cloud Curator Search Filter"
+   <extension id="org.creativecommons.learn.sourcesearcher"
+              name="OER Cloud Source Search Filter"
               point="org.apache.nutch.searcher.QueryFilter">
-      <implementation id="CuratorQueryFilter"
-                      class="org.creativecommons.learn.CuratorQueryFilter">
-        <parameter name="fields" value="curator"/>
+      <implementation id="SourceQueryFilter"
+                      class="org.creativecommons.learn.SourceQueryFilter">
+        <parameter name="fields" value="source"/>
       </implementation>
    </extension>
 
