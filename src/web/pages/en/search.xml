@@ -1,11 +1,16 @@
 <page>
 <body>
 <center>
+<div id="searchui" class="box">
+<div id="search-base">
 <form name="search" action="../search.jsp" method="get">
   <input type="hidden" name="lang" value="en"/>
-  <input name="query" size="44"/>&#160;<input type="submit" value="Search"/>
+  <input id="q" name="query" size="44"/>&#160;
+  <input id="qsubmit" type="submit" value="Search"/>
   <a href="help.html">help</a>
 </form>
+</div>
+</div>
 </center>
 <div style="text-align: right;">
 <a href="http://lucene.apache.org/nutch/index.html">

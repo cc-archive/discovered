@@ -177,17 +177,21 @@ function queryfocus() { document.search.query.focus(); }
 
 <jsp:include page="<%= language + \"/include/header.html\"%>"/>
 
+<div id="searchui" class="box">
  <form name="search" action="../search.jsp" method="get">
- <input name="query" size=44 value="<%=htmlQueryString%>">
+ <div id="search-base">
+ <input id="q" name="query" size=44 value="<%=htmlQueryString%>">
  <input type="hidden" name="hitsPerPage" value="<%=hitsPerPage%>">
  <input type="hidden" name="lang" value="<%=language%>">
- <input type="submit" value="<i18n:message key="search"/>">
+ <input type="submit" id="qsubmit" value="<i18n:message key="search"/>">
  <% if (clusteringAvailable) { %>
    <input id="clustbox" type="checkbox" name="clustering" value="yes" <% if (clustering.equals("yes")) { %>CHECKED<% } %>>
     <label for="clustbox"><i18n:message key="clustering"/></label>
  <% } %>
  <a href="help.html">help</a>
+</div>
  </form>
+</div>
 
 <%--
 // Uncomment this to enable query refinement.
@@ -225,18 +229,20 @@ function queryfocus() { document.search.query.focus(); }
    bean.LOG.info("total hits: " + hits.getTotal());
 %>
 
-<i18n:message key="hits">
-  <i18n:messageArg value="<%=new Long((end==0)?0:(start+1))%>"/>
-  <i18n:messageArg value="<%=new Long(end)%>"/>
-  <i18n:messageArg value="<%=new Long(hits.getTotal())%>"/>
-</i18n:message>
-
 <%
 // be responsive
 out.flush();
 %>
 
-<br><br>
+<div class="box">
+     <div id="search-options" style="border:none;">&nbsp;</div>
+     <div id="results">
+
+<i18n:message key="hits">
+  <i18n:messageArg value="<%=new Long((end==0)?0:(start+1))%>"/>
+  <i18n:messageArg value="<%=new Long(end)%>"/>
+  <i18n:messageArg value="<%=new Long(hits.getTotal())%>"/>
+</i18n:message>
 
 <% if (clustering.equals("yes") && length != 0) { %>
 <table border=0 cellspacing="3" cellpadding="0">
@@ -257,7 +263,7 @@ out.flush();
     String summary = summaries[i].toHtml(true);
     String caching = detail.getValue("cache");
     boolean showSummary = true;
-    boolean showCached = true;
+    boolean showCached = false;
     if (caching != null) {
       showSummary = !caching.equals(Nutch.CACHING_FORBIDDEN_ALL);
       showCached = !caching.equals(Nutch.CACHING_FORBIDDEN_NONE);
@@ -267,34 +273,9 @@ out.flush();
       title = url;
     }
     %>
-    <div class="result_item <%=ResultHelper.getLicenseCSS(detail.getValue("license"))%>">
+     
+       <%@ include file="cclearn.jsp" %>
 
-    <b><a href="<%=url%>"><%=Entities.encode(title)%></a></b>
-    <%@ include file="more.jsp" %>
-    <%@ include file="cclearn.jsp" %>
-    <% if (!"".equals(summary) && showSummary) { %>
-    <br><%=summary%>
-    <% } %>
-    <br>
-    <span class="url"><%=Entities.encode(url)%></span>
-    <%
-      if (showCached) {
-        %>(<a href="../cached.jsp?<%=id%>"><i18n:message key="cached"/></a>) <%
-    }
-    %>
-    (<a href="../explain.jsp?<%=id%>&query=<%=URLEncoder.encode(queryString, "UTF-8")%>&lang=<%=queryLang%>"><i18n:message key="explain"/></a>)
-    (<a href="../anchors.jsp?<%=id%>"><i18n:message key="anchors"/></a>)
-    <% if (hit.moreFromDupExcluded()) {
-    String more =
-    "query="+URLEncoder.encode("site:"+hit.getDedupValue()+" "+queryString, "UTF8")
-    +params+"&hitsPerSite="+0
-    +"&lang="+queryLang
-    +"&clustering="+clustering;%>
-    (<a href="../search.jsp?<%=more%>"><i18n:message key="moreFrom"/>
-     <%=hit.getDedupValue()%></a>)
-    <% } %>
-    <br><br>
-    </div>
 <% } %>
 
 <% if (clustering.equals("yes") && length != 0) { %>
@@ -360,6 +341,7 @@ if ((!hits.totalIsExact() && (hits.getLength() <= start+hitsPerPage))) {
 <a href="http://wiki.apache.org/nutch/FAQ">
 <img border="0" src="../img/poweredbynutch_01.gif">
 </a>
+</div></div>
 
 <jsp:include page="/include/footer.html"/>
 
