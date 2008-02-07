@@ -4,17 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 
 public class ResultHelper {
 
-    public static String getLicenseCSS (String license_url) {
-	// return the name of a specific CSS class based on the license
-
-	if (license_url.equals("http://creativecommons.org/licenses/by/3.0/"))
-	    return "green";
-
-	// unknown
-	return "gray";
-	
-    } // getLicenseCSS
-
     public static String getLicenseImage (String license_url) {
 	// return the URL to the license image for the specied license
 
@@ -38,9 +27,21 @@ public class ResultHelper {
 	// and return the resulting HREF
 	String query = request.getParameter("query");
 
-	query = query + "+tag:" + tag;
+	query = query + "+tag:\"" + tag + "\"";
 	return request.getRequestURL().toString() + "?query=" + query;
 
     } // getTagQueryHref
+
+    public static String getSourceQueryHref (HttpServletRequest request,
+					     String source) {
+
+	// starting with a request, add a tag filter to the search
+	// and return the resulting HREF
+	String query = request.getParameter("query");
+
+	query = query + "+source:\"" + source + "\"";
+	return request.getRequestURL().toString() + "?query=" + query;
+
+    } // getSourceQueryHref
 
 } // ResultHelper
