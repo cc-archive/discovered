@@ -24,6 +24,13 @@
                       class="org.creativecommons.learn.TagIndexer" />
    </extension>
 
+   <extension id="org.creativecommons.learn.curatorindexer"
+              name="OER Cloud Curator Indexer"
+              point="org.apache.nutch.indexer.IndexingFilter">
+      <implementation id="TagIndexer"
+                      class="org.creativecommons.learn.CuratorIndexer" />
+   </extension>
+
    <!-- The TagQueryFilter is called when you perform a search; it
         runs a search for the query against the OER Cloud tags for the
         document.
@@ -38,6 +45,16 @@
       <implementation id="TagQueryFilter"
                       class="org.creativecommons.learn.TagQueryFilter">
         <parameter name="fields" value="tag"/>
+      </implementation>
+   </extension>
+
+
+   <extension id="org.creativecommons.learn.curatorsearcher"
+              name="OER Cloud Curator Search Filter"
+              point="org.apache.nutch.searcher.QueryFilter">
+      <implementation id="CuratorQueryFilter"
+                      class="org.creativecommons.learn.CuratorQueryFilter">
+        <parameter name="fields" value="curator"/>
       </implementation>
    </extension>
 

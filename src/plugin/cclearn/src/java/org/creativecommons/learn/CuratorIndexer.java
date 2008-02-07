@@ -30,36 +30,31 @@ import org.apache.lucene.document.Document;
 import org.creativecommons.learn.oercloud.TagLoader;
 import org.creativecommons.learn.Search;
 
-public class TagIndexer implements IndexingFilter {
+public class CuratorIndexer implements IndexingFilter {
     
-    public static final Log LOG = LogFactory.getLog(TagIndexer.class.getName());
+    public static final Log LOG = LogFactory.getLog(
+					      CuratorIndexer.class.getName());
     
     private Configuration conf;
     private TagLoader tagLoader = new TagLoader();
 
-    public TagIndexer() {
-	LOG.info("Created TagIndexer.");
+    public CuratorIndexer() {
+	LOG.info("Created CuratorIndexer.");
     }
 
     public Document filter(Document doc, Parse parse, Text url, 
 			   CrawlDatum datum, Inlinks inlinks)
 	throws IndexingException {
 
-	// load the tag list from the database
-	Collection<String> tags = tagLoader.tags(url.toString());
-	Iterator<String> tagIterator = tags.iterator();
+	// add the currator information
+	String currator = tagLoader.currator(url.toString());
+	
+	Field curratorField = new Field(Search.CURATOR_FIELD, currator,
+					Field.Store.YES, 
+					Field.Index.UN_TOKENIZED);
+	curratorField.setBoost(Search.CURATOR_BOOST);
 
-	while (tagIterator.hasNext()) {
-	    String tag = tagIterator.next();
-
-	    Field tagsField = new Field(Search.TAGS_FIELD, tag, Field.Store.YES,
-				    Field.Index.TOKENIZED);
-	    tagsField.setBoost(Search.TAGS_BOOST);
-	    LOG.info("Adding tag (" + tag + ") to resource (" + 
-		     url.toString() + ")");
-	    doc.add(tagsField);
-
-	}
+	doc.add(curratorField);
 
 	return doc;
 
@@ -73,4 +68,4 @@ public class TagIndexer implements IndexingFilter {
 	return this.conf;
     }  
 
-} // TagIndexer
+} // CuratorIndexer
