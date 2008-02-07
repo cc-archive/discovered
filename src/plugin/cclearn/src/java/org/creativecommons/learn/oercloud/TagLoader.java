@@ -109,8 +109,8 @@ public class TagLoader {
 
     } // tags
 
-    public String currator(String url)  {
-	// return the currator name for the URL
+    public String source(String url)  {
+	// return the source name for the URL
 
 	try {
 
@@ -138,6 +138,6 @@ public class TagLoader {
 
 	return "";
 
-    } // currator
+    } // source
 
 } // TagLoader

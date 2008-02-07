@@ -10,13 +10,13 @@ import org.apache.commons.logging.LogFactory;
 
 import org.creativecommons.learn.Search;
 
-public class CuratorQueryFilter extends FieldQueryFilter {
+public class SourceQueryFilter extends FieldQueryFilter {
     private static final Log LOG = 
-	LogFactory.getLog(CuratorQueryFilter.class.getName());
+	LogFactory.getLog(SourceQueryFilter.class.getName());
 
-    public CuratorQueryFilter() {
-        super(Search.CURATOR_FIELD, Search.CURATOR_BOOST);
-        LOG.info("Added a OER curator query");
+    public SourceQueryFilter() {
+        super(Search.SOURCE_FIELD, Search.SOURCE_BOOST);
+        LOG.info("Added a OER source query");
     }
   
 }

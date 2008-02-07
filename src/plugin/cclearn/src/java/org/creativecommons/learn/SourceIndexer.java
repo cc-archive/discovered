@@ -30,32 +30,32 @@ import org.apache.lucene.document.Document;
 import org.creativecommons.learn.oercloud.TagLoader;
 import org.creativecommons.learn.Search;
 
-public class CuratorIndexer implements IndexingFilter {
+public class SourceIndexer implements IndexingFilter {
     
     public static final Log LOG = LogFactory.getLog(
-					      CuratorIndexer.class.getName());
+					      SourceIndexer.class.getName());
     
     private Configuration conf;
     private TagLoader tagLoader = new TagLoader();
 
-    public CuratorIndexer() {
-	LOG.info("Created CuratorIndexer.");
+    public SourceIndexer() {
+	LOG.info("Created SourceIndexer.");
     }
 
     public Document filter(Document doc, Parse parse, Text url, 
 			   CrawlDatum datum, Inlinks inlinks)
 	throws IndexingException {
 
-	// add the curator information
-	String curator = tagLoader.curator(url.toString());
+	// add the source information
+	String source = tagLoader.source(url.toString());
 	
-	if (curator != null) {
-	    Field curatorField = new Field(Search.CURATOR_FIELD, curator,
+	if (source != null) {
+	    Field sourceField = new Field(Search.SOURCE_FIELD, source,
 					    Field.Store.YES, 
 					    Field.Index.TOKENIZED);
-	    curatorField.setBoost(Search.CURATOR_BOOST);
+	    sourceField.setBoost(Search.SOURCE_BOOST);
 	    
-	    doc.add(curatorField);
+	    doc.add(sourceField);
 	}
 
 	return doc;
@@ -70,4 +70,4 @@ public class CuratorIndexer implements IndexingFilter {
 	return this.conf;
     }  
 
-} // CuratorIndexer
+} // SourceIndexer
