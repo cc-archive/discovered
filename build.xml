@@ -451,7 +451,7 @@
     <copy todir="${build.docs}/include">
       <fileset dir="${docs.src}/include"/>
     </copy>
-
+<!--
     <antcall target="generate-locale">
       <param name="doc.locale" value="ca"/>
     </antcall>
@@ -523,7 +523,7 @@
     <antcall target="generate-locale">
       <param name="doc.locale" value="zh"/>
     </antcall>
-
+-->
     <fixcrlf srcdir="${docs.dir}" eol="lf" encoding="utf-8"
              includes="**/*.html"/>
 
