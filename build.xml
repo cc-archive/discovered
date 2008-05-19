@@ -98,7 +98,7 @@
     <javac 
      encoding="${build.encoding}" 
      srcdir="${src.dir}"
-     includes="org/creativecommons/learn/*.java org/apache/nutch/**/*.java"
+     includes="org/creativecommons/learn/**/*.java org/apache/nutch/**/*.java"
      destdir="${build.classes}"
      debug="${javac.debug}"
      optimize="${javac.optimize}"
