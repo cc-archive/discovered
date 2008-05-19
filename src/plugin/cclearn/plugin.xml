@@ -24,11 +24,11 @@
                       class="org.creativecommons.learn.TagIndexer" />
    </extension>
 
-   <extension id="org.creativecommons.learn.sourceindexer"
+   <extension id="org.creativecommons.learn.resourcesourceindexer"
               name="OER Cloud Source Indexer"
               point="org.apache.nutch.indexer.IndexingFilter">
-      <implementation id="TagIndexer"
-                      class="org.creativecommons.learn.SourceIndexer" />
+      <implementation id="ResourceSourceIndexer"
+                      class="org.creativecommons.learn.ResourceSourceIndexer" />
    </extension>
 
    <!-- The TagQueryFilter is called when you perform a search; it
