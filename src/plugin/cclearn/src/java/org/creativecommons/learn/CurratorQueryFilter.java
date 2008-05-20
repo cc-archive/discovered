@@ -10,12 +10,12 @@ import org.apache.commons.logging.LogFactory;
 
 import org.creativecommons.learn.Search;
 
-public class SourceQueryFilter extends FieldQueryFilter {
+public class CurratorQueryFilter extends FieldQueryFilter {
     private static final Log LOG = 
-	LogFactory.getLog(SourceQueryFilter.class.getName());
+	LogFactory.getLog(CurratorQueryFilter.class.getName());
 
-    public SourceQueryFilter() {
-        super(Search.SOURCE_FIELD, Search.SOURCE_BOOST);
+    public CurratorQueryFilter() {
+        super(Search.CURRATOR_FIELD, Search.CURRATOR_BOOST);
         LOG.info("Added a OER source query");
     }
   

@@ -28,7 +28,7 @@
               name="OER Cloud Source Indexer"
               point="org.apache.nutch.indexer.IndexingFilter">
       <implementation id="ResourceSourceIndexer"
-                      class="org.creativecommons.learn.ResourceSourceIndexer" />
+                      class="org.creativecommons.learn.CurratorIndexer" />
    </extension>
 
    <!-- The TagQueryFilter is called when you perform a search; it
@@ -53,7 +53,7 @@
               name="OER Cloud Source Search Filter"
               point="org.apache.nutch.searcher.QueryFilter">
       <implementation id="SourceQueryFilter"
-                      class="org.creativecommons.learn.SourceQueryFilter">
+                      class="org.creativecommons.learn.CurratorQueryFilter">
         <parameter name="fields" value="source"/>
       </implementation>
    </extension>
