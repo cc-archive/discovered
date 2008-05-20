@@ -13,9 +13,12 @@ import com.hp.hpl.jena.rdf.model.ModelMaker;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.DC;
 import com.hp.hpl.jena.vocabulary.RDF;
+import com.sun.syndication.feed.module.DCModule;
+import com.sun.syndication.feed.module.DCSubject;
 import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndEntry;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.creativecommons.learn.oercloud.OerFeed;
@@ -64,7 +67,8 @@ public class TripleStore {
             Resource res = model.createResource(entry.getUri());
             model.add(res, DC.title, model.createLiteral(entry.getTitle()));
             model.add(res, RDF.type, CCLEARN.resource);
-            model.add(res, DC.contributor, model.createResource(feed.getUrl()));
+            model.add(res, CCLEARN.source, model.createResource(feed.getUrl()));
+            
             model.add(res, DC.description, 
                     model.createLiteral(entry.getDescription().getValue()));
                         
@@ -74,6 +78,34 @@ public class TripleStore {
                         model.createLiteral( ((SyndCategory)category).getName() ));
             } // for each category
             
+            // add actual Dublin Core metadata using the DC Module
+	        DCModule dc_metadata = (DCModule)entry.getModule(DCModule.URI);
+
+	        // dc:category
+        	List<DCSubject> subjects = dc_metadata.getSubjects();      	
+        	for (DCSubject s : subjects) {
+                model.add(res, DC.subject, 
+                        model.createLiteral(s.getValue()));
+        	}
+
+        	// dc:type
+        	List<String> types = dc_metadata.getTypes();
+        	for (String type : types) {
+                model.add(res, DC.type, model.createLiteral(type));
+        	}
+
+        	// dc:format
+        	List<String> formats = dc_metadata.getFormats();
+        	for (String format : formats) {
+                model.add(res, DC.type, model.createLiteral(format));
+        	}
+        	
+        	// dc:contributor
+        	List<String> contributors = dc_metadata.getContributors();
+        	for (String contributor : contributors) {
+                model.add(res, DC.type, model.createLiteral(contributor));
+        	}
+        	
             // close the connection
             this.close();
         } catch (ClassNotFoundException ex) {
