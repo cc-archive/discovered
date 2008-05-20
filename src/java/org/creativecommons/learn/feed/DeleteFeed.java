@@ -34,7 +34,7 @@ public class DeleteFeed {
 		
 		try {
 			Model m = TripleStore.getModel();
-			m.remove(m.createResource(url), RDF.type, CCLEARN.feed);
+			m.remove(m.createResource(url), RDF.type, CCLEARN.Feed);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
