@@ -12,7 +12,12 @@ import org.apache.nutch.crawl.Inlinks;
 import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.IndexingFilter;
 import org.apache.nutch.parse.Parse;
-import org.creativecommons.learn.oercloud.ObjectMgr;
+import org.creativecommons.learn.aggregate.handlers.TripleStore;
+
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.vocabulary.DC;
 
 public class ResourceSourceIndexer implements IndexingFilter {
 
@@ -28,21 +33,28 @@ public class ResourceSourceIndexer implements IndexingFilter {
 	public Document filter(Document doc, Parse parse, Text url,
 			CrawlDatum datum, Inlinks inlinks) throws IndexingException {
 
-		return doc;
-		/*
 		// add the source information
-		String source = ObjectMgr.get().getBookmark(url.toString()).getUser().getName();
+		try {
+			Model ts = new TripleStore().getModel();
+			
+			NodeIterator sources = ts.listObjectsOfProperty(ts.createResource(url.toString()), 
+					DC.contributor);
+			while (sources.hasNext()) {
+				RDFNode source = sources.nextNode();
+				
+				Field sourceField = new Field(Search.SOURCE_FIELD, source.toString(),
+						Field.Store.YES, Field.Index.TOKENIZED);
+				sourceField.setBoost(Search.SOURCE_BOOST);
 
-		if (source != null) {
-			Field sourceField = new Field(Search.SOURCE_FIELD, source,
-					Field.Store.YES, Field.Index.TOKENIZED);
-			sourceField.setBoost(Search.SOURCE_BOOST);
-
-			doc.add(sourceField);
+				doc.add(sourceField);
+				
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
+		
 		return doc;
-*/
 	} // public Document filter
 
 	public void setConf(Configuration conf) {

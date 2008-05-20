@@ -15,9 +15,19 @@ import org.apache.nutch.crawl.Inlinks;
 import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.IndexingFilter;
 import org.apache.nutch.parse.Parse;
+import org.creativecommons.learn.aggregate.handlers.CCLEARN;
+import org.creativecommons.learn.aggregate.handlers.TripleStore;
 import org.creativecommons.learn.oercloud.Bookmark;
 import org.creativecommons.learn.oercloud.ObjectMgr;
 import org.creativecommons.learn.oercloud.Tag;
+
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.ResIterator;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.vocabulary.DC;
+import com.hp.hpl.jena.vocabulary.RDF;
 
 public class TagIndexer implements IndexingFilter {
     
@@ -33,30 +43,30 @@ public class TagIndexer implements IndexingFilter {
 			   CrawlDatum datum, Inlinks inlinks)
 	throws IndexingException {
 
+		// add the tag/subject information
+		try {
+			Model ts = new TripleStore().getModel();
+			
+			NodeIterator subjects = ts.listObjectsOfProperty(ts.createResource(url.toString()), 
+					DC.subject);
+			while (subjects.hasNext()) {
+				RDFNode subject = subjects.nextNode();
+				
+				Field tagsField = new Field(Search.TAGS_FIELD, subject.toString(),
+						Field.Store.YES, Field.Index.TOKENIZED);
+	    		LOG.info("Adding tag (" + subject.toString() + ") to resource (" + 
+	    				url.toString() + ")");
+				tagsField.setBoost(Search.TAGS_BOOST);
 
-    	// load the tag list from the database
-    	Bookmark resource = ObjectMgr.get().getBookmark(url.toString());
-    	
-    	return doc;
-    	/*
-    	Collection<Tag> tags = resource.getTags();
-
-    	Iterator<Tag> tagIterator = tags.iterator();
-
-    	while (tagIterator.hasNext()) {
-    		Tag tag = tagIterator.next();
-
-    		Field tagsField = new Field(Search.TAGS_FIELD, tag.getTag(), Field.Store.YES,
-				    	Field.Index.TOKENIZED);
-    		tagsField.setBoost(Search.TAGS_BOOST);
-    		LOG.info("Adding tag (" + tag + ") to resource (" + 
-    				url.toString() + ")");
-    		doc.add(tagsField);
-
-    	}
-
-    	return doc;
-	*/
+				doc.add(tagsField);
+				
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return doc;
     } // public Document filter
   
     public void setConf(Configuration conf) {
