@@ -44,7 +44,8 @@ public class Opml {
                 // nope...
                 OerFeed node_feed = new OerFeed();
                 node_feed.setUrl(n.getAttributeValue("xmlUrl"));
-
+                node_feed.setUser(feed.getUser());
+                
                 if (n.getAttributeValue("type").equals("include")) {
                     // explicit inclusion
                     node_feed.setFeedType("opml");
