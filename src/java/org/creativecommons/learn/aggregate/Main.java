@@ -25,30 +25,8 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-/*
-        EntityManager em = ObjectMgr.get().getEm();
-        em.getTransaction().begin();
-        
-        Query q = em.createNamedQuery("Bookmark.findByBId");
-        q.setParameter("bId", BigInteger.valueOf(59599));
-        
-        Bookmark b = (Bookmark) q.getSingleResult();
-        System.out.println(b.getTitle());
-        
-        Tag t = new Tag(b, "foo");
-        b.getTags().add(t);
-        System.out.println(b.getUser());
-        System.out.println(b.getUser().getBookmarks().size());
-        
-        em.getTransaction().commit();
-        
-/*
- for (Tag t : b.getTags()) {
-            System.out.println(t.getTag());
-            
-        }
- */       
-        // get a list of all available feeds
+
+    	// get a list of all available feeds
         List<OerFeed> all_feeds = ObjectMgr.get().getAllFeeds();
 
         // process each one
@@ -57,11 +35,12 @@ public class Main {
             // XXX see if this feed needs to be re-imported
             if (feed.getLastImportDate().before(new Date())) {
                 try {
-                    // reimport necessary
+                    // re-import necessary
                     feed.poll();
-                    feed.setLastImportDate(new Date());
                 } catch (IOException ex) {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    feed.setLastImportDate(new Date());                	
                 }
             }
             
