@@ -103,7 +103,11 @@ public class OerFeed implements Serializable {
                 Logger.getLogger(OerFeed.class.getName()).log(Level.SEVERE, null, ex);
             } catch (FeedException ex) {
                 // maybe OAI-PMH?
-                new OaiPmh().poll(this);
+            	try {
+            		new OaiPmh().poll(this);
+            	} catch (UnsupportedOperationException e) {
+            		
+            	}
                 // XXX still need to log feed errors if it's not OAI-PMH
                 Logger.getLogger(OerFeed.class.getName()).log(Level.SEVERE, null, ex);
             }
