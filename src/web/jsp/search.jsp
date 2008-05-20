@@ -333,8 +333,9 @@ if ((!hits.totalIsExact() && (hits.getLength() <= start+hitsPerPage))) {
 %>
 
 <table bgcolor="3333ff" align="right">
-<tr><td bgcolor="ff9900"><a href="<%=rss%>"><font color="ffffff"><b>RSS</b>
-</font></a></td></tr>
+<tr><td bgcolor="ff9900"><a href="<%=rss%>">
+	<img src="./img/feed-icon-28x28.png" border="0"/>
+</a></td></tr>
 </table>
 
 </div></div>
