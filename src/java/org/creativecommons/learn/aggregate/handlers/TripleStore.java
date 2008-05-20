@@ -63,7 +63,7 @@ public class TripleStore {
             // add the basic assertions about the resource (title, source, etc)
             Resource res = model.createResource(entry.getUri());
             model.add(res, DC.title, model.createLiteral(entry.getTitle()));
-            model.add(res, RDF.type, model.createResource("http://learn.creativecommons.org/ns#Resource"));
+            model.add(res, RDF.type, CCLEARN.resource);
             model.add(res, DC.contributor, model.createResource(feed.getUrl()));
             model.add(res, DC.description, 
                     model.createLiteral(entry.getDescription().getValue()));
