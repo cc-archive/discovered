@@ -18,16 +18,16 @@
      -->
 
    <extension id="org.creativecommons.learn.tagindexer"
-              name="OER Cloud Tag Indexer"
+              name="Subject Indexer"
               point="org.apache.nutch.indexer.IndexingFilter">
       <implementation id="TagIndexer"
                       class="org.creativecommons.learn.TagIndexer" />
    </extension>
 
    <extension id="org.creativecommons.learn.curatorindexer"
-              name="OER Cloud Source Indexer"
+              name="Curator Indexer"
               point="org.apache.nutch.indexer.IndexingFilter">
-      <implementation id="ResourceSourceIndexer"
+      <implementation id="CuratorIndexer"
                       class="org.creativecommons.learn.CuratorIndexer" />
    </extension>
 
@@ -40,7 +40,7 @@
      -->   
 
    <extension id="org.creativecommons.learn.tagsearcher"
-              name="OER Cloud Tag Search Filter"
+              name="Subject Search Filter"
               point="org.apache.nutch.searcher.QueryFilter">
       <implementation id="TagQueryFilter"
                       class="org.creativecommons.learn.TagQueryFilter">
@@ -50,11 +50,11 @@
 
 
    <extension id="org.creativecommons.learn.curatorsearcher"
-              name="OER Cloud Source Search Filter"
+              name="Curator Search Filter"
               point="org.apache.nutch.searcher.QueryFilter">
-      <implementation id="SourceQueryFilter"
+      <implementation id="CuratorQueryFilter"
                       class="org.creativecommons.learn.CuratorQueryFilter">
-        <parameter name="fields" value="source"/>
+        <parameter name="fields" value="curator"/>
       </implementation>
    </extension>
 
