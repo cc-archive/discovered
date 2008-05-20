@@ -364,3 +364,7 @@ ul.tabs a {
 .box li {
   margin-left: 15px;
 }
+
+#rss-results {
+  float: right;
+}

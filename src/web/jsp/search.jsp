@@ -314,6 +314,10 @@ if ((hits.totalIsExact() && end < hits.getTotal()) // more hits to show
 <%
     }
 
+<a id="rss-results" href="<%=rss%>">
+	<img src="./img/feed-icon-14x14.png" border="0"/>
+</a>
+
 if ((!hits.totalIsExact() && (hits.getLength() <= start+hitsPerPage))) {
 %>
     <form name="showAllHits" action="./search.jsp" method="get">
@@ -331,12 +335,6 @@ if ((!hits.totalIsExact() && (hits.getLength() <= start+hitsPerPage))) {
 <%
     }
 %>
-
-<table bgcolor="3333ff" align="right">
-<tr><td bgcolor="ff9900"><a href="<%=rss%>">
-	<img src="./img/feed-icon-28x28.png" border="0"/>
-</a></td></tr>
-</table>
 
 </div></div>
 
