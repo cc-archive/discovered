@@ -12,8 +12,6 @@ import org.apache.nutch.crawl.Inlinks;
 import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.IndexingFilter;
 import org.apache.nutch.parse.Parse;
-import org.creativecommons.learn.aggregate.handlers.CCLEARN;
-import org.creativecommons.learn.aggregate.handlers.TripleStore;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
