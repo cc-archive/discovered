@@ -7,7 +7,7 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 public class CCLEARN {
 
     protected static final String uri ="http://learn.creativecommons.org/ns#";
-
+	
     /** returns the URI for this schema
         @return the URI for this schema
     */
@@ -20,10 +20,13 @@ public class CCLEARN {
     protected static final Property property( String local )
         { return ResourceFactory.createProperty( uri, local ); }
 
-    public static final Resource resource = resource("Resource");
-	public static final Resource feed = resource("Feed");
+    public static final Resource Resource = resource("Resource");
+	public static final Resource Feed = resource("Feed");
 
+	public static final Resource Curator = resource("Curator");
+	
 	public static final Property feedType = property("feedType");
 	public static final Property source = property("source");
+	public static final Property hasCurator = property("hasCurator");
 
 }
