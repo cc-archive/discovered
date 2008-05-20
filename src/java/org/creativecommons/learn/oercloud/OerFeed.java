@@ -74,7 +74,7 @@ public class OerFeed implements Serializable {
         // get the contents of the feed and emit events for each
         
         // OPML
-        if (this.getFeedType().equals("opml")) {
+        if (this.getFeedType().toLowerCase().equals("opml")) {
             
             new Opml().poll(this);
             
