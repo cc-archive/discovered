@@ -7,5 +7,6 @@ public class Search {
 
     public static String CURATOR_FIELD = "curator";
     public static float  CURATOR_BOOST = 1.0f;
+	public static String CURATOR_NAME_FIELD = "curator_name";
 
 } // Search

@@ -43,8 +43,12 @@ public class CuratorIndexer implements IndexingFilter {
 				Field sourceField = new Field(Search.CURATOR_FIELD, source.toString(),
 						Field.Store.YES, Field.Index.TOKENIZED);
 				sourceField.setBoost(Search.CURATOR_BOOST);
-
 				doc.add(sourceField);
+			
+				Field curatorName = new Field(Search.CURATOR_NAME_FIELD, source.toString(),
+						Field.Store.YES, Field.Index.UN_TOKENIZED);
+				curatorName.setBoost(Search.CURATOR_BOOST);
+				doc.add(curatorName);
 				
 			}
 		} catch (ClassNotFoundException e) {
