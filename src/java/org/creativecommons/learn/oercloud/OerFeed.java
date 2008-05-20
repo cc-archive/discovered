@@ -49,7 +49,7 @@ public class OerFeed {
 		try {
 			Model m = TripleStore.getModel();
 			Resource r_feed_url = m.createResource(feed_url);
-			m.add(r_feed_url, RDF.type, CCLEARN.feed);
+			m.add(r_feed_url, RDF.type, CCLEARN.Feed);
 			
 			return new OerFeed(r_feed_url);
 		} catch (ClassNotFoundException e) {
@@ -68,7 +68,7 @@ public class OerFeed {
 		// Query the triple store for known feeds
 		ResIterator feeds;
 		try {
-			feeds = TripleStore.getModel().listSubjectsWithProperty(RDF.type, CCLEARN.feed);
+			feeds = TripleStore.getModel().listSubjectsWithProperty(RDF.type, CCLEARN.Feed);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -89,7 +89,7 @@ public class OerFeed {
 			Model m = TripleStore.getModel();
 			Resource r_feed_url = m.createResource(feed_url);
 			
-			if (m.listStatements(r_feed_url, RDF.type, CCLEARN.feed).hasNext() == true) {
+			if (m.listStatements(r_feed_url, RDF.type, CCLEARN.Feed).hasNext() == true) {
 				// it does; return the OerFeed object
 				return new OerFeed(r_feed_url);
 			}
@@ -115,7 +115,7 @@ public class OerFeed {
             // add the basic assertions about the resource (title, source, etc)
             Resource res = model.createResource(entry.getUri());
             model.add(res, DC.title, model.createLiteral(entry.getTitle()));
-            model.add(res, RDF.type, CCLEARN.resource);
+            model.add(res, RDF.type, CCLEARN.Resource);
             model.add(res, CCLEARN.source, model.createResource(feed.getUrl()));
             
             model.add(res, DC.description, 
@@ -244,7 +244,40 @@ public class OerFeed {
     	
     }
     
-    @Override
+    public Curator getCurator() {
+    	try {
+    		
+			return Curator.byUrl(TripleStore.getModel().getProperty(this.url, CCLEARN.hasCurator).getString());
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (NullPointerException e) {
+			return null;
+		}
+    }
+    
+	public void setCurator(String curator_url) {
+
+    	try {
+    		Resource r_curator = TripleStore.getModel().createResource(curator_url);
+    		
+    		Statement old_curator = TripleStore.getModel().getProperty(this.url, CCLEARN.hasCurator);
+    		if (old_curator != null) {
+    			TripleStore.getModel().remove(old_curator);
+    		}
+			
+			TripleStore.getModel().add(this.url, CCLEARN.hasCurator, r_curator);
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	@Override
     public int hashCode() {
         int hash = 0;
         hash += (url != null ? url.hashCode() : 0);
@@ -264,6 +297,5 @@ public class OerFeed {
     public String toString() {
         return "OerFeed[url=" + url + "]";
     }
-
 
 }
