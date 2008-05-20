@@ -45,7 +45,8 @@ public class ObjectMgr {
         // XXX: Right now this just serves as a single point of dispatch
         // for our handlers (oer cloud, triple store, etc).  In the future
         // it should probably be significantly less tightly coupled
-        this.oercloud.updateEntry(feed, entry);
+    	
+        // this.oercloud.updateEntry(feed, entry);
         this.triplestore.updateEntry(feed, entry);
         
     } // updateEntry
