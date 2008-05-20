@@ -125,7 +125,7 @@ public class Curator {
 			e.printStackTrace();
 			return null;
 		} catch (NullPointerException e) {
-			return null;
+			return this.getUrl();
 		}
     }
 

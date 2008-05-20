@@ -43,22 +43,18 @@ public class CuratorIndexer implements IndexingFilter {
 				RDFNode source = sources.nextNode();
 				OerFeed feed = OerFeed.feedByUrl(source.toString());
 				
-				Field sourceField = new Field(Search.CURATOR_FIELD, source.toString(),
-						Field.Store.YES, Field.Index.TOKENIZED);
-				sourceField.setBoost(Search.CURATOR_BOOST);
-				doc.add(sourceField);
-			
-				String name = null;
-				if (feed.getCurator() != null) {
-					name = feed.getCurator().getName();
-				} else {
-					name = feed.getUrl();
-				}
-				
-				Field curatorName = new Field(Search.CURATOR_NAME_FIELD, name,
+				Field sourceField = new Field(Search.FEED_FIELD, source.toString(),
 						Field.Store.YES, Field.Index.UN_TOKENIZED);
-				curatorName.setBoost(Search.CURATOR_BOOST);
-				doc.add(curatorName);
+				sourceField.setBoost(Search.FEED_BOOST);
+				doc.add(sourceField);
+
+				// if this feed has curator information attached, index it as well
+				if (feed.getCurator() != null) {
+					Field curator = new Field(Search.CURATOR_FIELD, feed.getCurator().getUrl(),
+							Field.Store.YES, Field.Index.UN_TOKENIZED);
+					curator.setBoost(Search.CURATOR_BOOST);
+					doc.add(curator);
+				}
 				
 			}
 		} catch (ClassNotFoundException e) {

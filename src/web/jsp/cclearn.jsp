@@ -3,15 +3,8 @@
     // show cclearn-related meta info for each hit.
     // information indexed by ./src/plugin/cclearn.
 
-    // curator
-    String curator = detail.getValue("curator");
-    if (curator == null) {
-       curator = "unknown";
-    } else {
-       // make the curator a link
-       curator = "<a href='" + ResultHelper.getCuratorQueryHref(request,
-	  curator) + "'>" + curator + "</a>";
-    }
+    // curator information
+    String[] curators = ResultHelper.getCuratorLinks(request, detail);
 
     // License
     String license_uri = detail.getValue("license");
@@ -34,7 +27,9 @@
 
           <div class="primary">
             <p class="source"><strong>Curator:</strong> 
-	       <span><%=curator%></span>
+            <% for (int i_cur = 0; i_cur < curators.length; i_cur++) { %>
+	           <span><%=curators[i_cur]%></span>
+	        <% } %>
 	    </p>
 <!--            <p class="subject"><strong>Subject:</strong> 
 	       <span></span></p>
