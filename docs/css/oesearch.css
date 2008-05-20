@@ -230,6 +230,7 @@ div.option #othersubject, div.option #otherlang {
   width: 75%;
 	margin-top: 0px;
 	float: left;
+	padding-bottom: 10px;
 }
 
 .inactive {
