@@ -33,7 +33,7 @@ public class CuratorIndexer implements IndexingFilter {
 
 		// add the source information
 		try {
-			Model ts = new TripleStore().getModel();
+			Model ts = TripleStore.getModel();
 			
 			NodeIterator sources = ts.listObjectsOfProperty(ts.createResource(url.toString()), 
 					CCLEARN.source);
