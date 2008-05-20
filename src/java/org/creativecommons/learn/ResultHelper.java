@@ -39,7 +39,7 @@ public class ResultHelper {
 	// and return the resulting HREF
 	String query = request.getParameter("query");
 
-	query = query + "+source:\"" + curator + "\"";
+	query = query + "+" + Search.CURATOR_FIELD + ":\"" + curator + "\"";
 	return request.getRequestURL().toString() + "?query=" + query;
 
     } // getSourceQueryHref
