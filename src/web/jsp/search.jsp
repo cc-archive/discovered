@@ -144,7 +144,7 @@
     .getLocale().getLanguage();
   String requestURI = HttpUtils.getRequestURL(request).toString();
   String base = requestURI.substring(0, requestURI.lastIndexOf('/'));
-  String rss = "../opensearch?query="+htmlQueryString
+  String rss = "./opensearch?query="+htmlQueryString
     +"&hitsPerSite="+hitsPerSite+"&lang="+queryLang+params;
 %><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <%
@@ -298,7 +298,7 @@ out.flush();
 if ((hits.totalIsExact() && end < hits.getTotal()) // more hits to show
     || (!hits.totalIsExact() && (hits.getLength() > start+hitsPerPage))) {
 %>
-    <form name="next" action="../search.jsp" method="get">
+    <form name="next" action="./search.jsp" method="get">
     <input type="hidden" name="query" value="<%=htmlQueryString%>">
     <input type="hidden" name="lang" value="<%=queryLang%>">
     <input type="hidden" name="start" value="<%=end%>">
@@ -316,7 +316,7 @@ if ((hits.totalIsExact() && end < hits.getTotal()) // more hits to show
 
 if ((!hits.totalIsExact() && (hits.getLength() <= start+hitsPerPage))) {
 %>
-    <form name="showAllHits" action="../search.jsp" method="get">
+    <form name="showAllHits" action="./search.jsp" method="get">
     <input type="hidden" name="query" value="<%=htmlQueryString%>">
     <input type="hidden" name="lang" value="<%=queryLang%>">
     <input type="hidden" name="hitsPerPage" value="<%=hitsPerPage%>">
