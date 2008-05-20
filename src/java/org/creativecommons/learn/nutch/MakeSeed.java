@@ -6,7 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 
-import org.creativecommons.learn.aggregate.handlers.TripleStore;
+import org.creativecommons.learn.CCLEARN;
+import org.creativecommons.learn.TripleStore;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ResIterator;
@@ -41,19 +42,16 @@ public class MakeSeed {
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(seed_file));
 
-			TripleStore store = new TripleStore();
-			Model store_model = store.getModel();
+			Model store_model = TripleStore.getModel();
 
 			// write out all resources to the seed list
-			ResIterator subjects = store_model.listSubjectsWithProperty(RDF.type, 
-					store_model.createResource("http://learn.creativecommons.org/ns#Resource"));
+			ResIterator subjects = store_model.listSubjectsWithProperty(RDF.type, CCLEARN.resource);
 			while (subjects.hasNext()) {
 				Resource subject = subjects.nextResource();
 				out.write(subject.getURI() + "\n");
 			}
 			
 			out.close();
-			store.close();
 			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block

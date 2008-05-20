@@ -6,27 +6,27 @@
 package org.creativecommons.learn.oercloud;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-
+import org.creativecommons.learn.CCLEARN;
+import org.creativecommons.learn.TripleStore;
 import org.creativecommons.learn.aggregate.feed.OaiPmh;
 import org.creativecommons.learn.aggregate.feed.Opml;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ResIterator;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.vocabulary.DC;
+import com.hp.hpl.jena.vocabulary.RDF;
+import com.sun.syndication.feed.module.DCModule;
+import com.sun.syndication.feed.module.DCSubject;
+import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
@@ -37,44 +37,130 @@ import com.sun.syndication.io.XmlReader;
  *
  * @author nathan
  */
-@Entity
-@Table(name = "oer_feeds")
-@NamedQueries({
-    @NamedQuery(name = "OerFeed.findById", query = "SELECT o FROM OerFeed o WHERE o.id = :id"), 
-    @NamedQuery(name = "OerFeed.findByUrl", query = "SELECT o FROM OerFeed o WHERE o.url = :url"), 
-    @NamedQuery(name = "OerFeed.findByLastImport", query = "SELECT o FROM OerFeed o WHERE o.lastImport = :lastImport"), 
-    @NamedQuery(name = "OerFeed.findByFeedType", query = "SELECT o FROM OerFeed o WHERE o.feedType = :feedType")
-})
-public class OerFeed implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Column(name = "id", nullable = false)
-    private Long id;
-    @Column(name = "url")
-    private String url;
-    @Column(name = "last_import")
-    private BigInteger lastImport;
-    @Column(name = "feed_type")
-    private String feedType;
+public class OerFeed {
 
-    @ManyToOne()
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-    
-    public OerFeed() {
-        this.lastImport = BigInteger.valueOf(0);
-    }
+    private Resource url = null;
 
-    public OerFeed(Long id) {
-        this.lastImport = BigInteger.valueOf(0);
-        this.id = id;
-    }
-   
-    public Long getId() {
-        return id;
-    }
+	public static OerFeed newFeed(String feed_url) throws InstantiationException {
+		// Create a new feed in the TripleStore if it does not already exist
+		if (feedByUrl(feed_url) != null) 
+			throw new InstantiationException("Feed with this URL already exists");
+		
+		try {
+			Model m = TripleStore.getModel();
+			Resource r_feed_url = m.createResource(feed_url);
+			m.add(r_feed_url, RDF.type, CCLEARN.feed);
+			
+			return new OerFeed(r_feed_url);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-    public void poll() throws IOException {
+		return null;
+	} // newFeed
+
+	public static List<OerFeed> getAllFeeds() {
+		
+		// Return a list of OerFeed objects for all feeds we know about
+		Vector<OerFeed> result = new Vector<OerFeed>();
+		
+		// Query the triple store for known feeds
+		ResIterator feeds;
+		try {
+			feeds = TripleStore.getModel().listSubjectsWithProperty(RDF.type, CCLEARN.feed);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+		while (feeds.hasNext()) {
+			result.add(new OerFeed(feeds.nextResource()));
+		}
+		
+		return result;
+	}
+
+	public static OerFeed feedByUrl(String feed_url) {
+		
+		// see if the feed already exists
+		try {
+			Model m = TripleStore.getModel();
+			Resource r_feed_url = m.createResource(feed_url);
+			
+			if (m.listStatements(r_feed_url, RDF.type, CCLEARN.feed).hasNext() == true) {
+				// it does; return the OerFeed object
+				return new OerFeed(r_feed_url);
+			}
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+	public OerFeed(Resource feed_url) {
+    	
+    	url = feed_url;
+
+    } // OerFeed
+
+    public void updateEntry(OerFeed feed, SyndEntry entry) {
+        try {
+            Model model = TripleStore.getModel();
+
+            // add the basic assertions about the resource (title, source, etc)
+            Resource res = model.createResource(entry.getUri());
+            model.add(res, DC.title, model.createLiteral(entry.getTitle()));
+            model.add(res, RDF.type, CCLEARN.resource);
+            model.add(res, CCLEARN.source, model.createResource(feed.getUrl()));
+            
+            model.add(res, DC.description, 
+                    model.createLiteral(entry.getDescription().getValue()));
+                        
+            // add categories, mapped to dc:subject
+            for (Object category : entry.getCategories()) {
+                model.add(res, DC.subject, 
+                        model.createLiteral( ((SyndCategory)category).getName() ));
+            } // for each category
+            
+            // add actual Dublin Core metadata using the DC Module
+	        DCModule dc_metadata = (DCModule)entry.getModule(DCModule.URI);
+
+	        // dc:category
+        	List<DCSubject> subjects = dc_metadata.getSubjects();      	
+        	for (DCSubject s : subjects) {
+                model.add(res, DC.subject, 
+                        model.createLiteral(s.getValue()));
+        	}
+
+        	// dc:type
+        	List<String> types = dc_metadata.getTypes();
+        	for (String type : types) {
+                model.add(res, DC.type, model.createLiteral(type));
+        	}
+
+        	// dc:format
+        	List<String> formats = dc_metadata.getFormats();
+        	for (String format : formats) {
+                model.add(res, DC.type, model.createLiteral(format));
+        	}
+        	
+        	// dc:contributor
+        	List<String> contributors = dc_metadata.getContributors();
+        	for (String contributor : contributors) {
+                model.add(res, DC.type, model.createLiteral(contributor));
+        	}
+        	
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(TripleStore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    } // updateEntry
+
+    public void update() throws IOException {
         // get the contents of the feed and emit events for each
         
         // OPML
@@ -96,7 +182,7 @@ public class OerFeed implements Serializable {
                 for (SyndEntry entry : feed_entries) {
 
                     // emit an event with the entry information
-                    ObjectMgr.get().updateEntry(this, entry);
+                	this.updateEntry(this, entry);
 
                 } // for each entry
             } catch (IllegalArgumentException ex) {
@@ -115,18 +201,10 @@ public class OerFeed implements Serializable {
         } // not opml...
     } // poll
     
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUrl() {
-        return url;
+        return url.getURI();
     }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
+/*
     public Date getLastImportDate() {
         return new Date(this.getLastImport().intValue() * 1000);
     }
@@ -136,35 +214,40 @@ public class OerFeed implements Serializable {
                 BigInteger.valueOf(lastImportDate.getTime()).intValue() / 1000
                 ));
     }
-    
-    public BigInteger getLastImport() {
-        return lastImport;
-    }
-
-    public void setLastImport(BigInteger lastImport) {
-        this.lastImport = lastImport;
-    }
-
+*/  
     public String getFeedType() {
-        return feedType;
+    	try {
+			return TripleStore.getModel().getProperty(this.url, CCLEARN.feedType).getString();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (NullPointerException e) {
+			return null;
+		}
     }
 
     public void setFeedType(String feedType) {
-        this.feedType = feedType;
-    }
-
-    public User getUser() {
-        return user;
-    }
-    
-    public void setUser(User user) {
-        this.user = user;
+    	
+    	try {
+    		Statement old_type = TripleStore.getModel().getProperty(this.url, CCLEARN.feedType);
+    		if (old_type != null) {
+    			TripleStore.getModel().remove(old_type);
+    		}
+			
+			TripleStore.getModel().add(this.url, CCLEARN.feedType, feedType);
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
     }
     
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (url != null ? url.hashCode() : 0);
         return hash;
     }
 
@@ -175,15 +258,12 @@ public class OerFeed implements Serializable {
             return false;
         }
         OerFeed other = (OerFeed) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        return this.url.equals(other.url);
     }
 
-    @Override
     public String toString() {
-        return "nbtest.OerFeed[id=" + id + "]";
+        return "OerFeed[url=" + url + "]";
     }
+
 
 }
