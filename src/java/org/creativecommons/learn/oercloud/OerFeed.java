@@ -5,19 +5,16 @@
 
 package org.creativecommons.learn.oercloud;
 
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -26,8 +23,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+
 import org.creativecommons.learn.aggregate.feed.OaiPmh;
 import org.creativecommons.learn.aggregate.feed.Opml;
+
+import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.io.FeedException;
+import com.sun.syndication.io.SyndFeedInput;
+import com.sun.syndication.io.XmlReader;
 
 /**
  *
@@ -81,7 +85,11 @@ public class OerFeed implements Serializable {
         } else {
             try {
                 SyndFeedInput input = new SyndFeedInput();
-                SyndFeed feed = input.build(new XmlReader(new URL(this.getUrl())));
+                URLConnection feed_connection = new URL(this.getUrl()).openConnection();
+                feed_connection.setConnectTimeout(30000);
+                feed_connection.setReadTimeout(60000);
+                
+                SyndFeed feed = input.build(new XmlReader(feed_connection));
 
                 List<SyndEntry> feed_entries = feed.getEntries();
 
