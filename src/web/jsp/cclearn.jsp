@@ -3,14 +3,14 @@
     // show cclearn-related meta info for each hit.
     // information indexed by ./src/plugin/cclearn.
 
-    // Source
-    String source = detail.getValue("source");
-    if (source == null) {
-       source = "unknown";
+    // curator
+    String curator = detail.getValue("curator");
+    if (curator == null) {
+       curator = "unknown";
     } else {
-       // make the source a link
-       source = "<a href='" + ResultHelper.getSourceQueryHref(request,
-	  source) + "'>" + source + "</a>";
+       // make the curator a link
+       curator = "<a href='" + ResultHelper.getCuratorQueryHref(request,
+	  curator) + "'>" + curator + "</a>";
     }
 
     // License
@@ -33,8 +33,8 @@
 	  </a></p>
 
           <div class="primary">
-            <p class="source"><strong>Source:</strong> 
-	       <span><%=source%></span>
+            <p class="source"><strong>Curator:</strong> 
+	       <span><%=curator%></span>
 	    </p>
 <!--            <p class="subject"><strong>Subject:</strong> 
 	       <span></span></p>

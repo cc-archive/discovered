@@ -19,15 +19,15 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
-public class CurratorIndexer implements IndexingFilter {
+public class CuratorIndexer implements IndexingFilter {
 
-	public static final Log LOG = LogFactory.getLog(CurratorIndexer.class
+	public static final Log LOG = LogFactory.getLog(CuratorIndexer.class
 			.getName());
 
 	private Configuration conf;
 
-	public CurratorIndexer() {
-		LOG.info("Created CurratorIndexer.");
+	public CuratorIndexer() {
+		LOG.info("Created CuratorIndexer.");
 	}
 
 	public Document filter(Document doc, Parse parse, Text url,
@@ -42,9 +42,9 @@ public class CurratorIndexer implements IndexingFilter {
 			while (sources.hasNext()) {
 				RDFNode source = sources.nextNode();
 				
-				Field sourceField = new Field(Search.CURRATOR_FIELD, source.toString(),
+				Field sourceField = new Field(Search.CURATOR_FIELD, source.toString(),
 						Field.Store.YES, Field.Index.TOKENIZED);
-				sourceField.setBoost(Search.CURRATOR_BOOST);
+				sourceField.setBoost(Search.CURATOR_BOOST);
 
 				doc.add(sourceField);
 				
@@ -65,4 +65,4 @@ public class CurratorIndexer implements IndexingFilter {
 		return this.conf;
 	}
 
-} // CurratorIndexer
+} // CuratorIndexer

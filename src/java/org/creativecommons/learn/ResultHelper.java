@@ -32,14 +32,14 @@ public class ResultHelper {
 
     } // getTagQueryHref
 
-    public static String getSourceQueryHref (HttpServletRequest request,
-					     String source) {
+    public static String getCuratorQueryHref (HttpServletRequest request,
+					     String curator) {
 
 	// starting with a request, add a tag filter to the search
 	// and return the resulting HREF
 	String query = request.getParameter("query");
 
-	query = query + "+source:\"" + source + "\"";
+	query = query + "+source:\"" + curator + "\"";
 	return request.getRequestURL().toString() + "?query=" + query;
 
     } // getSourceQueryHref
