@@ -45,7 +45,7 @@ public class MakeSeed {
 			Model store_model = TripleStore.getModel();
 
 			// write out all resources to the seed list
-			ResIterator subjects = store_model.listSubjectsWithProperty(RDF.type, CCLEARN.resource);
+			ResIterator subjects = store_model.listSubjectsWithProperty(RDF.type, CCLEARN.Resource);
 			while (subjects.hasNext()) {
 				Resource subject = subjects.nextResource();
 				out.write(subject.getURI() + "\n");
