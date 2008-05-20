@@ -12,6 +12,8 @@ import org.apache.nutch.crawl.Inlinks;
 import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.IndexingFilter;
 import org.apache.nutch.parse.Parse;
+import org.creativecommons.learn.oercloud.Curator;
+import org.creativecommons.learn.oercloud.OerFeed;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
@@ -39,13 +41,14 @@ public class CuratorIndexer implements IndexingFilter {
 					CCLEARN.source);
 			while (sources.hasNext()) {
 				RDFNode source = sources.nextNode();
+				OerFeed feed = OerFeed.feedByUrl(source.toString());
 				
 				Field sourceField = new Field(Search.CURATOR_FIELD, source.toString(),
 						Field.Store.YES, Field.Index.TOKENIZED);
 				sourceField.setBoost(Search.CURATOR_BOOST);
 				doc.add(sourceField);
 			
-				Field curatorName = new Field(Search.CURATOR_NAME_FIELD, source.toString(),
+				Field curatorName = new Field(Search.CURATOR_NAME_FIELD, feed.getCurator().getName(),
 						Field.Store.YES, Field.Index.UN_TOKENIZED);
 				curatorName.setBoost(Search.CURATOR_BOOST);
 				doc.add(curatorName);
