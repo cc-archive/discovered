@@ -15,7 +15,7 @@
 -\.(gif|GIF|jpg|JPG|ico|ICO|css|sit|eps|wmf|zip|ppt|mpg|xls|gz|rpm|tgz|mov|MOV|exe|png)$
 
 # skip URLs containing certain characters as probable queries, etc.
--[?*!@=]
+#-[?*!@=]
 
 # skip URLs with slash-delimited segment that repeats 3+ times, to break loops
 -.*(/.+?)/.*?\1/.*?\1/
