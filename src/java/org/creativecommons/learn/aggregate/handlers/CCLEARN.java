@@ -21,5 +21,6 @@ public class CCLEARN {
         { return ResourceFactory.createProperty( uri, local ); }
 
     public static final Resource resource = resource("Resource");
+	public static final Property source = property("source");
 
 }

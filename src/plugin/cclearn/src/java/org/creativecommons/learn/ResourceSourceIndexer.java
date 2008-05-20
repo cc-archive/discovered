@@ -12,12 +12,12 @@ import org.apache.nutch.crawl.Inlinks;
 import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.IndexingFilter;
 import org.apache.nutch.parse.Parse;
+import org.creativecommons.learn.aggregate.handlers.CCLEARN;
 import org.creativecommons.learn.aggregate.handlers.TripleStore;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.vocabulary.DC;
 
 public class ResourceSourceIndexer implements IndexingFilter {
 
@@ -38,7 +38,7 @@ public class ResourceSourceIndexer implements IndexingFilter {
 			Model ts = new TripleStore().getModel();
 			
 			NodeIterator sources = ts.listObjectsOfProperty(ts.createResource(url.toString()), 
-					DC.contributor);
+					CCLEARN.source);
 			while (sources.hasNext()) {
 				RDFNode source = sources.nextNode();
 				
