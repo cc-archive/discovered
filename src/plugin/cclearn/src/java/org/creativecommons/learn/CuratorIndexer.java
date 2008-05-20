@@ -48,7 +48,14 @@ public class CuratorIndexer implements IndexingFilter {
 				sourceField.setBoost(Search.CURATOR_BOOST);
 				doc.add(sourceField);
 			
-				Field curatorName = new Field(Search.CURATOR_NAME_FIELD, feed.getCurator().getName(),
+				String name = null;
+				if (feed.getCurator() != null) {
+					name = feed.getCurator().getName();
+				} else {
+					name = feed.getUrl();
+				}
+				
+				Field curatorName = new Field(Search.CURATOR_NAME_FIELD, name,
 						Field.Store.YES, Field.Index.UN_TOKENIZED);
 				curatorName.setBoost(Search.CURATOR_BOOST);
 				doc.add(curatorName);
