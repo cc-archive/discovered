@@ -246,8 +246,8 @@ public class OerFeed {
     
     public Curator getCurator() {
     	try {
-    		
-			return Curator.byUrl(TripleStore.getModel().getProperty(this.url, CCLEARN.hasCurator).getString());
+    		return new Curator(TripleStore.getModel().getProperty(this.url, CCLEARN.hasCurator).getResource());
+			// return Curator.byUrl(TripleStore.getModel().getProperty(this.url, CCLEARN.hasCurator).getString());
 			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
