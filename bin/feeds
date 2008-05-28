@@ -37,7 +37,7 @@ if [ $# = 0 ]; then
   echo "  addfeed          add a feed"
   echo "  addcurator       add a curator"
   echo "  rmfeed           remove a feed"
-  echo "  setcurr          set the curator for a feed"
+  echo "  setcurator       set the curator for a feed"
   echo " or"
   echo "  CLASSNAME         run the class named CLASSNAME"
   echo "Most commands print help when invoked w/o parameters."
