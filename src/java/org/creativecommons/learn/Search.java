@@ -12,5 +12,6 @@ public class Search {
     public static float  FEED_BOOST = 1.0f;
     
 	// public static String CURATOR_NAME_FIELD = "curator_name";
+    public static String LICENSE_FIELD = "license";
 
 } // Search
