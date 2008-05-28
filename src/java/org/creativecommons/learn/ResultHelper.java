@@ -75,10 +75,12 @@ public class ResultHelper {
 			System.out.println(curators[i]);
 			Curator c = Curator.byUrl(curators[i]);
 
-			curator_links.add("<a href=\""
-					+ getCuratorQueryHref(request, curators[i]) + "\">"
-					+ c.getName() + "</a> <a href=\"" + curators[i]
-					+ "\"><img src=\"./img/house.png\" border=\"0\" /></a>");
+			if (c != null) {
+				curator_links.add("<a href=\""
+						+ getCuratorQueryHref(request, curators[i]) + "\">"
+						+ c.getName() + "</a> <a href=\"" + curators[i]
+						+ "\"><img src=\"./img/house.png\" border=\"0\" /></a>");
+			}
 		}
 
 		return (String[]) curator_links
