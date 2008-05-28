@@ -45,7 +45,7 @@ public class CuratorIndexer implements IndexingFilter {
 				OerFeed feed = OerFeed.feedByUrl(source.toString());
 				
 				Field sourceField = new Field(Search.FEED_FIELD, source.toString(),
-						Field.Store.YES, Field.Index.UN_TOKENIZED);
+						Field.Store.YES, Field.Index.TOKENIZED);
 				sourceField.setBoost(Search.FEED_BOOST);
 				doc.add(sourceField);
 
@@ -56,7 +56,7 @@ public class CuratorIndexer implements IndexingFilter {
 				}
 
 				Field curator = new Field(Search.CURATOR_FIELD, curator_url,
-						Field.Store.YES, Field.Index.UN_TOKENIZED);
+						Field.Store.YES, Field.Index.TOKENIZED);
 				curator.setBoost(Search.CURATOR_BOOST);
 				doc.add(curator);
 				
