@@ -27,7 +27,7 @@ public class ResultHelper {
 		// and return the resulting HREF
 		try {
 			String query = URLDecoder.decode(request.getParameter("query"), "UTF-8").trim();
-			query = query + " " + query_key + ":" + query_value + "";
+			query = query + " " + query_key + ":\"" + query_value + "\"";
 			query = URLEncoder.encode(query, "UTF-8");
 			
 			return request.getRequestURL().append("?query=" + query).toString();
@@ -44,7 +44,7 @@ public class ResultHelper {
 	public static String getLicenseQueryLink(HttpServletRequest request,
 			String license_uri) {
 
-		return addQueryParameter(request, Search.LICENSE_FIELD, license_uri);
+		return addQueryParameter(request, "cc", "license=" + license_uri);
 
 	} // getLicenseQueryLink
 
