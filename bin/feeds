@@ -33,8 +33,11 @@ if [ $# = 0 ]; then
   echo "Usage: nutch COMMAND"
   echo "where COMMAND is one of:"
   echo "  listfeeds        list all feeds"
+  echo "  listcurators     list all curators"
   echo "  addfeed          add a feed"
+  echo "  addcurator       add a curator"
   echo "  rmfeed           remove a feed"
+  echo "  setcurr          set the curator for a feed"
   echo " or"
   echo "  CLASSNAME         run the class named CLASSNAME"
   echo "Most commands print help when invoked w/o parameters."
@@ -164,6 +167,12 @@ elif [ "$COMMAND" = "addfeed" ] ; then
   CLASS=org.creativecommons.learn.feed.AddFeed
 elif [ "$COMMAND" = "rmfeed" ] ; then
   CLASS=org.creativecommons.learn.feed.DeleteFeed
+elif [ "$COMMAND" = "listcurators" ] ; then
+  CLASS=org.creativecommons.learn.feed.ListCurators
+elif [ "$COMMAND" = "addcurator" ] ; then
+  CLASS=org.creativecommons.learn.feed.AddCurator
+elif [ "$COMMAND" = "setcurator" ] ; then
+  CLASS=org.creativecommons.learn.feed.SetCurator
 else
   CLASS=$COMMAND
 fi
