@@ -58,13 +58,4 @@
       </implementation>
    </extension>
 
-   <extension id="org.creativecommons.learn.curatornamesearcher"
-              name="Curator Name Search Filter"
-              point="org.apache.nutch.searcher.QueryFilter">
-      <implementation id="CuratorNameQueryFilter"
-                      class="org.creativecommons.learn.CuratorNameQueryFilter">
-        <parameter name="fields" value="curator_name"/>
-      </implementation>
-   </extension>
-
 </plugin>
