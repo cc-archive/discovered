@@ -20,10 +20,17 @@
         <p class="abstract"><%=summary%></p>
 
         <div class="meta">
-          <p class="license"><a href="<%=license_uri%>">
-	    <img src="<%=ResultHelper.getLicenseImage(license_uri)%>" 
-	    	 border=0 />
-	  </a></p>
+	<% if (license_uri != null) { %>
+          <p class="license">
+	    <a href="<%=license_uri%>">
+	      <img src="<%=ResultHelper.getLicenseImage(license_uri)%>" 
+	       	   border=0 />
+	    </a>
+	    <a href="<%=ResultHelper.getLicenseQueryLink(request, license_uri)%>">
+	      <img alt="more like this" src="./img/magnifier.png" border="0" />
+	    </a>
+	  </p>
+	<% } %>
 
           <div class="primary">
             <p class="source"><strong>Curator:</strong> 

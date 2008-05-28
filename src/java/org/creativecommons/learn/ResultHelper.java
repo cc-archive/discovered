@@ -11,8 +11,8 @@ public class ResultHelper {
 
 	public static String getLicenseImage(String license_url) {
 		// return the URL to the license image for the specified license
-
-		if (license_url.indexOf("http://creativecommons.org/licenses") != 0)
+try{
+		if ((license_url == null) || (license_url.indexOf("http://creativecommons.org/licenses") != 0))
 			// not a CC license
 			return null;
 
@@ -22,8 +22,22 @@ public class ResultHelper {
 		result += "80x15.png";
 
 		return result;
+		} catch (NullPointerException e) {
+		   return null;
+		   }
 
 	} // getLicenseImage
+
+	public static String getLicenseQueryLink(HttpServletRequest request, String license_uri) {
+
+		// starting with a request, add a tag filter to the search
+		// and return the resulting HREF
+		String query = request.getParameter("query");
+
+		query = query + "+" + Search.LICENSE_FIELD + ":\"" + license_uri + "\"";
+		return request.getRequestURL().toString() + "?query=" + query;
+
+	} // getLicenseQueryLink
 
 	public static String getTagQueryHref(HttpServletRequest request, String tag) {
 
@@ -39,17 +53,19 @@ public class ResultHelper {
 	public static String[] getCuratorLinks(HttpServletRequest request, HitDetails result) {
 
 		// get the curator(s) and resolve them to human readable name(s)
-		Vector<String> curator_links = new Vector<String>();
 		String[] curators = result.getValues(Search.CURATOR_FIELD);
-		
-		for (String curator_url : curators) {
-			Curator c = Curator.byUrl(curator_url);
+		if (curators == null) return new String[0];
 
-			curator_links.add(
-					"<a href=\"" + getCuratorQueryHref(request, curator_url) + "\">" + c.getName() + "</a> ");
-		}
+                Vector<String> curator_links = new Vector<String>();
 		
-		return (String[]) curator_links.toArray();
+		for (int i = 0; i < curators.length; i++) {
+		System.out.println(curators[i]);
+			Curator c = Curator.byUrl(curators[i]);
+
+			curator_links.add( "<a href=\"" + getCuratorQueryHref(request, curators[i]) + "\">" + c.getName() + "</a> <a href=\"" + curators[i] + "\"><img src=\"./img/house.png\" border=\"0\" /></a>" );
+		}
+	
+		return (String[]) curator_links.toArray(new String[curator_links.size()]);
 		
 	}
 	
@@ -59,7 +75,9 @@ public class ResultHelper {
 		// and return the resulting HREF
 		String query = request.getParameter("query");
 
-		query = query + "+" + Search.CURATOR_FIELD + ":\"" + curator + "\"";
+		query = query + "+" + Search.CURATOR_FIELD + ":'" + curator + "'";
+		System.out.println(Search.CURATOR_FIELD);
+		System.out.println(curator);
 		return request.getRequestURL().toString() + "?query=" + query;
 
 	} // getSourceQueryHref
