@@ -50,7 +50,7 @@
               point="org.apache.nutch.searcher.QueryFilter">
       <implementation id="CCQueryFilter"
                       class="org.creativecommons.nutch.CCQueryFilter">
-        <parameter name="fields" value="cc"/>
+        <parameter name="raw-fields" value="cc"/>
       </implementation>
    </extension>
 
