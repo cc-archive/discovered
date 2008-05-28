@@ -39,6 +39,7 @@ public class CuratorIndexer implements IndexingFilter {
 			
 			NodeIterator sources = ts.listObjectsOfProperty(ts.createResource(url.toString()), 
 					CCLEARN.source);
+			
 			while (sources.hasNext()) {
 				RDFNode source = sources.nextNode();
 				OerFeed feed = OerFeed.feedByUrl(source.toString());
@@ -49,12 +50,15 @@ public class CuratorIndexer implements IndexingFilter {
 				doc.add(sourceField);
 
 				// if this feed has curator information attached, index it as well
+				String curator_url = "";
 				if (feed.getCurator() != null) {
-					Field curator = new Field(Search.CURATOR_FIELD, feed.getCurator().getUrl(),
-							Field.Store.YES, Field.Index.UN_TOKENIZED);
-					curator.setBoost(Search.CURATOR_BOOST);
-					doc.add(curator);
+					curator_url = feed.getCurator().getUrl();
 				}
+
+				Field curator = new Field(Search.CURATOR_FIELD, curator_url,
+						Field.Store.YES, Field.Index.UN_TOKENIZED);
+				curator.setBoost(Search.CURATOR_BOOST);
+				doc.add(curator);
 				
 			}
 		} catch (ClassNotFoundException e) {
