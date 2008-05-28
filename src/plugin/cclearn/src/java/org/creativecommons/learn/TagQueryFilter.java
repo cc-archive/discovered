@@ -6,7 +6,7 @@ import org.apache.nutch.searcher.FieldQueryFilter;
 
 public class TagQueryFilter extends FieldQueryFilter {
     private static final Log LOG = 
-	LogFactory.getLog(TagQueryFilter.class.getName());
+    	LogFactory.getLog(TagQueryFilter.class.getName());
 
     public TagQueryFilter() {
         super(Search.TAGS_FIELD, Search.TAGS_BOOST);

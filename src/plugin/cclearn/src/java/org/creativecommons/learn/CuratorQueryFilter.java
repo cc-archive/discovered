@@ -5,12 +5,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.nutch.searcher.FieldQueryFilter;
 
 public class CuratorQueryFilter extends FieldQueryFilter {
-    private static final Log LOG = 
-	LogFactory.getLog(CuratorQueryFilter.class.getName());
+	private static final Log LOG = LogFactory.getLog(
+			CuratorQueryFilter.class.getName());
 
-    public CuratorQueryFilter() {
-        super(Search.CURATOR_FIELD, Search.CURATOR_BOOST);
-        LOG.info("Added a OER source query");
-    }
-  
+	public CuratorQueryFilter() {
+		super(Search.CURATOR_FIELD, Search.CURATOR_BOOST);
+		LOG.info("Added a OER source query");
+	}
+
 }
