@@ -6,12 +6,6 @@
 
 	<property name="cclearn.crawl.seeddir" location="seed" />
 	
-	<target name="compile" depends="Nutch.compile">
-		<copy todir="${build.dir}/META-INF">
-			<fileset dir="${basedir}/META-INF"/>
-		</copy>
-	</target>
-	
 	<target name="aggregate" depends="compile">
 		<path id="aggregate.classpath">
 			<pathelement location="${basedir}" />
