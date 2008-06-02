@@ -231,6 +231,7 @@ div.option #othersubject, div.option #otherlang {
 	margin-top: 0px;
 	float: left;
 	padding-bottom: 10px;
+	min-height: 400px;
 }
 
 .inactive {
