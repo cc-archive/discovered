@@ -1,20 +1,21 @@
 package org.creativecommons.learn;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Vector;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.creativecommons.learn.oercloud.OerFeed;
+import thewebsemantic.Bean2RDF;
+import thewebsemantic.Filler;
+import thewebsemantic.NotFoundException;
+import thewebsemantic.RDF2Bean;
 
 import com.hp.hpl.jena.db.DBConnection;
 import com.hp.hpl.jena.db.IDBConnection;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.rdf.model.Resource;
 
 /**
  *
@@ -22,10 +23,38 @@ import com.hp.hpl.jena.vocabulary.RDF;
  */
 public class TripleStore {
 
-    private static IDBConnection conn = null;
-    private static ModelMaker maker = null;
+	private static TripleStore instance = null;
+	
+    private IDBConnection conn = null;
+    private ModelMaker maker = null;
+    private Model model = null;
     
-    private static void open() throws ClassNotFoundException {
+    private RDF2Bean loader = null;
+    private Bean2RDF saver = null;
+    
+    private TripleStore() {
+    	// private constructor
+    	super();
+    	
+    	try {
+        	this.loader = new RDF2Bean(this.getModel());
+			this.saver = new Bean2RDF(this.getModel());
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    public static TripleStore get() {
+    	
+    	if (instance == null) {
+    		instance = new TripleStore();
+    	}
+    	
+    	return instance;
+    }
+    
+    private void open() throws ClassNotFoundException {
     	
         String className = "com.mysql.jdbc.Driver";         // path of driver class
         Class.forName (className);                          // Load the Driver
@@ -39,8 +68,8 @@ public class TripleStore {
         maker = ModelFactory.createModelRDBMaker(conn) ;
     	
     } // open
-    
-    private static void close() {
+ 
+    private void close() {
         try {
             // Close the database connection
             conn.close();
@@ -50,15 +79,67 @@ public class TripleStore {
         
     } // close
 
-    public static Model getModel() throws ClassNotFoundException {
+    public Model getModel() throws ClassNotFoundException {
 
     	if (maker == null) {
-    		TripleStore.open();
+    		this.open();
+    	}
+ 
+    	if (model == null) {
+            // create or open the default model
+    		this.model = maker.createDefaultModel();
     	}
     	
-        // create or open the default model
-        return maker.createDefaultModel();
+        return this.model;
 
     } // getModel
+    
+
+    /* Delegate Methods */
+    /* **************** */
+    
+	public boolean exists(Class<?> c, String id) {
+		return loader.exists(c, id);
+	}
+
+	public boolean exists(String uri) {
+		return loader.exists(uri);
+	}
+
+	public void fill(Object o, String propertyName) {
+		loader.fill(o, propertyName);
+	}
+
+	public Filler fill(Object o) {
+		return loader.fill(o);
+	}
+
+	public <T> T load(Class<T> c, String id) throws NotFoundException {
+		return loader.load(c, id);
+	}
+
+	public <T> Collection<T> load(Class<T> c) {
+		return loader.load(c);
+	}
+
+	public <T> T loadDeep(Class<T> c, String id) throws NotFoundException {
+		return loader.loadDeep(c, id);
+	}
+
+	public <T> Collection<T> loadDeep(Class<T> c) {
+		return loader.loadDeep(c);
+	}
+
+	public void delete(Object bean) {
+		saver.delete(bean);
+	}
+
+	public Resource save(Object bean) {
+		return saver.save(bean);
+	}
+
+	public Resource saveDeep(Object bean) {
+		return saver.saveDeep(bean);
+	}
 
 } // TripleStore
