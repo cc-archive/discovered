@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.nutch.searcher.HitDetails;
 import org.creativecommons.learn.oercloud.Curator;
+import org.creativecommons.learn.oercloud.Resource;
 
 import thewebsemantic.NotFoundException;
 
@@ -116,4 +117,14 @@ public class ResultHelper {
 
 	} // getLicenseImage
 
+	public static Resource getResource(String resource_url) {
+		
+		try {
+			return TripleStore.get().load(Resource.class, resource_url);
+		} catch (NotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
 } // ResultHelper
