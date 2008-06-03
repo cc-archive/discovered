@@ -3,6 +3,8 @@
     // show cclearn-related meta info for each hit.
     // information indexed by ./src/plugin/cclearn.
 
+    Resource result_item = ResultHelper.getResource(detail.getValue("url"));
+
     // curator information
     String[] curators = ResultHelper.getCuratorLinks(request, detail);
 
@@ -17,7 +19,7 @@
  
     <h2><a href="<%=url%>"><%=Entities.encode(title)%></a></h2>
 
-        <p class="abstract"><%=summary%></p>
+        <p class="abstract"><%=result_item.getDescription()%></p>
 
         <div class="meta">
 	<% if (license_uri != null) { %>
@@ -51,10 +53,6 @@
         %>(<a href="./cached.jsp?<%=id%>"><i18n:message key="cached"/></a>) <%
     }
     %>
-
-    (<a href="./explain.jsp?<%=id%>&query=<%=URLEncoder.encode(queryString, "UTF-8")%>&lang=<%=queryLang%>"><i18n:message key="explain"/></a>)
-    (<a href="./anchors.jsp?<%=id%>"><i18n:message key="anchors"/></a>)
-
 	  </p>
 
           <div class="clear"></div>
@@ -83,6 +81,8 @@
     (<a href="../search.jsp?<%=more%>"><i18n:message key="moreFrom"/>
      <%=hit.getDedupValue()%></a>)
     <% } %>
+    (<a href="./explain.jsp?<%=id%>&query=<%=URLEncoder.encode(queryString, "UTF-8")%>&lang=<%=queryLang%>"><i18n:message key="explain"/></a>)
+    (<a href="./anchors.jsp?<%=id%>"><i18n:message key="anchors"/></a>)
 
     </div>
 </div>

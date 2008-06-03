@@ -34,6 +34,7 @@
   import="org.apache.nutch.util.NutchConfiguration"
 
   import="org.creativecommons.learn.ResultHelper"
+  import="org.creativecommons.learn.oercloud.*"
 
 %><%
   Configuration nutchConf = NutchConfiguration.get(application);
