@@ -35,7 +35,7 @@ public class Main {
             //if (feed.getLastImportDate().before(new Date())) {
                 try {
                     // re-import necessary
-                    feed.update();
+                	new FeedUpdater(feed).update();
                 } catch (IOException ex) {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
