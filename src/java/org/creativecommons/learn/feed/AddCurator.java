@@ -1,5 +1,6 @@
 package org.creativecommons.learn.feed;
 
+import org.creativecommons.learn.TripleStore;
 import org.creativecommons.learn.oercloud.Curator;
 
 public class AddCurator {
@@ -20,17 +21,11 @@ public class AddCurator {
 		String name = args[0];
 		String url = args[1];
 		
-		try {
-			Curator new_c = Curator.create(url);
-			new_c.setName(name);
-			
-		} catch (InstantiationException e1) {
-			e1.printStackTrace();
-
-			System.out.println("Curator already exists.");
-			System.exit(1);
-		}
-				
+		Curator new_curator = new Curator(url);
+		new_curator.setName(name);
+		
+		TripleStore.get().save(new_curator);
+						
 	}
 
 }

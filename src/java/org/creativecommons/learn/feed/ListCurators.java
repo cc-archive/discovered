@@ -1,7 +1,8 @@
 package org.creativecommons.learn.feed;
 
-import java.util.List;
+import java.util.Collection;
 
+import org.creativecommons.learn.TripleStore;
 import org.creativecommons.learn.oercloud.Curator;
 
 public class ListCurators {
@@ -12,7 +13,7 @@ public class ListCurators {
 	public static void main(String[] args) {
 		
 		// list feeds we're tracking
-		List<Curator> curators = Curator.getAll();
+		Collection<Curator> curators = TripleStore.get().load(Curator.class); 
 			
 		for (Curator c : curators) {
 			System.out.println(c.getName() + " (" + c.getUrl() + ")");

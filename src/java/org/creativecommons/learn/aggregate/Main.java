@@ -6,12 +6,12 @@
 package org.creativecommons.learn.aggregate;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.creativecommons.learn.oercloud.OerFeed;
+import org.creativecommons.learn.TripleStore;
+import org.creativecommons.learn.oercloud.Feed;
 
 
 /**
@@ -26,10 +26,10 @@ public class Main {
     public static void main(String[] args) {
 
     	// get a list of all available feeds
-        List<OerFeed> all_feeds = OerFeed.getAllFeeds();
-        
+    	Collection<Feed> all_feeds = TripleStore.get().load(Feed.class);
+    	
         // process each one
-        for (OerFeed feed : all_feeds) {
+        for (Feed feed : all_feeds) {
 
             // XXX see if this feed needs to be re-imported
             //if (feed.getLastImportDate().before(new Date())) {

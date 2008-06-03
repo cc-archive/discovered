@@ -34,7 +34,7 @@ public class TagIndexer implements IndexingFilter {
 
 		// add the tag/subject information
 		try {
-			Model ts = TripleStore.getModel();
+			Model ts = TripleStore.get().getModel();
 			
 			NodeIterator subjects = ts.listObjectsOfProperty(ts.createResource(url.toString()), 
 					DC.subject);

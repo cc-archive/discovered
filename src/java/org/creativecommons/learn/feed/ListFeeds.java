@@ -1,8 +1,9 @@
 package org.creativecommons.learn.feed;
 
-import java.util.List;
+import java.util.Collection;
 
-import org.creativecommons.learn.oercloud.OerFeed;
+import org.creativecommons.learn.TripleStore;
+import org.creativecommons.learn.oercloud.Feed;
 
 public class ListFeeds {
 
@@ -12,9 +13,9 @@ public class ListFeeds {
 	public static void main(String[] args) {
 		
 		// list feeds we're tracking
-		List<OerFeed> feeds = OerFeed.getAllFeeds();
+		Collection<Feed> feeds = TripleStore.get().load(Feed.class);
 			
-		for (OerFeed f : feeds) {
+		for (Feed f : feeds) {
 			System.out.println(f.getUrl() + " (" + f.getFeedType() + ")");
 		}
 		

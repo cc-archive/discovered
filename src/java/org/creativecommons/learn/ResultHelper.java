@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.nutch.searcher.HitDetails;
 import org.creativecommons.learn.oercloud.Curator;
 
+import thewebsemantic.NotFoundException;
+
 public class ResultHelper {
 
 	private static String _getFullUrl(HttpServletRequest request) {
@@ -73,8 +75,13 @@ public class ResultHelper {
 
 		for (int i = 0; i < curators.length; i++) {
 			System.out.println(curators[i]);
-			Curator c = Curator.byUrl(curators[i]);
-
+			Curator c;
+			try {
+				c = (Curator)TripleStore.get().load(Curator.class, curators[i]);
+			} catch (NotFoundException e) {
+				c = null;
+			}
+			
 			if (c != null) {
 				curator_links.add("<a href=\""
 						+ getCuratorQueryHref(request, curators[i]) + "\">"

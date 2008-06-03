@@ -1,7 +1,7 @@
 package org.creativecommons.learn.feed;
 
 import org.creativecommons.learn.oercloud.Curator;
-import org.creativecommons.learn.oercloud.OerFeed;
+import org.creativecommons.learn.oercloud.Feed;
 
 public class AddFeed {
 
@@ -21,21 +21,13 @@ public class AddFeed {
 		String type = args[0];
 		String url = args[1];
 		
-		try {
-			OerFeed new_feed = OerFeed.newFeed(url);
-			new_feed.setFeedType(type);
-			
+		Feed new_feed = new Feed(url);
+		new_feed.setFeedType(type);
+		
 			if (args.length > 2) {
-				Curator curator = Curator.getOrCreate(args[2]);
-				new_feed.setCurator(curator.getUrl());
+				Curator curator = new Curator(args[2]);
+				new_feed.setCurator(curator);
 			}
-			
-		} catch (InstantiationException e1) {
-			e1.printStackTrace();
-
-			System.out.println("Feed already exists.");
-			System.exit(1);
-		}
 				
 	}
 

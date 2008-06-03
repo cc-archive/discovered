@@ -1,7 +1,10 @@
 package org.creativecommons.learn.feed;
 
+import org.creativecommons.learn.TripleStore;
 import org.creativecommons.learn.oercloud.Curator;
-import org.creativecommons.learn.oercloud.OerFeed;
+import org.creativecommons.learn.oercloud.Feed;
+
+import thewebsemantic.NotFoundException;
 
 public class SetCurator {
 
@@ -21,10 +24,19 @@ public class SetCurator {
 		String feed_url = args[0];
 		String curator_url = args[1];
 
-		OerFeed feed = OerFeed.feedByUrl(feed_url);
-		Curator curator = Curator.byUrl(curator_url);
+		Feed feed;
+		try {
+			feed = TripleStore.get().load(Feed.class, feed_url);
+			Curator curator = new Curator(curator_url);
 
-		feed.setCurator(curator.getUrl());
+			feed.setCurator(curator);
+			
+			TripleStore.get().save(feed);
+		} catch (NotFoundException e) {
+
+			System.out.println("Feed (" + feed_url + ") not found.");
+			System.exit(1);
+		}
 
 	}
 

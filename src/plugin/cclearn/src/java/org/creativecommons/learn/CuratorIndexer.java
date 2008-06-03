@@ -12,8 +12,10 @@ import org.apache.nutch.crawl.Inlinks;
 import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.IndexingFilter;
 import org.apache.nutch.parse.Parse;
-import org.creativecommons.learn.oercloud.Curator;
-import org.creativecommons.learn.oercloud.OerFeed;
+import org.creativecommons.learn.oercloud.Feed;
+import org.creativecommons.learn.oercloud.Resource;
+
+import thewebsemantic.NotFoundException;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
@@ -35,24 +37,19 @@ public class CuratorIndexer implements IndexingFilter {
 
 		// add the source information
 		try {
-			Model ts = TripleStore.getModel();
+			Resource this_doc = TripleStore.get().load(Resource.class, url.toString());
 			
-			NodeIterator sources = ts.listObjectsOfProperty(ts.createResource(url.toString()), 
-					CCLEARN.source);
-			
-			while (sources.hasNext()) {
-				RDFNode source = sources.nextNode();
-				OerFeed feed = OerFeed.feedByUrl(source.toString());
+			for (Feed source : this_doc.getSources()) {
 				
-				Field sourceField = new Field(Search.FEED_FIELD, source.toString(),
+				Field sourceField = new Field(Search.FEED_FIELD, source.getUrl(),
 						Field.Store.YES, Field.Index.TOKENIZED);
 				sourceField.setBoost(Search.FEED_BOOST);
 				doc.add(sourceField);
 
 				// if this feed has curator information attached, index it as well
 				String curator_url = "";
-				if (feed.getCurator() != null) {
-					curator_url = feed.getCurator().getUrl();
+				if (source.getCurator() != null) {
+					curator_url = source.getCurator().getUrl();
 				}
 
 				Field curator = new Field(Search.CURATOR_FIELD, curator_url,
@@ -61,9 +58,10 @@ public class CuratorIndexer implements IndexingFilter {
 				doc.add(curator);
 				
 			}
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+		} catch (NotFoundException e) {
+			
+			// no information on this resource...
 		}
 		
 		return doc;

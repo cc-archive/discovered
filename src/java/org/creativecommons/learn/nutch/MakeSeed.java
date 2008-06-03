@@ -42,7 +42,7 @@ public class MakeSeed {
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(seed_file));
 
-			Model store_model = TripleStore.getModel();
+			Model store_model = TripleStore.get().getModel();
 
 			// write out all resources to the seed list
 			ResIterator subjects = store_model.listSubjectsWithProperty(RDF.type, CCLEARN.Resource);

@@ -5,7 +5,7 @@
 
 package org.creativecommons.learn.aggregate.feed;
 
-import org.creativecommons.learn.oercloud.OerFeed;
+import org.creativecommons.learn.oercloud.Feed;
 
 /**
  *
@@ -13,7 +13,7 @@ import org.creativecommons.learn.oercloud.OerFeed;
  */
 public class OaiPmh {
 
-    public void poll(OerFeed aThis) {
+    public void poll(Feed aThis) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 

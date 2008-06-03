@@ -1,171 +1,53 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.creativecommons.learn.oercloud;
 
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import org.creativecommons.learn.CCLEARN;
-import org.creativecommons.learn.TripleStore;
-import org.creativecommons.learn.aggregate.feed.OaiPmh;
-import org.creativecommons.learn.aggregate.feed.Opml;
+import thewebsemantic.Namespace;
+import thewebsemantic.RdfProperty;
+import thewebsemantic.Uri;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.vocabulary.DC;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.sun.syndication.feed.module.DCModule;
-import com.sun.syndication.feed.module.DCSubject;
-import com.sun.syndication.feed.synd.SyndCategory;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
-
-/**
- *
- * @author nathan
- */
+@Namespace("http://learn.creativecommons.org/ns#")
 public class Curator {
 
-    private Resource url = null;
-
-	public static Curator getOrCreate(String url) {
-		// TODO Auto-generated method stub
-		return null;
+	private String url = null;
+	private String name = null;
+	
+	private List<Feed> feeds = null;
+	
+	public Curator(String url) {
+		
+		super();
+		
+		this.url = url;		
 	}
 
-	public static Curator create(String url) throws InstantiationException {
-		// Create a new feed in the TripleStore if it does not already exist
-		if (byUrl(url) != null) 
-			throw new InstantiationException("Curator with this URL already exists");
-		
-		try {
-			Model m = TripleStore.getModel();
-			Resource r_url = m.createResource(url);
-			m.add(r_url, RDF.type, CCLEARN.Curator);
-			
-			return new Curator(r_url);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
-	} // newFeed
-
-	public static List<Curator> getAll() {
-		
-		// Return a list of Curator objects
-		Vector<Curator> result = new Vector<Curator>();
-		
-		// Query the triple store for known feeds
-		ResIterator feeds;
-		try {
-			feeds = TripleStore.getModel().listSubjectsWithProperty(RDF.type, CCLEARN.Curator);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-		
-		while (feeds.hasNext()) {
-			result.add(new Curator(feeds.nextResource()));
-		}
-		
-		return result;
+	@RdfProperty("http://purl.org/dc/elements/1.1/title")
+	public String getName() {
+		return name;
 	}
 
-	public static Curator byUrl(String url) {
-		
-		// see if the feed already exists
-		try {
-			Model m = TripleStore.getModel();
-			Resource r_url = m.createResource(url);
-			
-			if (m.listStatements(r_url, RDF.type, CCLEARN.Curator).hasNext() == true) {
-				// it does; return the OerFeed object
-				return new Curator(r_url);
-			}
-			
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public Curator(Resource url) {
-    	
-    	this.url = url;
-
-    } // Curator
-
+	@Uri
 	public String getUrl() {
-        return url.getURI();
-    }
+		return url;
+	}
 
-    public String getName() {
-    	try {
-			return TripleStore.getModel().getProperty(this.url, DC.title).getString();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		} catch (NullPointerException e) {
-			return this.getUrl();
-		}
-    }
+	/* (non-Javadoc)
+	 * @see org.creativecommons.learn.oercloud.IRdfMapped#setUrl(java.lang.String)
+	 */
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
+	public List<Feed> getFeeds() {
+		return this.feeds;
+	}
 
-    public void setName (String name) {
-    	
-    	try {
-    		Statement old_name = TripleStore.getModel().getProperty(this.url, DC.title);
-    		if (old_name != null) {
-    			TripleStore.getModel().remove(old_name);
-    		}
-			
-			TripleStore.getModel().add(this.url, DC.title, name);
-			
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
-    }
-    
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (url != null ? url.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Curator)) {
-            return false;
-        }
-        Curator other = (Curator) object;
-        return this.url.equals(other.url);
-    }
-
-    public String toString() {
-        return "Curator[url=" + url + "]";
-    }
-
-
+	public void setFeeds(List<Feed> feedList) {
+		this.feeds = feedList;
+	}
+	
 }
