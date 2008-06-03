@@ -179,8 +179,8 @@
     <war destfile="${build.dir}/${final.name}.war"
     	webxml="${web.src.dir}/web.xml">
       <fileset dir="${web.src.dir}/jsp"/>
-      <zipfileset dir="${docs.src}" includes="include/*.html"/>
       <zipfileset dir="${docs.src}" includes="cc/*.html"/>
+      <zipfileset dir="${docs.src}" includes="include/*.html"/>
       <zipfileset dir="${build.docs}" includes="*/include/*.html"/>
       <fileset dir="${docs.dir}"/>
       <lib dir="${lib.dir}">
