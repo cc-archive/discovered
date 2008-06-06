@@ -39,7 +39,7 @@ if [ $# = 0 ]; then
   echo "  rmfeed           remove a feed"
   echo "  setcurator       set the curator for a feed"
   echo "  aggregate"
-  echo "  dumpn3"
+  echo "  dump"
   echo " or"
   echo "  CLASSNAME         run the class named CLASSNAME"
   echo "Most commands print help when invoked w/o parameters."
@@ -178,8 +178,8 @@ elif [ "$COMMAND" = "setcurator" ] ; then
   CLASS=org.creativecommons.learn.feed.SetCurator
 elif [ "$COMMAND" = "aggregate" ] ; then
   CLASS=org.creativecommons.learn.aggregate.Main
-elif [ "$COMMAND" = "dumpn3" ] ; then
-  CLASS=org.creativecommons.learn.feed.DumpN3
+elif [ "$COMMAND" = "dump" ] ; then
+  CLASS=org.creativecommons.learn.feed.DumpStore
 else
   CLASS=$COMMAND
 fi
