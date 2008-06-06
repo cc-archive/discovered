@@ -14,12 +14,15 @@ public class Resource {
 	private String title = null;
 	private String description = null;
 	private Collection<String> subjects = new Vector<String>();
-
+	private Collection<String> creators = new Vector<String>();
+	
 	private Collection<Feed> sources = new Vector<Feed>();
+
 	private Collection<String> types = new Vector<String>();
 	private Collection<String> formats = new Vector<String>();
 	private Collection<String> contributors = new Vector<String>();
-
+	private Collection<String> languages = new Vector<String>();
+	
 	public Resource(String url) {
 		this.url = url;
 	}
@@ -94,6 +97,24 @@ public class Resource {
 
 	public void setSources(Collection<Feed> sources) {
 		this.sources = sources;
+	}
+	
+	@RdfProperty("http://purl.org/dc/elements/1.1/creator")
+	public Collection<String> getCreators() {
+		return creators;
+	}
+
+	public void setCreators(Collection<String> creators) {
+		this.creators = creators;
+	}
+
+	@RdfProperty("http://purl.org/dc/elements/1.1/language")
+	public Collection<String> getLanguages() {
+		return languages;
+	}
+
+	public void setLanguages(Collection<String> languages) {
+		this.languages = languages;
 	}
 
 }

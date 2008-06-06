@@ -1,28 +1,10 @@
 package org.creativecommons.learn.oercloud;
 
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.creativecommons.learn.TripleStore;
-import org.creativecommons.learn.aggregate.feed.OaiPmh;
-import org.creativecommons.learn.aggregate.feed.Opml;
+import java.util.Date;
 
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfProperty;
 import thewebsemantic.Uri;
-
-import com.sun.syndication.feed.module.DCModule;
-import com.sun.syndication.feed.module.DCSubject;
-import com.sun.syndication.feed.synd.SyndCategory;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
 
 @Namespace("http://learn.creativecommons.org/ns#")
 public class Feed {
@@ -30,7 +12,8 @@ public class Feed {
 	private Curator curator = null;
 	private String url = null;
 	private String feedType = null;
-
+	private Date lastImport = new Date(0);
+	
 	public Feed(String url) {
 		super();
 
@@ -62,6 +45,15 @@ public class Feed {
 
 	public void setFeedType(String feedType) {
 		this.feedType = feedType;
+	}
+	
+	@RdfProperty("http://learn.creativecommons.org/ns#lastImportDate")
+	public Date getLastImport() {
+		return lastImport;
+	}
+	
+	public void setLastImport(Date lastImport) {
+		this.lastImport = lastImport;
 	}
 
 }
