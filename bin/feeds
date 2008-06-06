@@ -38,6 +38,8 @@ if [ $# = 0 ]; then
   echo "  addcurator       add a curator"
   echo "  rmfeed           remove a feed"
   echo "  setcurator       set the curator for a feed"
+  echo "  aggregate"
+  echo "  dumpn3"
   echo " or"
   echo "  CLASSNAME         run the class named CLASSNAME"
   echo "Most commands print help when invoked w/o parameters."
@@ -74,7 +76,8 @@ if [ "$NUTCH_HEAPSIZE" != "" ]; then
 fi
 
 # CLASSPATH initially contains $NUTCH_CONF_DIR, or defaults to $NUTCH_HOME/conf
-CLASSPATH=${NUTCH_CONF_DIR:=$NUTCH_HOME/conf}:/usr/share/java/mysql-connector-java.jar
+CLASSPATH=${NUTCH_CONF_DIR:=$NUTCH_HOME/conf} 
+
 CLASSPATH=${CLASSPATH}:$JAVA_HOME/lib/tools.jar
 
 # so that filenames w/ spaces are handled correctly in loops below
@@ -173,6 +176,10 @@ elif [ "$COMMAND" = "addcurator" ] ; then
   CLASS=org.creativecommons.learn.feed.AddCurator
 elif [ "$COMMAND" = "setcurator" ] ; then
   CLASS=org.creativecommons.learn.feed.SetCurator
+elif [ "$COMMAND" = "aggregate" ] ; then
+  CLASS=org.creativecommons.learn.aggregate.Main
+elif [ "$COMMAND" = "dumpn3" ] ; then
+  CLASS=org.creativecommons.learn.feed.DumpN3
 else
   CLASS=$COMMAND
 fi
