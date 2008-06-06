@@ -25,11 +25,11 @@ import com.sun.syndication.io.XmlReader;
 public class FeedUpdater {
 
 	private Feed feed;
-	
+
 	public FeedUpdater(Feed feed) {
 		this.feed = feed;
 	}
-	
+
 	protected void addEntry(SyndEntry entry) {
 
 		// XXX check if the entry exists first...
@@ -75,7 +75,12 @@ public class FeedUpdater {
 
 			new Opml().poll(feed);
 
+		} else if (feed.getFeedType().toLowerCase().equals("oai-pmh")) {
+
+			new OaiPmh().poll(feed);
+			
 		} else {
+			
 			try {
 				SyndFeedInput input = new SyndFeedInput();
 				URLConnection feed_connection = new URL(feed.getUrl())
@@ -83,7 +88,8 @@ public class FeedUpdater {
 				feed_connection.setConnectTimeout(30000);
 				feed_connection.setReadTimeout(60000);
 
-				SyndFeed rome_feed = input.build(new XmlReader(feed_connection));
+				SyndFeed rome_feed = input
+						.build(new XmlReader(feed_connection));
 
 				List<SyndEntry> feed_entries = rome_feed.getEntries();
 
@@ -94,8 +100,8 @@ public class FeedUpdater {
 
 				} // for each entry
 			} catch (IllegalArgumentException ex) {
-				Logger.getLogger(Feed.class.getName()).log(Level.SEVERE,
-						null, ex);
+				Logger.getLogger(Feed.class.getName()).log(Level.SEVERE, null,
+						ex);
 			} catch (FeedException ex) {
 				// maybe OAI-PMH?
 				try {
@@ -104,8 +110,8 @@ public class FeedUpdater {
 
 				}
 				// XXX still need to log feed errors if it's not OAI-PMH
-				Logger.getLogger(Feed.class.getName()).log(Level.SEVERE,
-						null, ex);
+				Logger.getLogger(Feed.class.getName()).log(Level.SEVERE, null,
+						ex);
 			}
 
 		} // not opml...
