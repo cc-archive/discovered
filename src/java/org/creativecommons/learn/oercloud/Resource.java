@@ -23,6 +23,8 @@ public class Resource {
 	private Collection<String> contributors = new Vector<String>();
 	private Collection<String> languages = new Vector<String>();
 	
+	private Collection<OaiResource> seeAlso = new Vector<OaiResource>();
+	
 	public Resource(String url) {
 		this.url = url;
 	}
@@ -115,6 +117,15 @@ public class Resource {
 
 	public void setLanguages(Collection<String> languages) {
 		this.languages = languages;
+	}
+
+	@RdfProperty("http://www.w3.org/2000/01/rdf-schema#seeAlso")
+	public Collection<OaiResource> getSeeAlso() {
+		return seeAlso;
+	}
+
+	public void setSeeAlso(Collection<OaiResource> seeAlso) {
+		this.seeAlso = seeAlso;
 	}
 
 }
