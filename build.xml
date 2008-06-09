@@ -213,6 +213,7 @@
 				<include name="json.jar" />
 				<include name="antlr-*.jar" />
 				<include name="icu4j*.jar" />
+				<include name="dom4j*.jar" />
 <!--
 				antlr-2.7.5.jar            icu4j_3_4.jar  junit.jar              xercesImpl.jar
 				arq-extra.jar              iri.jar        log4j-1.2.12.jar       xml-apis.jar
