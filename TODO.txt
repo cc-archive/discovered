@@ -1,0 +1,6 @@
+* aggregate w/ OER Commons, NSDL
+* pull description from triple store if possible when rendering results
+* "more..." for tags, description
+
+* browse
+** OPML view
