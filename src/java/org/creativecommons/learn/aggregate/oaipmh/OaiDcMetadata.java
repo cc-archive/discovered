@@ -1,15 +1,12 @@
 package org.creativecommons.learn.aggregate.oaipmh;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Vector;
 
 import org.creativecommons.learn.TripleStore;
 import org.creativecommons.learn.feed.IResourceExtractor;
 import org.creativecommons.learn.oercloud.Feed;
+import org.creativecommons.learn.oercloud.OaiResource;
 import org.creativecommons.learn.oercloud.Resource;
 import org.dom4j.Element;
-import org.dom4j.Node;
 
 import se.kb.oai.OAIException;
 import se.kb.oai.pmh.MetadataFormat;
@@ -17,7 +14,7 @@ import se.kb.oai.pmh.OaiPmhServer;
 import se.kb.oai.pmh.Record;
 import thewebsemantic.NotFoundException;
 
-public class OaiDcMetadata implements IResourceExtractor{
+public class OaiDcMetadata extends OaiMetadataFormat implements IResourceExtractor {
 
 /*
 	    <element ref="dc:title"/>
@@ -37,49 +34,8 @@ public class OaiDcMetadata implements IResourceExtractor{
 	    <element ref="dc:rights"/>
 */
 
-	private MetadataFormat format;
-
 	public OaiDcMetadata(MetadataFormat f) {
-		
-		this.format = f; 
-
-	}
-
-	public Resource getResource(String url) {
-		
-		Resource result = null;
-		
-		if (TripleStore.get().exists(Resource.class, url)) {
-			try {
-				result = TripleStore.get().load(Resource.class, url);
-			} catch (NotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else {
-			result = new Resource(url);
-		}
-		
-		return result;
-	}
-	
-	private String getNodeText(Element context, String element_name) {
-		List<?> identifiers = context.selectNodes("//" + element_name);
-		if (identifiers.size() < 1) return null;
-		return ((Node) identifiers.get(0)).getText();
-	}
-
-	private Collection<String> getNodes(Element context, String element_name) {
-		
-		Vector<String> nodes = new Vector<String>();
-		
-		List<Node> items = context.selectNodes("//" + element_name);
-		
-		for (Node item : items) {
-			nodes.add(item.getText());
-		}
-		
-		return nodes;
+		super(f);
 	}
 
 	@Override
@@ -89,36 +45,47 @@ public class OaiDcMetadata implements IResourceExtractor{
 		Record oai_record = server.getRecord(identifier, this.format.getPrefix());
 		Element metadata = oai_record.getMetadata();
 		
-		// get the item URL (dc:identifier)
-		String DC = metadata.getNamespaceForURI("http://purl.org/dc/elements/1.1/").getPrefix();
-				
+		// get the namespace prefix
+		metadata.addNamespace("dc", "http://purl.org/dc/elements/1.1/");
+		
 		// load or create the Resource object
-		Resource item = getResource(getNodeText(metadata, DC + ":identifier"));
+		Resource item = getResource(getNodeText(metadata, "//dc:identifier"));
 		item.getSources().add(feed);
 
 		// title
-		item.setTitle(getNodeText(metadata, DC + ":title"));
+		item.setTitle(getNodeText(metadata, "//dc:title"));
 		
 		// creator
-		item.getCreators().addAll(getNodes(metadata, DC + ":creator"));
+		item.getCreators().addAll(getNodesText(metadata, "//dc:creator"));
 		
 		// subject(s)
-		item.getSubjects().addAll(getNodes(metadata, DC + ":subject"));
+		item.getSubjects().addAll(getNodesText(metadata, "//dc:subject"));
 		
 		// description
-		item.setDescription(getNodeText(metadata, DC + ":description"));
+		item.setDescription(getNodeText(metadata, "//dc:description"));
 		
 		// contributor(s)
-		item.getContributors().addAll(getNodes(metadata, DC + ":contributor"));
+		item.getContributors().addAll(getNodesText(metadata, "//dc:contributor"));
 		
 		// format(s)
-		item.getFormats().addAll(getNodes(metadata, DC + ":format"));
+		item.getFormats().addAll(getNodesText(metadata, "//dc:format"));
 		
 		// language(s)
-		item.getLanguages().addAll(getNodes(metadata, DC + ":language"));
+		item.getLanguages().addAll(getNodesText(metadata, "//dc:language"));
 		
 		// type(s)
-		item.getTypes().addAll(getNodes(metadata, DC + ":type"));
+		item.getTypes().addAll(getNodesText(metadata, "//dc:type"));
+		
+		// source
+		item.getSources().add(feed);
+		
+		// see also
+		try {
+			item.getSeeAlso().add(TripleStore.get().load(OaiResource.class, identifier));
+		} catch (NotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		// persist the Resource
 		TripleStore.get().save(item);
