@@ -17,10 +17,6 @@ import org.creativecommons.learn.oercloud.Resource;
 
 import thewebsemantic.NotFoundException;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.NodeIterator;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-
 public class CuratorIndexer implements IndexingFilter {
 
 	public static final Log LOG = LogFactory.getLog(CuratorIndexer.class
@@ -35,8 +31,9 @@ public class CuratorIndexer implements IndexingFilter {
 	public Document filter(Document doc, Parse parse, Text url,
 			CrawlDatum datum, Inlinks inlinks) throws IndexingException {
 
-		// add the source information
+		// add the source / curator information
 		try {
+			
 			Resource this_doc = TripleStore.get().load(Resource.class, url.toString());
 			
 			for (Feed source : this_doc.getSources()) {
