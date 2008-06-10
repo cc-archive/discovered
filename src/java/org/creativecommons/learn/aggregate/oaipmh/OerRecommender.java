@@ -30,9 +30,6 @@ public class OerRecommender extends OaiMetadataFormat implements IResourceExtrac
 		// Retrieve the resource metadata from the server
 		Record oai_record = server.getRecord(identifier, this.format.getPrefix());
 		Element metadata = oai_record.getMetadata();
-
-		System.out.println(metadata.asXML());
-		System.out.println();
 		
 		metadata.addNamespace(OERR, OERR_URL);
 

@@ -31,9 +31,6 @@ public class OerSubmissions extends OaiMetadataFormat implements IResourceExtrac
 		Record oai_record = server.getRecord(identifier, this.format.getPrefix());
 		Element metadata = oai_record.getMetadata();
 
-		System.out.println(metadata.asXML());
-		System.out.println();
-		
 		metadata.addNamespace(OERS, OERS_URL);
 
 		// get a handle to the resource
