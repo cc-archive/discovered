@@ -1,7 +1,6 @@
 package org.creativecommons.learn.aggregate.feed;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,7 +38,8 @@ public class OaiPmh {
 		MetadataFormatsList formats = server.listMetadataFormats();
 		for (MetadataFormat f : formats.asList()) {
 
-			if (f.getSchema().equals("http://www.openarchives.org/OAI/2.0/oai_dc.xsd"))
+			if (f.getSchema().equals(
+					"http://www.openarchives.org/OAI/2.0/oai_dc.xsd"))
 				result.put(f, new OaiDcMetadata(f));
 
 			if (f.getSchema().equals("http://www.oercommons.org/oerr.xsd"))
@@ -56,80 +56,113 @@ public class OaiPmh {
 
 	public void poll(Feed feed) {
 
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.DATE, -10);
-
-		System.out.println("foo");
+		Boolean moreResults = true;
+		Boolean moreSets = true;
 		OaiPmhServer server = new OaiPmhServer("http://oercommons.org/oai");
+		IdentifiersList identifiers = null;
 
 		Map<MetadataFormat, IResourceExtractor> formats;
-		SetsList sets;
-		
+		SetsList sets = null;
+
 		try {
 			formats = getFormats(server);
-			sets = server.listSets();
 		} catch (OAIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return;
 		}
 
 		for (MetadataFormat f : formats.keySet()) {
 
-			for (Set s : sets.asList()) {
+			try {
+				sets = server.listSets();
+				moreSets = true;
+			} catch (OAIException e1) {
+				moreSets = false;
+			}
 
-				System.out.println("Processing " + s.getSpec() + " ("
-						+ s.getName() + ")");
+			while (moreSets) {
+				
+				for (Set s : sets.asList()) {
 
-				IdentifiersList identifiers;
-				try {
-					identifiers = server.listIdentifiers(f
-							.getPrefix(), iso8601.format(calendar.getTime()), null,
-							s.toString());
-				} catch (OAIException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					continue;
-				}
+					System.out.println("Processing " + s.getSpec() + " ("
+							+ s.getName() + ")");
 
-				for (Header header : identifiers.asList()) {
+					moreResults = true;
 
-					System.out.println(header.getIdentifier());
-
-					// create the OaiResource if needed 
-					OaiResource resource  = null;
-					if (TripleStore.get().exists(OaiResource.class,
-							header.getIdentifier())) {
-						try {
-							resource = TripleStore.get().load(OaiResource.class, header.getIdentifier());
-						} catch (NotFoundException e) {
-						}
-					} else {
-						resource = new OaiResource(header.getIdentifier());
-					}
-
-					// add the set as a subject heading
-					resource.getSubjects().add(s.getName());
-					TripleStore.get().save(resource);
-					
-					// look up the extractor for this format
 					try {
-						formats.get(f).process(
-								feed, server, header.getIdentifier());
+						identifiers = server.listIdentifiers(f.getPrefix(),
+								iso8601.format(feed.getLastImport()), null, s
+										.toString());
 					} catch (OAIException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 						continue;
 					}
 
+					while (moreResults) {
+
+						for (Header header : identifiers.asList()) {
+
+							System.out.println(header.getIdentifier());
+
+							// create the OaiResource if needed
+							OaiResource resource = null;
+							if (TripleStore.get().exists(OaiResource.class,
+									header.getIdentifier())) {
+								try {
+									resource = TripleStore.get().load(
+											OaiResource.class,
+											header.getIdentifier());
+								} catch (NotFoundException e) {
+								}
+							} else {
+								resource = new OaiResource(header
+										.getIdentifier());
+							}
+
+							// add the set as a subject heading
+							resource.getSubjects().add(s.getName());
+							TripleStore.get().save(resource);
+
+							// look up the extractor for this format
+							try {
+								formats.get(f).process(feed, server,
+										header.getIdentifier());
+							} catch (OAIException e) {
+								e.printStackTrace();
+								continue;
+							}
+
+						}
+
+						// Resumption Token handling
+						if (identifiers.getResumptionToken() != null) {
+							// continue...
+							try {
+								identifiers = server
+										.listIdentifiers(identifiers
+												.getResumptionToken());
+								moreResults = true;
+							} catch (OAIException e) {
+								e.printStackTrace();
+								moreResults = false;
+							}
+						} else {
+							moreResults = false;
+						}
+					} // while more results...
+				} // for each set
+				
+				if (sets.getResumptionToken() != null) {
+					// continue...
+					try {
+						sets = server.listSets(sets.getResumptionToken());
+					} catch (OAIException e) {
+						moreSets = false;
+					}
+					moreSets = true;
+				} else {
+					moreSets = false;
 				}
-
-				// XXX Resumption Tokens!
-
-			}
+			} // while more sets...
 		}
-
-		System.out.println(sets.getResumptionToken().toString());
 
 	}
 
