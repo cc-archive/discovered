@@ -41,7 +41,7 @@ public class Main {
         	System.out.println(feed.getUrl());
         	
             // see if this feed needs to be re-imported
-            if (true) { // feed.getLastImport().before( calendar.getTime() )) {
+            if (feed.getLastImport().before( calendar.getTime() )) {
                 try {
                     // re-import necessary
                 	System.out.println("updating...");
