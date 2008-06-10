@@ -6,9 +6,10 @@
 
 	<property name="cclearn.crawl.seeddir" location="seed" />
 	
-	<target name="aggregate" depends="compile">
+	<target name="aggregate" depends="job">
 		<path id="aggregate.classpath">
-			<pathelement location="${basedir}" />
+			<!-- <pathelement location="${basedir}" /> -->
+			<pathelement location="${build.dir}/${final.name}.job" />
 		    <path refid="classpath"/>
 		</path>
 
