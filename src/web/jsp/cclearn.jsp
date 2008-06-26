@@ -13,13 +13,18 @@
 
     // Tags
     String[] tags = detail.getValues("tag");
+    
+    // Description
+    if (result_item != null) {
+    	summary = result_item.getDescription();
+    }
 %>
 
 <div class="result">
  
     <h2><a href="<%=url%>"><%=Entities.encode(title)%></a></h2>
 
-        <p class="abstract"><%=result_item.getDescription()%></p>
+        <p class="abstract"><%=summary%></p>
 
         <div class="meta">
 	<% if (license_uri != null) { %>
