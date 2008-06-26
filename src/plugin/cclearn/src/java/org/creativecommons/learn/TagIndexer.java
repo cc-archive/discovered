@@ -30,15 +30,17 @@ public class TagIndexer implements IndexingFilter {
 	public Document filter(Document doc, Parse parse, Text url,
 			CrawlDatum datum, Inlinks inlinks) throws IndexingException {
 
+		LOG.info("Indexing tags for " + url.toString());
+		
 		// add the tag/subject information
 		try {
 
-			Resource resource = TripleStore.get().load(Resource.class,
+			Resource resource = TripleStore.get().loadDeep(Resource.class,
 					url.toString());
 
 			for (String subject : resource.getSubjects()) {
 
-				addTag(doc, subject);
+				addTag(doc, url, subject);
 
 			}
 
@@ -46,24 +48,27 @@ public class TagIndexer implements IndexingFilter {
 			for (OaiResource related : resource.getSeeAlso()) {
 				for (String subject : related.getSubjects()) {
 
-					addTag(doc, subject);
+					addTag(doc, url, subject);
 				}
 			}
 
 		} catch (NotFoundException e) {
-			// TODO Auto-generated catch block
+			LOG.warn("Unable to find " + url.toString() + " in triple store.");
 			e.printStackTrace();
 		}
 
 		return doc;
+
 	} // public Document filter
 
-	private void addTag(Document doc, String subject) {
+	private void addTag(Document doc, Text url, String subject) {
+		
+		LOG.debug("Adding tag (" + subject + ") to resource (" + url.toString() + ")");
+
 		Field tagsField = new Field(Search.TAGS_FIELD, subject,
 				Field.Store.YES, Field.Index.TOKENIZED);
-		LOG.info("Adding tag (" + subject + ") to resource (" + doc.toString()
-				+ ")");
 		tagsField.setBoost(Search.TAGS_BOOST);
+		
 
 		doc.add(tagsField);
 	}

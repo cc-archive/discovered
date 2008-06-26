@@ -34,7 +34,7 @@ public class CuratorIndexer implements IndexingFilter {
 		// add the source / curator information
 		try {
 			
-			Resource this_doc = TripleStore.get().load(Resource.class, url.toString());
+			Resource this_doc = TripleStore.get().loadDeep(Resource.class, url.toString());
 			
 			for (Feed source : this_doc.getSources()) {
 				
