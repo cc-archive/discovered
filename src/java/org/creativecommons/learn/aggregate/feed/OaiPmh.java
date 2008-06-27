@@ -58,7 +58,7 @@ public class OaiPmh {
 
 		Boolean moreResults = true;
 		Boolean moreSets = true;
-		OaiPmhServer server = new OaiPmhServer("http://oercommons.org/oai");
+		OaiPmhServer server = new OaiPmhServer(feed.getUrl());
 		IdentifiersList identifiers = null;
 
 		Map<MetadataFormat, IResourceExtractor> formats;
