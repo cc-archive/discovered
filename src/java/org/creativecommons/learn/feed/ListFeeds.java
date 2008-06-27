@@ -16,7 +16,7 @@ public class ListFeeds {
 		Collection<Feed> feeds = TripleStore.get().load(Feed.class);
 			
 		for (Feed f : feeds) {
-			System.out.println(f.getUrl() + " (" + f.getFeedType() + ")");
+			System.out.println(f.getUrl() + " (" + f.getFeedType() + ", " + f.getCurator().getUrl() + " )");
 		}
 		
 	} // main
