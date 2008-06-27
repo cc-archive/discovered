@@ -45,12 +45,16 @@ public class TagIndexer implements IndexingFilter {
 			}
 
 			// related resource tags (oai-pmh)
+			/** Disabled for now
+			 * 
 			for (OaiResource related : resource.getSeeAlso()) {
 				for (String subject : related.getSubjects()) {
 
 					addTag(doc, url, subject);
 				}
 			}
+
+			 */
 
 		} catch (NotFoundException e) {
 			LOG.warn("Unable to find " + url.toString() + " in triple store.");
