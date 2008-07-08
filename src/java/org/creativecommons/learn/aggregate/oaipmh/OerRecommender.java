@@ -36,6 +36,9 @@ public class OerRecommender extends OaiMetadataFormat implements IResourceExtrac
 		// get a handle to the resource
 		Resource resource = this.getResource(this.getNodeText(metadata, "//oerr:url"));
 		
+		// add source information
+		resource.getSources().add(feed);
+		
 		// title, description
 		resource.setTitle(this.getNodeText(metadata, "//oerr:title"));
 		resource.setDescription(this.getNodeText(metadata, "//oerr:abstract"));
