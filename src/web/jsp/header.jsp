@@ -1,7 +1,7 @@
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <head>
-<title>Open Education Search: <i18n:message key="title"/></title>
+<title>ccLearn Universal Education Search</title>
 <link rel="icon" href="img/favicon.ico" type="image/x-icon"/>
 <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
 

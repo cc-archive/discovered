@@ -30,7 +30,8 @@
 	<% if (license_uri != null) { %>
           <p class="license">
 	    <a href="<%=license_uri%>">
-	      <img src="<%=ResultHelper.getLicenseImage(license_uri)%>" 
+	      <img src="<%=ResultHelper.getLicenseImage(license_uri)%>"
+               alt="<%=ResultHelper.getLicenseName(license_uri)%>" 
 	       	   border=0 />
 	    </a>
 	    <a href="<%=ResultHelper.getLicenseQueryLink(request, license_uri)%>">
@@ -83,7 +84,7 @@
     +params+"&hitsPerSite="+0
     +"&lang="+queryLang
     +"&clustering="+clustering;%>
-    (<a href="../search.jsp?<%=more%>"><i18n:message key="moreFrom"/>
+    (<a href="./search.jsp?<%=more%>"><i18n:message key="moreFrom"/>
      <%=hit.getDedupValue()%></a>)
     <% } %>
     (<a href="./explain.jsp?<%=id%>&query=<%=URLEncoder.encode(queryString, "UTF-8")%>&lang=<%=queryLang%>"><i18n:message key="explain"/></a>)
