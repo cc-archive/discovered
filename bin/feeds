@@ -35,6 +35,7 @@ if [ $# = 0 ]; then
   echo "  listfeeds        list all feeds"
   echo "  listcurators     list all curators"
   echo "  addfeed          add a feed"
+  echo "  resetfeed        reset the last aggregation date for a feed"
   echo "  addcurator       add a curator"
   echo "  rmfeed           remove a feed"
   echo "  setcurator       set the curator for a feed"
@@ -171,6 +172,8 @@ elif [ "$COMMAND" = "addfeed" ] ; then
   CLASS=org.creativecommons.learn.feed.AddFeed
 elif [ "$COMMAND" = "rmfeed" ] ; then
   CLASS=org.creativecommons.learn.feed.DeleteFeed
+elif [ "$COMMAND" = "resetfeed" ] ; then
+  CLASS=org.creativecommons.learn.feed.ResetAggregationDate
 elif [ "$COMMAND" = "listcurators" ] ; then
   CLASS=org.creativecommons.learn.feed.ListCurators
 elif [ "$COMMAND" = "addcurator" ] ; then
