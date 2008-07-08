@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.nutch.searcher.HitDetails;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Resource;
+import org.creativecommons.license.License;
 
 import thewebsemantic.NotFoundException;
 
@@ -108,6 +109,9 @@ public class ResultHelper {
 			String result = license_url.replace(
 					"http://creativecommons.org/licenses/",
 					"http://i.creativecommons.org/l/");
+			
+			if (result.charAt(result.length() - 1) != '/') result += "/";
+
 			result += "80x15.png";
 
 			return result;
@@ -117,6 +121,14 @@ public class ResultHelper {
 
 	} // getLicenseImage
 
+	public static String getLicenseName(String license_url) {
+		
+		// return the human readable name of the license
+		License license = new License(license_url);
+		return license.getName();
+
+	} // getLicenseName
+	
 	public static Resource getResource(String resource_url) {
 		
 		try {
