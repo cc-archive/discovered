@@ -31,7 +31,7 @@
           <p class="license">
 	    <a href="<%=license_uri%>">
 	      <img src="<%=ResultHelper.getLicenseImage(license_uri)%>"
-               alt="<%=ResultHelper.getLicenseName(license_uri)%>" 
+               title="<%=ResultHelper.getLicenseName(license_uri)%>" 
 	       	   border=0 />
 	    </a>
 	    <a href="<%=ResultHelper.getLicenseQueryLink(request, license_uri)%>">
