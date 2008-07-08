@@ -140,6 +140,7 @@
       <manifest>
       </manifest>
 			<zipfileset dir="${src.dir}" includes="**/*.properties" />			
+			<zipfileset dir="${src.dir}" includes="**/*.rdf" />			
     </jar>
   </target>
 
@@ -160,6 +161,7 @@
       <zipfileset dir="${lib.dir}" prefix="lib"
                   includes="**/*.jar" excludes="hadoop-*.jar"/>
       <zipfileset dir="${build.plugins}" prefix="plugins"/>
+			<zipfileset dir="${src.dir}" includes="**/*.rdf" />
     </jar>
   </target>
 
@@ -214,13 +216,7 @@
 				<include name="antlr-*.jar" />
 				<include name="icu4j*.jar" />
 				<include name="dom4j*.jar" />
-<!--
-				antlr-2.7.5.jar            icu4j_3_4.jar  junit.jar              xercesImpl.jar
-				arq-extra.jar              iri.jar        log4j-1.2.12.jar       xml-apis.jar
-				arq.jar                    jena.jar       lucene-core-2.2.0.jar
-				commons-logging-1.1.1.jar  jenatest.jar   stax-api-1.0.jar
-				concurrent.jar             json.jar       wstx-asl-3.0.0.jar
--->				
+
       </lib>
       <lib dir="${build.dir}">
 	      <include name="${final.name}.jar"/>
