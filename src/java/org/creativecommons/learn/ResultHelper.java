@@ -48,6 +48,7 @@ public class ResultHelper {
 	public static String getLicenseQueryLink(HttpServletRequest request,
 			String license_uri) {
 
+		// XXX
 		return addQueryParameter(request, "cc", "license=" + license_uri);
 
 	} // getLicenseQueryLink
@@ -125,7 +126,11 @@ public class ResultHelper {
 		
 		// return the human readable name of the license
 		License license = new License(license_url);
-		return license.getName();
+		try {
+			return license.getName();
+		} catch (NullPointerException e) {
+			return "";
+		}
 
 	} // getLicenseName
 	
