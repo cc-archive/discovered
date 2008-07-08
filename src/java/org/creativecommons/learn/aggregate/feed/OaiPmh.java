@@ -3,6 +3,7 @@ package org.creativecommons.learn.aggregate.feed;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.creativecommons.learn.TripleStore;
 import org.creativecommons.learn.aggregate.oaipmh.OaiDcMetadata;
@@ -28,6 +29,8 @@ import thewebsemantic.NotFoundException;
  */
 public class OaiPmh {
 
+	private Logger LOG = Logger.getLogger(OaiPmh.class.getName());
+
 	private final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd");
 
 	protected Map<MetadataFormat, IResourceExtractor> getFormats(
@@ -38,12 +41,12 @@ public class OaiPmh {
 		MetadataFormatsList formats = server.listMetadataFormats();
 		for (MetadataFormat f : formats.asList()) {
 
+			if (f.getSchema().equals("http://www.oercommons.org/oerr.xsd"))
+				result.put(f, new OerRecommender(f));
+
 			if (f.getSchema().equals(
 					"http://www.openarchives.org/OAI/2.0/oai_dc.xsd"))
 				result.put(f, new OaiDcMetadata(f));
-
-			if (f.getSchema().equals("http://www.oercommons.org/oerr.xsd"))
-				result.put(f, new OerRecommender(f));
 
 			if (f.getSchema().equals("http://www.oercommons.org/oers.xsd"))
 				result.put(f, new OerSubmissions(f));
@@ -111,10 +114,6 @@ public class OaiPmh {
 
 		} // for each set specification
 
-		for (String k : sets.keySet()) {
-			System.out.println(k + ", " + sets.get(k));
-		}
-
 		return sets;
 	}
 
@@ -156,7 +155,7 @@ public class OaiPmh {
 
 				for (Header header : identifiers.asList()) {
 
-					System.out.println(header.getIdentifier());
+					LOG.info("Retrieving " + header.getIdentifier());
 
 					// create the OaiResource if needed
 					OaiResource resource = null;
