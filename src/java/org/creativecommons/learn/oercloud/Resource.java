@@ -19,6 +19,7 @@ public class Resource {
 	private Collection<Feed> sources = new Vector<Feed>();
 
 	private Collection<String> types = new Vector<String>();
+	private Collection<String> edlevels = new Vector<String>();
 	private Collection<String> formats = new Vector<String>();
 	private Collection<String> contributors = new Vector<String>();
 	private Collection<String> languages = new Vector<String>();
@@ -65,6 +66,15 @@ public class Resource {
 		this.subjects = subjects;
 	}
 
+	@RdfProperty("http://learn.creativecommons.org/ns#educationLevel")
+	public Collection<String> getEducationLevels() {
+		return edlevels;
+	}
+	
+	public void setEducationLevels(Collection<String> levels) {
+		this.edlevels = levels;
+	}
+	
 	@RdfProperty("http://purl.org/dc/elements/1.1/type")
 	public Collection<String> getTypes() {
 		return types;
