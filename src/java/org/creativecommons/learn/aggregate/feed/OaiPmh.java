@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.creativecommons.learn.TripleStore;
+import org.creativecommons.learn.aggregate.oaipmh.NsdlDc;
 import org.creativecommons.learn.aggregate.oaipmh.OaiDcMetadata;
 import org.creativecommons.learn.aggregate.oaipmh.OerRecommender;
 import org.creativecommons.learn.aggregate.oaipmh.OerSubmissions;
@@ -50,6 +51,9 @@ public class OaiPmh {
 
 			if (f.getSchema().equals("http://www.oercommons.org/oers.xsd"))
 				result.put(f, new OerSubmissions(f));
+
+			if (f.getSchema().equals("http://ns.nsdl.org/schemas/nsdl_dc/nsdl_dc_v1.02.xsd"))
+				result.put(f, new NsdlDc(f));
 
 			// oai_lom : http://ltsc.ieee.org/xsd/lomv1.0/lom.xsd
 		}
