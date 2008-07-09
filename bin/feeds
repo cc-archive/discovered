@@ -185,7 +185,7 @@ elif [ "$COMMAND" = "aggregate" ] ; then
 elif [ "$COMMAND" = "dump" ] ; then
   CLASS=org.creativecommons.learn.feed.DumpStore
 elif [ "$COMMAND" = "seed" ] ; then
-  CLASS=org.creativecommons.learn.nutch.MakeSeed
+  CLASS=org.creativecommons.learn.feed.MakeSeed
 else
   CLASS=$COMMAND
 fi
