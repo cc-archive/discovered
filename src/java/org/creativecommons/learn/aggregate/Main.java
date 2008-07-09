@@ -39,7 +39,7 @@ public class Main {
         for (Feed feed : all_feeds) {
 
         	System.out.println(feed.getUrl());
-        	
+        	Date import_date = new Date();
             // see if this feed needs to be re-imported
             if (feed.getLastImport().before( calendar.getTime() )) {
                 try {
@@ -50,7 +50,7 @@ public class Main {
                 } catch (IOException ex) {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
-                    feed.setLastImport(new Date());
+                    feed.setLastImport(import_date);
                     TripleStore.get().save(feed);
                 }
             }
