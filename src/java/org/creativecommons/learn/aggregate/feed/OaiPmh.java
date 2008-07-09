@@ -57,30 +57,36 @@ public class OaiPmh {
 		return result;
 	}
 
-	private Map<String, String> getSets(OaiPmhServer server)
-			throws OAIException {
+	private Map<String, String> getSets(OaiPmhServer server) {
 
 		Map<String, String> raw_setmap = new HashMap<String, String>();
 		Map<String, String> sets = new HashMap<String, String>();
 
 		Boolean moreSets = true;
 
-		SetsList serversets = server.listSets();
+		try {
+			SetsList serversets = server.listSets();
 
-		while (moreSets) {
-			for (Set s : serversets.asList()) {
-				raw_setmap.put(s.getSpec(), s.getName());
-			}
-			
-			// check for resumption token...
-			if (serversets.getResumptionToken() != null) {
-				serversets = server.listSets(serversets.getResumptionToken());
-				moreSets = true;
-			} else {
-				moreSets = false;
-			}
+			while (moreSets) {
+				for (Set s : serversets.asList()) {
+					raw_setmap.put(s.getSpec(), s.getName());
+				}
 
-		} // while more set specs may be retrieved
+				// check for resumption token...
+				if (serversets.getResumptionToken() != null) {
+					serversets = server.listSets(serversets
+							.getResumptionToken());
+					moreSets = true;
+				} else {
+					moreSets = false;
+				}
+
+			} // while more set specs may be retrieved
+
+		} catch (OAIException e) {
+			// Yeah, we probably don't support sets
+			return sets;
+		}
 
 		// post-process to handle heirarchical sets
 		for (String set_spec : raw_setmap.keySet()) {
@@ -135,11 +141,7 @@ public class OaiPmh {
 
 		// get a list of sets supported by the server and map them to their
 		// names
-		try {
-			sets = getSets(server);
-		} catch (OAIException e) {
-			return;
-		}
+		sets = getSets(server);
 
 		for (MetadataFormat f : formats.keySet()) {
 
@@ -176,6 +178,7 @@ public class OaiPmh {
 							resource.getSubjects().add(sets.get(set_spec));
 						}
 					}
+					
 					try {
 						TripleStore.get().save(resource);
 					} catch (NullPointerException e) {
