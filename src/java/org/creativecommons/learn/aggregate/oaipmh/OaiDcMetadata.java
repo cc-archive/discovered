@@ -44,7 +44,8 @@ public class OaiDcMetadata extends OaiMetadataFormat implements IResourceExtract
 		// Retrieve the resource metadata from the server
 		Record oai_record = server.getRecord(identifier, this.format.getPrefix());
 		Element metadata = oai_record.getMetadata();
-		
+		if (metadata == null) return;
+
 		// get the namespace prefix
 		metadata.addNamespace("dc", "http://purl.org/dc/elements/1.1/");
 		
