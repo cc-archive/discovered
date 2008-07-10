@@ -203,6 +203,10 @@ public class OaiPmh {
 					} catch (OAIException e) {
 						e.printStackTrace();
 						continue;
+					} catch (Exception e) {
+						LOG.warning("An exception occured while aggregating " + f.getPrefix() + " for " + header.getIdentifier());
+						LOG.warning("> " + e.getMessage());
+						e.printStackTrace();
 					}
 
 				}
