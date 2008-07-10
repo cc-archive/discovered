@@ -106,6 +106,10 @@ public class Main {
     		all_feeds = filtered_feeds;
     	}
     	
+    	// see if we're forcing updates
+    	boolean force = false;
+    	if (line.hasOption("force")) force = true;
+    	
         // process each one
         for (Feed feed : all_feeds) {
 
@@ -113,12 +117,12 @@ public class Main {
         	Date import_date = new Date();
 
         	// see if this feed needs to be re-imported
-            if (line.hasOption("force") || feed.getLastImport().before( calendar.getTime() )) {
+            if (force || feed.getLastImport().before( calendar.getTime() )) {
                 try {
                     // re-import necessary
                 	System.out.println("updating...");
 
-                	new FeedUpdater(feed).update();
+                	new FeedUpdater(feed).update(force);
                 } catch (IOException ex) {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {

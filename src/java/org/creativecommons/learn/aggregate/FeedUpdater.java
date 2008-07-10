@@ -67,7 +67,7 @@ public class FeedUpdater {
 		TripleStore.get().saveDeep(new_entry);
 	} // addEntry
 
-	public void update() throws IOException {
+	public void update(boolean force) throws IOException {
 		// get the contents of the feed and emit events for each
 
 		// OPML
@@ -77,7 +77,7 @@ public class FeedUpdater {
 
 		} else if (feed.getFeedType().toLowerCase().equals("oai-pmh")) {
 
-			new OaiPmh().poll(feed);
+			new OaiPmh().poll(feed, force);
 			
 		} else {
 			

@@ -128,6 +128,10 @@ public class OaiPmh {
 	}
 
 	public void poll(Feed feed) {
+		this.poll(feed, false);
+	}
+	
+	public void poll(Feed feed, boolean force) {
 
 		Boolean moreResults = true;
 		OaiPmhServer server = new OaiPmhServer(feed.getUrl());
@@ -147,11 +151,17 @@ public class OaiPmh {
 		// names
 		sets = getSets(server);
 
+		// get the formatted date of the last import
+		String last_import_date = null;
+		if (!force) 
+			last_import_date = iso8601.format(feed.getLastImport());
+		
 		for (MetadataFormat f : formats.keySet()) {
 
 			try {
-				identifiers = server.listIdentifiers(f.getPrefix(), iso8601
-						.format(feed.getLastImport()), null, null);
+				
+				identifiers = server.listIdentifiers(f.getPrefix(), 
+						last_import_date, null, null);
 			} catch (OAIException e) {
 				continue;
 			}
