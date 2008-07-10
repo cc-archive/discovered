@@ -1,5 +1,7 @@
 package org.creativecommons.learn.aggregate.oaipmh;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
@@ -48,6 +50,23 @@ public abstract class OaiMetadataFormat implements IResourceExtractor{
 		return ((Node) identifiers.get(0)).getText();
 	}
 
+	protected String getNodeTextAsUrl(Element context, String xpath) {
+		// Return the first node value we come to which can be interpreted as a URL
+		for (String nodetext : getNodesText(context, xpath)) {
+			try {
+				@SuppressWarnings("unused")
+				URL node_url = new URL(nodetext);
+				
+				// successfully created a URL, return this value
+				return nodetext;
+				
+			} catch (MalformedURLException e) {
+				
+			}
+		}
+		
+		return null;
+	}
 	protected Collection<String> getNodesText(Element context, String xpath) {
 		
 		Vector<String> nodes = new Vector<String>();
