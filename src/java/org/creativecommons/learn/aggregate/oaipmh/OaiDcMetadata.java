@@ -49,7 +49,10 @@ public class OaiDcMetadata extends OaiMetadataFormat implements IResourceExtract
 		metadata.addNamespace("dc", "http://purl.org/dc/elements/1.1/");
 		
 		// load or create the Resource object
-		Resource item = getResource(getNodeText(metadata, "//dc:identifier"));
+		String resource_url = getNodeTextAsUrl(metadata, "//dc:identifier");
+		if (resource_url == null) return;
+		
+		Resource item = getResource(resource_url);
 		item.getSources().add(feed);
 
 		// title
