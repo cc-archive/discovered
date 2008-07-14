@@ -19,19 +19,24 @@
   import="org.creativecommons.learn.oercloud.*"
 
 %>
-<%@ include file="/header.jsp" %>
+<%@ include file="../header.jsp" %>
 
-<% TripleStore store = TripleStore.get();
-%>
 
-<h2>Feeds</h2>
+<div class="box">
+
+<h1>Feeds</h1>
+
+<% Collection<Feed> feeds = TripleStore.get().loadDeep(Feed.class); %>
+
 
 <ul>
-<% for (Feed c : store.load(Feed.class)) { %>
-
-	<li><%=c.getUrl() %></li>
-<% } %>
+	<% for (Feed f : feeds) { %>
+	<li><%=f.getUrl() %></li>
+	<% } %>
 </ul>
+
+</div>
+
 <jsp:include page="/include/footer.html"/>
 
 </body>

@@ -19,12 +19,10 @@
   import="org.creativecommons.learn.oercloud.*"
 
 %>
-<%@ include file="/header.jsp" %>
+<%@ include file="../header.jsp" %>
 
-<% TripleStore store = TripleStore.get();
-%>
-
-<h2>Resource Repository</h2>
+<div class="box">
+<h1>Resource Repository</h1>
 
 <ul>
 	<li><a href="./curators.jsp">Curators</a></li>
