@@ -35,7 +35,7 @@
 	       	   border=0 />
 	    </a>
 	    <a href="<%=ResultHelper.getLicenseQueryLink(request, license_uri)%>">
-	      <img alt="more like this" src="./img/magnifier.png" border="0" />
+	      <img alt="more like this" src="<%=request.getContextPath()%>/img/magnifier.png" border="0" />
 	    </a>
 	  </p>
 	<% } %>
@@ -56,7 +56,7 @@
 	  <p class="info-links">
     <%
       if (showCached) {
-        %>(<a href="./cached.jsp?<%=id%>"><i18n:message key="cached"/></a>) <%
+        %>(<a href="<%=request.getContextPath()%>/cached.jsp?<%=id%>"><i18n:message key="cached"/></a>) <%
     }
     %>
 	  </p>
@@ -70,7 +70,7 @@
 
 <%     for (int i_tag = 0; i_tag < tags.length; i_tag++) { %>
 
-          <a href='<%=ResultHelper.getTagQueryHref(request, tags[i_tag])%>'>
+          <a href="<%=ResultHelper.getTagQueryHref(request, tags[i_tag])%>">
 	     <%=tags[i_tag]%>
 	  </a>&nbsp;
 <%     } 
@@ -84,11 +84,11 @@
     +params+"&hitsPerSite="+0
     +"&lang="+queryLang
     +"&clustering="+clustering;%>
-    (<a href="./search.jsp?<%=more%>"><i18n:message key="moreFrom"/>
+    (<a href="<%=request.getContextPath()%>/search.jsp?<%=more%>"><i18n:message key="moreFrom"/>
      <%=hit.getDedupValue()%></a>)
     <% } %>
-    (<a href="./explain.jsp?<%=id%>&query=<%=URLEncoder.encode(queryString, "UTF-8")%>&lang=<%=queryLang%>"><i18n:message key="explain"/></a>)
-    (<a href="./anchors.jsp?<%=id%>"><i18n:message key="anchors"/></a>)
+    (<a href="<%=request.getContextPath()%>/explain.jsp?<%=id%>&query=<%=URLEncoder.encode(queryString, "UTF-8")%>&lang=<%=queryLang%>"><i18n:message key="explain"/></a>)
+    (<a href="<%=request.getContextPath()%>/anchors.jsp?<%=id%>"><i18n:message key="anchors"/></a>)
 
     </div>
 </div>

@@ -19,7 +19,7 @@
   import="org.creativecommons.learn.oercloud.*"
 
 %>
-<%@ include file="../header.jsp" %>
+<%@ include file="/header.jsp" %>
 
 
 <div class="box">

@@ -6,7 +6,7 @@
   import="org.creativecommons.learn.TripleStore"
   import="org.creativecommons.learn.oercloud.Curator"
 %>
-<%@ include file="../header.jsp" %>
+<%@ include file="/header.jsp" %>
 
 <div class="box">
 
@@ -17,8 +17,8 @@
 
 <ul>
 	<% for (Curator c : curators) { %>
-	<li><%=c.getName() %> 
-		<a href="<%=c.getUrl() %>"><img src="./img/house.png" border="0" /></a>
+	<li><a href="<%=request.getContextPath()%>/browse/feeds.jsp?c=<%=c.getUrl()%>"><%=c.getName() %></a>  
+		<a href="<%=c.getUrl() %>"><img src="<%=request.getContextPath()%>/img/house.png" border="0" /></a>
 	</li>
 	<% } %>
 </ul>

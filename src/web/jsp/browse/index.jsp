@@ -19,14 +19,14 @@
   import="org.creativecommons.learn.oercloud.*"
 
 %>
-<%@ include file="../header.jsp" %>
+<%@ include file="/header.jsp" %>
 
 <div class="box">
 <h1>Resource Repository</h1>
 
 <ul>
-	<li><a href="./curators.jsp">Curators</a></li>
-	<li><a href="./feeds.jsp">Feeds</a></li>
+	<li><a href="<%=request.getContextPath()%>/browse/curators.jsp">Curators</a></li>
+	<li><a href="<%=request.getContextPath()%>/browse/feeds.jsp">Feeds</a></li>
 </ul>
 
 <jsp:include page="/include/footer.html"/>

@@ -19,15 +19,15 @@
   import="java.io.*"
   import="java.util.*"
 %>
-<%@ include file="./header.jsp" %>
+<%@ include file="/header.jsp" %>
 
 <div id="searchui" class="box">
 <div id="search-base">
-<form name="search" action="./search.jsp" method="get">
+<form name="search" action="<%=request.getContextPath()%>/search.jsp" method="get">
   <input type="hidden" name="lang" value="en"/>
   <input id="q" name="query" size="44"/>&#160;
   <input id="qsubmit" type="submit" value="Search"/>
-  <a href="help.html">help</a>
+  <a href="http://wiki.creativecommons.org/Universal_Education_Search">help</a>
 </form>
 </div>
 </div>
