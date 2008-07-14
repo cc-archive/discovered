@@ -3,7 +3,7 @@
 <div id="license">
 <p class="box">
 <a style="float:right;" href="http://wiki.apache.org/nutch/FAQ"> <img
-		border="0" src="./img/poweredbynutch_01.gif" align="top" /> </a>
+		border="0" src="<%=request.getContextPath()%>/img/poweredbynutch_01.gif" align="top" /> </a>
 <a rel="license"
 	href="http://creativecommons.org/licenses/by/3.0/"><img
 	src="http://i.creativecommons.org/l/by/3.0/88x31.png"

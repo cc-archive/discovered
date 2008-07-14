@@ -29,7 +29,7 @@
 	<li><a href="<%=request.getContextPath()%>/browse/feeds.jsp">Feeds</a></li>
 </ul>
 
-<jsp:include page="/include/footer.html"/>
+<jsp:include page="/footer.jsp"/>
 
 </body>
 </html>
