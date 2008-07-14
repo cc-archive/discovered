@@ -189,7 +189,7 @@ function queryfocus() { document.search.query.focus(); }
    <input id="clustbox" type="checkbox" name="clustering" value="yes" <% if (clustering.equals("yes")) { %>CHECKED<% } %>>
     <label for="clustbox"><i18n:message key="clustering"/></label>
  <% } %>
- <a href="http://wiki.creativecommons.org/Universal_Education_Search">help</a>
+ <a href="http://wiki.creativecommons.org/Universal_Education_Search_FAQ">help</a>
 </div>
  </form>
 </div>
