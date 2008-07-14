@@ -58,7 +58,7 @@ public class TripleStore {
     	
         String className = "com.mysql.jdbc.Driver";         // path of driver class
         Class.forName (className);                          // Load the Driver
-        String DB_URL =     "jdbc:mysql://localhost/oercloud";  // URL of database 
+        String DB_URL =     "jdbc:mysql://localhost/oercloud?autoReconnect=true";  // URL of database 
         String DB_USER =   "root";                          // database user id
         String DB_PASSWD = "";                          // database password
         String DB =        "MySQL";                         // database type
