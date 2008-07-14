@@ -1,9 +1,13 @@
 package org.creativecommons.learn.oercloud;
 
+import java.util.Collection;
 import java.util.List;
+
+import org.creativecommons.learn.TripleStore;
 
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfProperty;
+import thewebsemantic.Sparql;
 import thewebsemantic.Uri;
 
 @Namespace("http://learn.creativecommons.org/ns#")
@@ -42,8 +46,24 @@ public class Curator {
 		this.url = url;
 	}
 	
-	public List<Feed> getFeeds() {
-		return this.feeds;
+	public Collection<Feed> getFeeds() {
+		
+		String query = ""
+			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n"
+			+ "PREFIX cclearn: <http://learn.creativecommons.org/ns#> \n"
+			+ "\n" + "SELECT ?s \n" + "WHERE { \n"
+			+ "?s rdf:type cclearn:Feed .\n"
+			+ "?s cclearn:hasCurator <" + this.getUrl() + ">. \n"
+			+ "   }\n";
+		
+		try {
+			return Sparql.exec(TripleStore.get().getModel(), Feed.class, query);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
 	}
 
 	public void setFeeds(List<Feed> feedList) {

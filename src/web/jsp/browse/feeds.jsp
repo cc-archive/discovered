@@ -24,14 +24,21 @@
 
 <div class="box">
 
+<% Collection<Feed> feeds = null;
+
+	if (request.getParameter("c") != null) { 
+    	Curator c = TripleStore.get().load(Curator.class, request.getParameter("c")); 
+    	feeds = c.getFeeds(); 
+    %>
+<h1>Feeds for <%=c.getName() %></h1>
+<% } else { 
+		feeds = TripleStore.get().loadDeep(Feed.class);%>
 <h1>Feeds</h1>
-
-<% Collection<Feed> feeds = TripleStore.get().loadDeep(Feed.class); %>
-
+<% } %>
 
 <ul>
 	<% for (Feed f : feeds) { %>
-	<li><%=f.getUrl() %></li>
+	<li><%=f.getUrl() %> (<%=f.getCurator().getName()%>)</li>
 	<% } %>
 </ul>
 
