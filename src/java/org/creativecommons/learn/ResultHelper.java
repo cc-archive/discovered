@@ -1,6 +1,8 @@
 package org.creativecommons.learn;
 
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Vector;
@@ -29,9 +31,18 @@ public class ResultHelper {
 		
 		// starting with a request, add a tag filter to the search
 		// and return the resulting HREF
+		return addQueryParameter(request, query_key + ":\"" + query_value + "\"");
+		
+	} // addQueryParameter
+
+	private static String addQueryParameter(HttpServletRequest request, 
+			String new_query) {
+		
+		// starting with a request, add a tag filter to the search
+		// and return the resulting HREF
 		try {
 			String query = URLDecoder.decode(request.getParameter("query"), "UTF-8").trim();
-			query = query + " " + query_key + ":\"" + query_value + "\"";
+			query = query + " " + new_query;
 			query = URLEncoder.encode(query, "UTF-8");
 			
 			return request.getRequestURL().append("?query=" + query).toString();
@@ -43,13 +54,36 @@ public class ResultHelper {
 		// fall back to just returning the existing URI
 		return _getFullUrl(request);
 		
-	} // addQueryParameter
-	
+	} // addQueryParameter	
 	public static String getLicenseQueryLink(HttpServletRequest request,
 			String license_uri) {
 
-		// XXX
-		return addQueryParameter(request, "cc", "license=" + license_uri);
+		// see if this is a CC license URI
+		if (license_uri.startsWith("http://creativecommons.org/licenses/")) {
+			try {
+				// be slightly smarter about the new query string
+				URL licenseUrl = new URL(license_uri);
+				String[] pieces = licenseUrl.getPath().split("/");
+				
+				StringBuilder license_query = new StringBuilder(); 
+				if (pieces.length > 2) {
+					for (String code : pieces[2].split("-")) {
+						license_query.append("cc:" + code + " ");
+					}
+					
+					return addQueryParameter(request, license_query.toString());
+				}
+				
+				
+			} catch (MalformedURLException e) {
+				// Fall back to general case
+				return addQueryParameter(request, "cc", "license=" + license_uri);
+			}
+			
+			return addQueryParameter(request, "cc", "license=" + license_uri);
+		} else
+			// general case
+			return addQueryParameter(request, "cc", "license=" + license_uri);
 
 	} // getLicenseQueryLink
 
