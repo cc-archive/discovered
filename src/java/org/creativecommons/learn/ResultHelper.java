@@ -26,7 +26,7 @@ public class ResultHelper {
 		return url.toString();
 	}
 
-	private static String addQueryParameter(HttpServletRequest request, 
+	public static String getRefinedQueryHref(HttpServletRequest request, 
 			String query_key, String query_value) {
 		
 		// starting with a request, add a tag filter to the search
@@ -77,26 +77,26 @@ public class ResultHelper {
 				
 			} catch (MalformedURLException e) {
 				// Fall back to general case
-				return addQueryParameter(request, "cc", "license=" + license_uri);
+				return getRefinedQueryHref(request, "cc", "license=" + license_uri);
 			}
 			
-			return addQueryParameter(request, "cc", "license=" + license_uri);
+			return getRefinedQueryHref(request, "cc", "license=" + license_uri);
 		} else
 			// general case
-			return addQueryParameter(request, "cc", "license=" + license_uri);
+			return getRefinedQueryHref(request, "cc", "license=" + license_uri);
 
 	} // getLicenseQueryLink
-
+	
 	public static String getTagQueryHref(HttpServletRequest request, String tag) {
 
-		return addQueryParameter(request, Search.TAGS_FIELD, tag);
+		return getRefinedQueryHref(request, Search.TAGS_FIELD, tag);
 
 	} // getTagQueryHref
 
 	public static String getCuratorQueryHref(HttpServletRequest request,
 			String curator) {
 
-		return addQueryParameter(request, Search.CURATOR_FIELD, curator);
+		return getRefinedQueryHref(request, Search.CURATOR_FIELD, curator);
 
 	} // getCuratorQueryHref
 
