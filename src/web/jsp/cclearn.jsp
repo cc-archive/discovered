@@ -46,16 +46,14 @@
 	  </p>
 	<% } %>
 
-	<table class="primary">
+	<table class="result-meta" width="100%" cellspacing="0">
 		<tr valign="top" align="left">
-			<td class="source" width="33%">
-				<strong>Curator:</strong> 
+			<td align="left" class="source" width="33%"><strong>Curator:</strong> 
 		            <% for (int i_cur = 0; i_cur < curators.length; i_cur++) { %>
 			           <span><%=curators[i_cur]%></span>
 			        <% } %>
 			</td>
-			<td class="education_level" width="34%">
-				<strong>Education Level:</strong>
+			<td align="left" class="education_level" width="34%"><strong>Education Level:</strong>
 		            <% if (ed_levels != null)
 						for (String ed_level : ed_levels) { %>
 		          		<a href="<%=ResultHelper.getRefinedQueryHref(request, "education_level", ed_level)%>">
@@ -63,8 +61,7 @@
 			  			</a>
 			        <% } %>
 			</td>
-			<td class="language" width="33%">
-				<strong>Language:</strong>
+			<td align="left" class="language" width="33%"><strong>Language:</strong>
 					<% if (languages != null) 
 						for (String lang : languages) { %>
 						<a href="<%=ResultHelper.getRefinedQueryHref(request, "language", lang) %>">

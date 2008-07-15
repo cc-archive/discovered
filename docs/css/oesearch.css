@@ -10,6 +10,11 @@ body { background-color: #fff; color: #333; font: 12px verdana, sans-serif !impo
 	text-align: center; 
 }
 
+td{ font: 12px verdana, sans-serif !important;
+	line-height:150% !important; 
+	text-align: left; 
+}
+
 .box { text-align: left; margin: 0 auto; width: 91%; min-width: 765px; max-width: 1000px; } /* replaces #wrapper */
 .content-box { float: left; padding-top: 15px; margin-right: 1%; overflow: hidden; }
 .content-box-right { float: right; padding-top: 15px; margin-left: 1%; overflow: hidden; }
