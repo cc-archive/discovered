@@ -11,6 +11,12 @@ public class Search {
     public static String FEED_FIELD = "feed";
     public static float  FEED_BOOST = 1.0f;
     
+    public static String ED_LEVEL_FIELD = "education_level";
+    public static float ED_LEVEL_BOOST = 1.0f;
+    
+    public static String LANGUAGE_FIELD = "language";
+    public static float LANGUAGE_BOOST = 1.0f;
+    
 	// public static String CURATOR_NAME_FIELD = "curator_name";
     public static String LICENSE_FIELD = "license";
 

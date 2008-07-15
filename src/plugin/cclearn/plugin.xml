@@ -2,7 +2,7 @@
 <plugin
    id="cclearn"
    name="CC Learn Tagging Plugins"
-   version="0.0.1"
+   version="0.0.2"
    provider-name="learn.creativecommons.org">
 
    <runtime>
@@ -13,22 +13,15 @@
    </runtime>
 
 
-   <!-- The TagIndexer extends the IndexingFilter in order to add the
-        contents of tags stored in OER Cloud to the lucene index. 
+   <!-- The TripleStoreIndexer extends the IndexingFilter in order to add
+   		metadata stored in the Triple Store to the Lucene index.
      -->
 
-   <extension id="org.creativecommons.learn.tagindexer"
-              name="Subject Indexer"
+   <extension id="org.creativecommons.learn.triplestoreindexer"
+              name="Triple Store Indexer"
               point="org.apache.nutch.indexer.IndexingFilter">
-      <implementation id="TagIndexer"
-                      class="org.creativecommons.learn.TagIndexer" />
-   </extension>
-
-   <extension id="org.creativecommons.learn.curatorindexer"
-              name="Curator Indexer"
-              point="org.apache.nutch.indexer.IndexingFilter">
-      <implementation id="CuratorIndexer"
-                      class="org.creativecommons.learn.CuratorIndexer" />
+      <implementation id="TripleStoreIndexer"
+                      class="org.creativecommons.learn.TripleStoreIndexer" />
    </extension>
 
    <!-- The TagQueryFilter is called when you perform a search; it
@@ -48,7 +41,6 @@
       </implementation>
    </extension>
 
-
    <extension id="org.creativecommons.learn.curatorsearcher"
               name="Curator Search Filter"
               point="org.apache.nutch.searcher.QueryFilter">
@@ -58,4 +50,21 @@
       </implementation>
    </extension>
 
+   <extension id="org.creativecommons.learn.languagesearcher"
+              name="Langauge Search Filter"
+              point="org.apache.nutch.searcher.QueryFilter">
+      <implementation id="LanguageFilter"
+                      class="org.creativecommons.learn.LanguageFilter">
+        <parameter name="fields" value="language"/>
+      </implementation>
+   </extension>
+
+   <extension id="org.creativecommons.learn.educationlevelsearcher"
+              name="Education Level Search Filter"
+              point="org.apache.nutch.searcher.QueryFilter">
+      <implementation id="EducationLevelFilter"
+                      class="org.creativecommons.learn.EducationLevelFilter">
+        <parameter name="fields" value="education_level"/>
+      </implementation>
+   </extension>
 </plugin>
