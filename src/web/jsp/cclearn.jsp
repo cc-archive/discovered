@@ -46,35 +46,34 @@
 	  </p>
 	<% } %>
 
-          <div class="primary">
-            <p class="source"><strong>Curator:</strong> 
-            <% for (int i_cur = 0; i_cur < curators.length; i_cur++) { %>
-	           <span><%=curators[i_cur]%></span>
-	        <% } %>
-	    </p>
-		<p class="education_level">
-			<strong>Education Level:</strong>
-            <% for (String ed_level : ed_levels) { %>
-          		<a href="<%=ResultHelper.getRefinedQueryHref(request, "education_level", ed_level)%>">
-	     			<%=ed_level%>
-	  			</a>
-	        <% } %>
-		</p>
-		<p class="language">
-			<strong>Language:</strong>
-			<% for (String lang : languages) { %>
-				<a href="<%=RequestHelper.getRefinedQueryHref(request, "language", lang) %>">
-					<%=lang %>
-				</a>
-			<% } %>
-		</p>
-
-<!--            <p class="subject"><strong>Subject:</strong> 
-	       <span></span></p>
-            <p class="collection"><strong>Collection:</strong> 
-	       <span></span></p>
--->
-          </div>
+	<table class="primary">
+		<tr valign="top" align="left">
+			<td class="source" width="33%">
+				<strong>Curator:</strong> 
+		            <% for (int i_cur = 0; i_cur < curators.length; i_cur++) { %>
+			           <span><%=curators[i_cur]%></span>
+			        <% } %>
+			</td>
+			<td class="education_level" width="34%">
+				<strong>Education Level:</strong>
+		            <% if (ed_levels != null)
+						for (String ed_level : ed_levels) { %>
+		          		<a href="<%=ResultHelper.getRefinedQueryHref(request, "education_level", ed_level)%>">
+			     			<%=ed_level%>
+			  			</a>
+			        <% } %>
+			</td>
+			<td class="language" width="33%">
+				<strong>Language:</strong>
+					<% if (languages != null) 
+						for (String lang : languages) { %>
+						<a href="<%=ResultHelper.getRefinedQueryHref(request, "language", lang) %>">
+							<%=lang %>
+						</a>
+					<% } %>
+			</td>
+		</tr>
+	</table>
 
 	  <p class="info-links">
     <%
