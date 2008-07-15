@@ -14,6 +14,12 @@
     // Tags
     String[] tags = detail.getValues("tag");
     
+    // Education level(s)
+    String[] ed_levels = detail.getValues("education_level");
+    
+    // Language(s)
+    String[] languages = detail.getValues("language");
+    
     // Description
     if (result_item != null) {
     	summary = result_item.getDescription();
@@ -46,6 +52,23 @@
 	           <span><%=curators[i_cur]%></span>
 	        <% } %>
 	    </p>
+		<p class="education_level">
+			<strong>Education Level:</strong>
+            <% for (String ed_level : ed_levels) { %>
+          		<a href="<%=ResultHelper.getRefinedQueryHref(request, "education_level", ed_level)%>">
+	     			<%=ed_level%>
+	  			</a>
+	        <% } %>
+		</p>
+		<p class="language">
+			<strong>Language:</strong>
+			<% for (String lang : languages) { %>
+				<a href="<%=RequestHelper.getRefinedQueryHref(request, "language", lang) %>">
+					<%=lang %>
+				</a>
+			<% } %>
+		</p>
+
 <!--            <p class="subject"><strong>Subject:</strong> 
 	       <span></span></p>
             <p class="collection"><strong>Collection:</strong> 
@@ -66,7 +89,7 @@
 <%
     if (tags != null && tags.length > 0) { 
 %>
-       <strong>Tags:</strong>
+       <strong>Subject Tags:</strong>
 
 <%     for (int i_tag = 0; i_tag < tags.length; i_tag++) { %>
 
