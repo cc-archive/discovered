@@ -1,9 +1,13 @@
 package org.creativecommons.learn;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import thewebsemantic.Bean2RDF;
 import thewebsemantic.Filler;
@@ -25,7 +29,6 @@ public class TripleStore {
 
 	private static TripleStore instance = null;
 	
-    private IDBConnection conn = null;
     private ModelMaker maker = null;
     private Model model = null;
     
@@ -42,6 +45,12 @@ public class TripleStore {
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
     }
     
@@ -54,32 +63,40 @@ public class TripleStore {
     	return instance;
     }
     
-    private void open() throws ClassNotFoundException {
+    private void open() throws ClassNotFoundException, NamingException, SQLException {
     	
-        String className = "com.mysql.jdbc.Driver";         // path of driver class
+    	// Obtain our environment naming context
+    	Context initCtx = new InitialContext();
+    	Context envCtx = (Context) initCtx.lookup("java:comp/env");
+
+    	// Look up our data source
+    	DataSource ds = (DataSource)
+    	  envCtx.lookup("jdbc/OERCloud");
+
+    	// Allocate and use a connection from the pool
+    	Connection conn =  ds.getConnection();
+/*
+    	conn.close();
+
+    	
+    	
+    	String className = "com.mysql.jdbc.Driver";         // path of driver class
         Class.forName (className);                          // Load the Driver
-        String DB_URL =     "jdbc:mysql://localhost/oercloud?autoReconnect=true";  // URL of database 
+        String DB_URL =     "jdbc:mysql://localhost/oercloud";  // URL of database 
         String DB_USER =   "root";                          // database user id
         String DB_PASSWD = "";                          // database password
         String DB =        "MySQL";                         // database type
 
         // Create database connection
         conn = new DBConnection ( DB_URL, DB_USER, DB_PASSWD, DB );
-        maker = ModelFactory.createModelRDBMaker(conn) ;
+        */
+    	DBConnection conn2 = new DBConnection(conn);
+
+        maker = ModelFactory.createModelRDBMaker(conn2) ;
     	
     } // open
  
-    private void close() {
-        try {
-            // Close the database connection
-            conn.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(TripleStore.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-    } // close
-
-    public Model getModel() throws ClassNotFoundException {
+    public Model getModel() throws ClassNotFoundException, NamingException, SQLException {
 
     	if (maker == null) {
     		this.open();

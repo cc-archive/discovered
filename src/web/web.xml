@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE web-app
-    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
-    "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+
 <!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
@@ -18,7 +21,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-<web-app>
 
 <!-- order is very important here -->
 
@@ -66,5 +68,12 @@
   <taglib-uri>http://jakarta.apache.org/taglibs/i18n</taglib-uri>
   <taglib-location>/WEB-INF/taglibs-i18n.tld</taglib-location>
  </taglib>
+
+  <resource-ref>
+      <description>OER Cloud DB Connection</description>
+      <res-ref-name>jdbc/OERCloud</res-ref-name>
+      <res-type>javax.sql.DataSource</res-type>
+      <res-auth>Container</res-auth>
+  </resource-ref>
 
 </web-app>
