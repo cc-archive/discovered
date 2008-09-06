@@ -1,9 +1,16 @@
 package org.creativecommons.learn.oercloud;
 
+import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Date;
+
+import javax.naming.NamingException;
+
+import org.creativecommons.learn.TripleStore;
 
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfProperty;
+import thewebsemantic.Sparql;
 import thewebsemantic.Uri;
 
 @Namespace("http://learn.creativecommons.org/ns#")
@@ -56,4 +63,29 @@ public class Feed {
 		this.lastImport = lastImport;
 	}
 
+	public Collection<Resource> getResources() {
+		
+		String query = ""
+			+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n"
+			+ "PREFIX cclearn: <http://learn.creativecommons.org/ns#> \n"
+			+ "\n" + "SELECT ?s \n" + "WHERE { \n"
+			+ "?s rdf:type cclearn:Resource .\n"
+			+ "?s cclearn:source <" + this.getUrl() + ">. \n"
+			+ "   }\n";
+		
+		try {
+			return Sparql.exec(TripleStore.get().getModel(), Resource.class, query);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}	
 }
