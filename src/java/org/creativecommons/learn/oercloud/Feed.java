@@ -87,5 +87,6 @@ public class Feed {
 			e.printStackTrace();
 		}
 		
+		return null;
 	}	
 }
