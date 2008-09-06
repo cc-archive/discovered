@@ -1,5 +1,9 @@
 package org.creativecommons.learn.feed;
 
+import java.sql.SQLException;
+
+import javax.naming.NamingException;
+
 import org.creativecommons.learn.TripleStore;
 
 public class DumpStore {
@@ -7,8 +11,10 @@ public class DumpStore {
 	/**
 	 * @param args
 	 * @throws ClassNotFoundException 
+	 * @throws SQLException 
+	 * @throws NamingException 
 	 */
-	public static void main(String[] args) throws ClassNotFoundException {
+	public static void main(String[] args) throws ClassNotFoundException, NamingException, SQLException {
 		
 		if (args.length == 1 && args[0].equals("--help")) {
 			System.out.println("DumpStore");
