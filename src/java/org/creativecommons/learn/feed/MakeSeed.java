@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 import java.util.Date;
-
-import javax.naming.NamingException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -55,10 +52,8 @@ public class MakeSeed {
 	/**
 	 * @param args
 	 * @throws ClassNotFoundException
-	 * @throws SQLException 
-	 * @throws NamingException 
 	 */
-	public static void main(String[] args) throws ClassNotFoundException, NamingException, SQLException {
+	public static void main(String[] args) throws ClassNotFoundException {
 
 		// create the parser
 		CommandLineParser parser = new GnuParser();

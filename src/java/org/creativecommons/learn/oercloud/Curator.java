@@ -1,10 +1,7 @@
 package org.creativecommons.learn.oercloud;
 
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
-
-import javax.naming.NamingException;
 
 import org.creativecommons.learn.TripleStore;
 
@@ -60,13 +57,6 @@ public class Curator {
 		try {
 			return Sparql.exec(TripleStore.get().getModel(), Feed.class, query);
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		} catch (NamingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
