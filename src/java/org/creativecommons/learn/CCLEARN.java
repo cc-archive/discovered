@@ -7,6 +7,7 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 public class CCLEARN {
 
     protected static final String uri ="http://learn.creativecommons.org/ns#";
+	protected static final String default_prefix = "ccl";
 	
     /** returns the URI for this schema
         @return the URI for this schema
@@ -14,6 +15,10 @@ public class CCLEARN {
     public static String getURI()
         { return uri; }
 
+	public static String getDefaultPrefix() {
+		return default_prefix;
+	}
+	
     protected static final Resource resource( String local )
         { return ResourceFactory.createResource( uri + local ); }
 
