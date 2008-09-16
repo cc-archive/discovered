@@ -1,6 +1,8 @@
 package org.creativecommons.learn;
 
-// JDK import
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -13,12 +15,23 @@ import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.IndexingFilter;
 import org.apache.nutch.parse.Parse;
 import org.creativecommons.learn.oercloud.Feed;
-import org.creativecommons.learn.oercloud.OaiResource;
 import org.creativecommons.learn.oercloud.Resource;
 
 import thewebsemantic.NotFoundException;
 
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+
 public class TripleStoreIndexer implements IndexingFilter {
+
+	protected Map<String, String> DEFAULT_NAMESPACES;
 
 	public static final Log LOG = LogFactory.getLog(TripleStoreIndexer.class
 			.getName());
@@ -27,84 +40,73 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 	public TripleStoreIndexer() {
 		LOG.info("Created TripleStoreIndexer.");
+
+		// initialize the set of default mappings
+		DEFAULT_NAMESPACES = new HashMap<String, String>();
+		DEFAULT_NAMESPACES.put(CCLEARN.getURI(), CCLEARN.getDefaultPrefix());
+		DEFAULT_NAMESPACES.put("http://purl.org/dc/elements/1.1/", "dct");
+		DEFAULT_NAMESPACES.put("http://purl.org/dc/terms/", "dct");
+		DEFAULT_NAMESPACES.put("http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+				"rdf");
+
 	}
 
 	public Document filter(Document doc, Parse parse, Text url,
 			CrawlDatum datum, Inlinks inlinks) throws IndexingException {
 
+		LOG.info("TripleStore: indexing " + url.toString());
+
+		// Index all triples
+		LOG.debug("TripleStore: indexing all triples.");
+		indexTriples(doc, url);
+
+		// Follow special cases (curator)
+		LOG.debug("TripleStore: indexing special cases.");
 		try {
-
-			Resource resource = TripleStore.get().loadDeep(Resource.class,
-					url.toString());
-
-			// Add the source / curator information
-			indexSources(doc, resource);
-
-			// Add subjects/tags
-			indexSubjects(doc, resource);
-
-			// Add education level
-			indexEducationLevel(doc, resource);
-
-			// Add language
-			indexLangauge(doc, resource);
-
+			this.indexSources(doc,  TripleStore.get().loadDeep(Resource.class,
+			                               url.toString()));
 		} catch (NotFoundException e) {
-
-			// no information on this resource...
-			LOG.warn("Unable to index triple store information for "
-					+ url.toString() + "; resource not found.");
-
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
+		// Return the document
 		return doc;
+
 	} // public Document filter
 
-	private void indexLangauge(Document document, Resource resource) {
+	private void indexTriples(Document doc, Text url) {
+		Model m;
+		try {
+			m = TripleStore.get().getModel();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			LOG.error("Unable to get model; " + e.toString());
 
-		for (String ed_level : resource.getLanguages()) {
-
-			Field languageField = new Field(Search.LANGUAGE_FIELD, ed_level,
-					Field.Store.YES, Field.Index.UN_TOKENIZED);
-			languageField.setBoost(Search.LANGUAGE_BOOST);
-
-			document.add(languageField);
-
+			return;
 		}
 
-	} // indexLanguage
+		// Create a new query
+		String queryString = "SELECT ?p ?o " + "WHERE {" + "      <"
+				+ url.toString() + "> ?p ?o ." + "      }";
 
-	private void indexEducationLevel(Document document, Resource resource) {
+		Query query = QueryFactory.create(queryString);
 
-		for (String ed_level : resource.getEducationLevels()) {
+		// Execute the query and obtain results
+		QueryExecution qe = QueryExecutionFactory.create(query, m);
+		ResultSet results = qe.execSelect();
 
-			Field edLevelField = new Field(Search.ED_LEVEL_FIELD, ed_level,
-					Field.Store.YES, Field.Index.TOKENIZED);
-			edLevelField.setBoost(Search.ED_LEVEL_BOOST);
-
-			document.add(edLevelField);
-
+		// Index the triples
+		while (results.hasNext()) {
+			QuerySolution stmt = results.nextSolution();
+			this.indexStatement(doc, stmt.get("p"), stmt.get("o"));
 		}
 
-	} // indexEducationLevel
-
-	private void indexSubjects(Document document, Resource resource) {
-
-		for (String subject : resource.getSubjects()) {
-			addTag(document, subject);
-		}
-
-		// related resource tags (oai-pmh)
-		for (OaiResource related : resource.getSeeAlso()) {
-			for (String subject : related.getSubjects()) {
-
-				addTag(document, subject);
-			}
-		}
-
-	} // indexSubjects
+		// Important - free up resources used running the query
+		qe.close();
+	}
 
 	private void indexSources(Document document, Resource resource) {
+		
 		for (Feed source : resource.getSources()) {
 
 			Field sourceField = new Field(Search.FEED_FIELD, source.getUrl(),
@@ -118,23 +120,57 @@ public class TripleStoreIndexer implements IndexingFilter {
 				curator_url = source.getCurator().getUrl();
 			}
 
-			Field curator = new Field(Search.CURATOR_FIELD, curator_url,
-					Field.Store.YES, Field.Index.TOKENIZED);
+			Field curator = new Field(Search.CURATOR_INDEX_FIELD, curator_url,
+					Field.Store.YES, Field.Index.UN_TOKENIZED);
 			curator.setBoost(Search.CURATOR_BOOST);
 			document.add(curator);
-
 		}
-	} // indexSources
+	}
 
-	private void addTag(Document doc, String subject) {
+	protected String collapseResource(String uri) {
+		/*
+		 * Given a Resource URI, collapse it using our default namespace
+		 * mappings if possible. This is purely a convenience.
+		 */
 
-		LOG.debug("Adding tag (" + subject + ").");
+		for (String ns_url : DEFAULT_NAMESPACES.keySet()) {
+			if (uri.startsWith(ns_url)) {
+				return uri.replace(ns_url, "_" + DEFAULT_NAMESPACES.get(ns_url)
+						+ "_");
+			}
+		}
 
-		Field tagsField = new Field(Search.TAGS_FIELD, subject,
-				Field.Store.YES, Field.Index.TOKENIZED);
-		tagsField.setBoost(Search.TAGS_BOOST);
+		return uri;
 
-		doc.add(tagsField);
+	} // collapseResource
+
+	private void indexStatement(Document doc, RDFNode pred_node,
+			RDFNode obj_node) {
+		Field.Index tokenized = Field.Index.UN_TOKENIZED;
+
+		// index a single statement
+		String predicate = pred_node.toString();
+		String object = obj_node.toString();
+
+		// see if we want to collapse the predicate into a shorter convenience
+		// value
+		if (pred_node.isResource()) {
+			predicate = collapseResource(pred_node.toString());
+		}
+
+		// process the object...
+		if (obj_node.isLiteral()) {
+			object = ((Literal) obj_node).getValue().toString();
+			tokenized = Field.Index.TOKENIZED;
+		}
+
+		// add the field to the document
+		Field statementField = new Field(predicate, object, Field.Store.YES,
+				tokenized);
+
+		LOG.debug("Adding (" + predicate + ", " + object + ").");
+
+		doc.add(statementField);
 	}
 
 	public void setConf(Configuration conf) {
