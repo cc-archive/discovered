@@ -74,7 +74,7 @@ public class Main {
 		if (line.hasOption("help")) {
 			// automatically generate the help statement
 			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("seed", getOptions());
+			formatter.printHelp("aggregate", getOptions());
 
 			System.exit(0);
 		}
