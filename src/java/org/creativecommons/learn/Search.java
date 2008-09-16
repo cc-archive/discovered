@@ -13,10 +13,12 @@ public class Search {
     public static String FEED_FIELD = "feed";
     public static float  FEED_BOOST = 1.0f;
     
-    public static String ED_LEVEL_FIELD = "_ccl_educationLevel";
+    public static String ED_LEVEL_INDEX_FIELD = "_ccl_educationLevel";
+    public static String ED_LEVEL_QUERY_FIELD = "educationLevel";
     public static float ED_LEVEL_BOOST = 1.0f;
     
-    public static String LANGUAGE_FIELD = "_dct_language";
+    public static String LANGUAGE_INDEX_FIELD = "_dct_language";
+    public static String LANGUAGE_QUERY_FIELD = "language";
     public static float LANGUAGE_BOOST = 1.0f;
     
 	// public static String CURATOR_NAME_FIELD = "curator_name";
