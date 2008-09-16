@@ -2,14 +2,14 @@ package org.creativecommons.learn;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.nutch.searcher.FieldQueryFilter;
+import org.creativecommons.learn.search.MappedFieldQueryFilter;
 
-public class CuratorQueryFilter extends FieldQueryFilter {
+public class CuratorQueryFilter extends MappedFieldQueryFilter {
 	private static final Log LOG = LogFactory.getLog(
 			CuratorQueryFilter.class.getName());
 
 	public CuratorQueryFilter() {
-		super(Search.CURATOR_FIELD, Search.CURATOR_BOOST);
+		super(Search.CURATOR_QUERY_FIELD, Search.CURATOR_INDEX_FIELD, Search.CURATOR_BOOST);
 		LOG.info("Added a OER source query");
 	}
 
