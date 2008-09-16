@@ -3,7 +3,7 @@
     // show cclearn-related meta info for each hit.
     // information indexed by ./src/plugin/cclearn.
 
-    Resource result_item = ResultHelper.getResource(detail.getValue("url"));
+    // Resource result_item = ResultHelper.getResource(detail.getValue("url"));
 
     // curator information
     String[] curators = ResultHelper.getCuratorLinks(request, detail);
@@ -12,18 +12,20 @@
     String license_uri = detail.getValue("license");
 
     // Tags
-    String[] tags = detail.getValues("tag");
+    String[] tags = detail.getValues(Search.TAGS_INDEX_FIELD);
     
     // Education level(s)
-    String[] ed_levels = detail.getValues("education_level");
+    String[] ed_levels = detail.getValues(Search.ED_LEVEL_INDEX_FIELD);
     
     // Language(s)
-    String[] languages = detail.getValues("language");
+    String[] languages = detail.getValues(Search.LANGUAGE_INDEX_FIELD);
     
     // Description
+    /*
     if (result_item != null) {
     	summary = result_item.getDescription();
     }
+    */
 %>
 
 <div class="result">
@@ -56,7 +58,7 @@
 			<td align="left" class="education_level" width="34%"><strong>Education Level:</strong>
 		            <% if (ed_levels != null)
 						for (String ed_level : ed_levels) { %>
-		          		<a href="<%=ResultHelper.getRefinedQueryHref(request, "education_level", ed_level)%>">
+		          		<a href="<%=ResultHelper.getRefinedQueryHref(request, Search.ED_LEVEL_QUERY_FIELD, ed_level)%>">
 			     			<%=ed_level%>
 			  			</a>
 			        <% } %>
@@ -64,7 +66,7 @@
 			<td align="left" class="language" width="33%"><strong>Language:</strong>
 					<% if (languages != null) 
 						for (String lang : languages) { %>
-						<a href="<%=ResultHelper.getRefinedQueryHref(request, "language", lang) %>">
+						<a href="<%=ResultHelper.getRefinedQueryHref(request, Search.LANGUAGE_QUERY_FIELD, lang) %>">
 							<%=lang %>
 						</a>
 					<% } %>

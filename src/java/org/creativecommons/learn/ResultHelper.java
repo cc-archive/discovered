@@ -89,14 +89,14 @@ public class ResultHelper {
 	
 	public static String getTagQueryHref(HttpServletRequest request, String tag) {
 
-		return getRefinedQueryHref(request, Search.TAGS_FIELD, tag);
+		return getRefinedQueryHref(request, Search.TAGS_QUERY_FIELD, tag);
 
 	} // getTagQueryHref
 
 	public static String getCuratorQueryHref(HttpServletRequest request,
 			String curator) {
 
-		return getRefinedQueryHref(request, Search.CURATOR_FIELD, curator);
+		return getRefinedQueryHref(request, Search.CURATOR_QUERY_FIELD, curator);
 
 	} // getCuratorQueryHref
 
@@ -104,7 +104,7 @@ public class ResultHelper {
 			HitDetails result) {
 
 		// get the curator(s) and resolve them to human readable name(s)
-		String[] curators = result.getValues(Search.CURATOR_FIELD);
+		String[] curators = result.getValues(Search.CURATOR_INDEX_FIELD);
 		if (curators == null)
 			return new String[0];
 
@@ -168,14 +168,5 @@ public class ResultHelper {
 
 	} // getLicenseName
 	
-	public static Resource getResource(String resource_url) {
-		
-		try {
-			return TripleStore.get().load(Resource.class, resource_url);
-		} catch (NotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
-		
-	}
+
 } // ResultHelper
