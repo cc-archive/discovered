@@ -375,3 +375,7 @@ ul.tabs a {
 #rss-results {
   float: right;
 }
+
+.more_tags {
+  display:none;
+}
