@@ -2,9 +2,9 @@ package org.creativecommons.learn;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.creativecommons.learn.search.MappedFieldQueryFilter;
+import org.creativecommons.learn.search.MappedRawFieldQueryFilter;
 
-public class CuratorQueryFilter extends MappedFieldQueryFilter {
+public class CuratorQueryFilter extends MappedRawFieldQueryFilter {
 	private static final Log LOG = LogFactory.getLog(
 			CuratorQueryFilter.class.getName());
 
