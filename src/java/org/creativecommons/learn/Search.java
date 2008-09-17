@@ -2,6 +2,9 @@ package org.creativecommons.learn;
 
 public class Search {
 
+	public static int MAX_TAGS = 5;
+	public static int ORPHAN_TAG_LIMIT = 5;
+	
     public static String TAGS_INDEX_FIELD = "_dct_subject";
     public static String TAGS_QUERY_FIELD = "tag";
     public static float  TAGS_BOOST = 2.0f;

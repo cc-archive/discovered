@@ -83,21 +83,30 @@
 	  </p>
 
           <div class="clear"></div>
-<p>
+<div>
 <%
     if (tags != null && tags.length > 0) { 
 %>
        <strong>Subject Tags:</strong>
 
-<%     for (int i_tag = 0; i_tag < tags.length; i_tag++) { %>
+<% int initial_tags = tags.length;
+   if ((tags.length - Search.MAX_TAGS) > Search.ORPHAN_TAG_LIMIT) initial_tags = Search.MAX_TAGS;
+   
+   for (int i_tag = 0; i_tag < initial_tags; i_tag++) { %>
 
-          <a href="<%=ResultHelper.getTagQueryHref(request, tags[i_tag])%>">
-	     <%=tags[i_tag]%>
-	  </a>&nbsp;
-<%     } 
-
+    <a href="<%=ResultHelper.getTagQueryHref(request, tags[i_tag])%>"><%=tags[i_tag]%></a>&nbsp;
+<%     }
+   
+   // see if we need to show more tags
+   if (tags.length > initial_tags) { %>
+<div id="more_<%=i %>" class="more_tags">
+    <% for (int i_tag=Search.MAX_TAGS; i_tag < tags.length; i_tag++) { %>
+    <a href="<%=ResultHelper.getTagQueryHref(request, tags[i_tag])%>"><%=tags[i_tag]%></a>&nbsp;
+<% } %>
+</div><a href="#" id="show_<%=i %>" class="show_tags">(more...)</a>
+<%    }
     }    %>
-</p>
+</div>
 
     <% if (hit.moreFromDupExcluded()) {
     String more =
