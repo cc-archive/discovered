@@ -54,21 +54,26 @@ public class TripleStoreIndexer implements IndexingFilter {
 	public Document filter(Document doc, Parse parse, Text url,
 			CrawlDatum datum, Inlinks inlinks) throws IndexingException {
 
-		LOG.info("TripleStore: indexing " + url.toString());
-
-		// Index all triples
-		LOG.debug("TripleStore: indexing all triples.");
-		indexTriples(doc, url);
-
-		// Follow special cases (curator)
-		LOG.debug("TripleStore: indexing special cases.");
 		try {
-			this.indexSources(doc,  TripleStore.get().loadDeep(Resource.class,
-			                               url.toString()));
+			LOG.info("TripleStore: indexing " + url.toString());
+
+			// Index all triples
+			LOG.debug("TripleStore: indexing all triples.");
+			indexTriples(doc, url);
+
+			// Follow special cases (curator)
+			LOG.debug("TripleStore: indexing special cases.");
+			this.indexSources(doc, TripleStore.get().loadDeep(Resource.class,
+					url.toString()));
+
 		} catch (NotFoundException e) {
-			// TODO Auto-generated catch block
+			LOG.warn("Could not find " + url.toString() + " in the Triple Store.");
+			e.printStackTrace();
+		} catch (Exception e) {
+			LOG.error("An error occured while indexing " + url.toString());
 			e.printStackTrace();
 		}
+		
 		// Return the document
 		return doc;
 
@@ -106,7 +111,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 	}
 
 	private void indexSources(Document document, Resource resource) {
-		
+
 		for (Feed source : resource.getSources()) {
 
 			Field sourceField = new Field(Search.FEED_FIELD, source.getUrl(),
