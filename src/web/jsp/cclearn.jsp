@@ -21,6 +21,7 @@
     String[] languages = detail.getValues(Search.LANGUAGE_INDEX_FIELD);
     
     // Description
+    if (detail.getValue("_dct_description") != null) summary = detail.getValue("_dct_description");
     /*
     if (result_item != null) {
     	summary = result_item.getDescription();
