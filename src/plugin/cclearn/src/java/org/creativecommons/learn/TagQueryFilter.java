@@ -9,7 +9,7 @@ public class TagQueryFilter extends MappedFieldQueryFilter {
     	LogFactory.getLog(TagQueryFilter.class.getName());
 
     public TagQueryFilter() {
-        super("tag", Search.TAGS_INDEX_FIELD, Search.TAGS_BOOST);
+        super(Search.TAGS_QUERY_FIELD, Search.TAGS_INDEX_FIELD, Search.TAGS_BOOST);
         LOG.info("Added a OER tags query");
     }
   
