@@ -23,6 +23,8 @@ Ext.onReady(function() {
 
    Ext.select("a.show_tags").on("click", function(e) {
      Ext.get(e.getTarget()).parent().first(".more_tags").show();
+     Ext.get(e.getTarget()).hide();
+     
      e.stopEvent();
    });
 });
