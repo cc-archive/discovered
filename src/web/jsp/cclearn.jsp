@@ -39,16 +39,23 @@
 
 	<table class="result-meta" width="100%" cellspacing="0">
 		<tr valign="top" align="left">
-			<td align="left" class="source" width="25%"><strong>Curator:</strong> 
-		            <% if (curators != null) {
+			<td align="left" class="source" width="25%">
+			
+		<table align="left" width="100%" border="0">
+		<tr><td width="1%" valign="top">
+			<strong>Curator:</strong> 
+			</td>
+			<td>
+		            <% if (curators != null) { 
 		            	for (int i_cur = 0; i_cur < curators.length; i_cur++) { %>
-			           <span><%=curators[i_cur]%></span>
+			           <span><%=curators[i_cur]%></span><br/>
 			        <% } 
 		            } else { %>
 						<a href="http://wiki.creativecommons.org/UES:Missing_Metadata">
 							<img src="<%=request.getContextPath()%>/icons/help.png" alt="help" border="0"/>
 						</a>
 					<% } %>
+					</td></tr></table>
 			</td>
 			<td align="left" class="education_level" width="25%"><strong>Education Level:</strong>
 		            <% if (ed_levels != null) {
@@ -88,7 +95,7 @@
 	      <img alt="more like this" src="<%=request.getContextPath()%>/img/magnifier.png" border="0" />
 	    </a>
 	<% } else { %>
-		<a href="http://wiki.creativecommons.org/UESearch_Metadata">
+		<a href="http://wiki.creativecommons.org/UES:Missing_Metadata">
 		<img src="<%=request.getContextPath()%>/icons/help.png" alt="help" border="0" />
 		</a>
 	<% } %>
