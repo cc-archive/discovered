@@ -45,7 +45,7 @@
 			           <span><%=curators[i_cur]%></span>
 			        <% } 
 		            } else { %>
-						<a href="http://wiki.creativecommons.org/UESearch_Metadata">
+						<a href="http://wiki.creativecommons.org/UES:Missing_Metadata">
 							<img src="<%=request.getContextPath()%>/icons/help.png" alt="help" border="0"/>
 						</a>
 					<% } %>
@@ -58,7 +58,7 @@
 			  			</a>
 			        <% 	}
 		            }else { %>
-						<a href="http://wiki.creativecommons.org/UESearch_Metadata">
+						<a href="http://wiki.creativecommons.org/UES:Missing_Metadata">
 							<img src="<%=request.getContextPath()%>/icons/help.png" alt="help" border="0"/>
 						</a>
 					<% } %>
@@ -71,12 +71,13 @@
 						</a>
 					<% } 
 					} else { %>
-						<a href="http://wiki.creativecommons.org/UESearch_Metadata">
+						<a href="http://wiki.creativecommons.org/UES:Missing_Metadata">
 							<img src="<%=request.getContextPath()%>/icons/help.png" alt="help" border="0" />
 						</a>
 					<% } %>
 			</td>
 			<td align="left" class="license" width="25%">
+			<strong>License:</strong>
 	<% if (license_uri != null) { %>
 	    <a href="<%=license_uri%>">
 	      <img src="<%=ResultHelper.getLicenseImage(license_uri)%>"
@@ -86,7 +87,11 @@
 	    <a href="<%=ResultHelper.getLicenseQueryLink(request, license_uri)%>">
 	      <img alt="more like this" src="<%=request.getContextPath()%>/img/magnifier.png" border="0" />
 	    </a>
-	<% } else { %>&nbsp;<% } %>
+	<% } else { %>
+		<a href="http://wiki.creativecommons.org/UESearch_Metadata">
+		<img src="<%=request.getContextPath()%>/icons/help.png" alt="help" border="0" />
+		</a>
+	<% } %>
 			</td>
 		</tr>
 <tr><td colspan="4" align="left" valign="top">

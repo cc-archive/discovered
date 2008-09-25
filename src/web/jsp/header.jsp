@@ -26,13 +26,15 @@ Ext.onReady(function() {
    Ext.select(".show_tags").on("click", function(e) {
 
      var more_tags = Ext.get(e.getTarget()).parent().first(".more_tags");
-     more_tags.setVisibilityMode(Ext.Element.DISPLAY);
+     // more_tags.setVisibilityMode(Ext.Element.DISPLAY);
      more_tags.toggle();
      
-     if (Ext.get(e.getTarget()).isVisible())
+     if (more_tags.isVisible())
      	e.getTarget().src="<%=request.getContextPath()%>/icons/bullet_toggle_minus.png";
-     else
+     else {
      	e.getTarget().src="<%=request.getContextPath()%>/icons/bullet_toggle_plus.png";
+	more_tags.dom.style.display = "none";
+     }
      
      e.stopEvent();
    });
