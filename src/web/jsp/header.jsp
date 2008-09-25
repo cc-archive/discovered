@@ -21,9 +21,18 @@ function queryfocus() { document.search.query.focus(); }
 
 Ext.onReady(function() {
 
-   Ext.select("a.show_tags").on("click", function(e) {
-     Ext.get(e.getTarget()).parent().first(".more_tags").show();
-     Ext.get(e.getTarget()).hide();
+   Ext.select(".more_tags").setVisibilityMode(Ext.Element.DISPLAY).hide();
+   
+   Ext.select(".show_tags").on("click", function(e) {
+
+     var more_tags = Ext.get(e.getTarget()).parent().first(".more_tags");
+     more_tags.setVisibilityMode(Ext.Element.DISPLAY);
+     more_tags.toggle();
+     
+     if (Ext.get(e.getTarget()).isVisible())
+     	e.getTarget().src="<%=request.getContextPath()%>/icons/bullet_toggle_minus.png";
+     else
+     	e.getTarget().src="<%=request.getContextPath()%>/icons/bullet_toggle_plus.png";
      
      e.stopEvent();
    });
