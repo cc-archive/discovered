@@ -232,7 +232,6 @@ div.option #othersubject, div.option #otherlang {
 	margin: 5px 15px 0 15px;
 }
 #results {
-  width: 75%;
 	margin-top: 0px;
 	float: left;
 	padding-bottom: 10px;
@@ -376,6 +375,10 @@ ul.tabs a {
   float: right;
 }
 
+.show_tags {
+	cursor: pointer;
+}
+
 .more_tags {
-  display:none;
+	display: none;
 }

@@ -36,8 +36,48 @@
         <p class="abstract"><%=summary%></p>
 
         <div class="meta">
+
+	<table class="result-meta" width="100%" cellspacing="0">
+		<tr valign="top" align="left">
+			<td align="left" class="source" width="25%"><strong>Curator:</strong> 
+		            <% if (curators != null) {
+		            	for (int i_cur = 0; i_cur < curators.length; i_cur++) { %>
+			           <span><%=curators[i_cur]%></span>
+			        <% } 
+		            } else { %>
+						<a href="http://wiki.creativecommons.org/UESearch_Metadata">
+							<img src="<%=request.getContextPath()%>/icons/help.png" alt="help" border="0"/>
+						</a>
+					<% } %>
+			</td>
+			<td align="left" class="education_level" width="25%"><strong>Education Level:</strong>
+		            <% if (ed_levels != null) {
+						for (String ed_level : ed_levels) { %>
+		          		<a href="<%=ResultHelper.getRefinedQueryHref(request, Search.ED_LEVEL_QUERY_FIELD, ed_level)%>">
+			     			<%=ed_level%>
+			  			</a>
+			        <% 	}
+		            }else { %>
+						<a href="http://wiki.creativecommons.org/UESearch_Metadata">
+							<img src="<%=request.getContextPath()%>/icons/help.png" alt="help" border="0"/>
+						</a>
+					<% } %>
+			</td>
+			<td align="left" class="language" width="25%"><strong>Language:</strong>
+					<% if (languages != null) { 
+						for (String lang : languages) { %>
+						<a href="<%=ResultHelper.getRefinedQueryHref(request, Search.LANGUAGE_QUERY_FIELD, lang) %>">
+							<%=lang %>
+						</a>
+					<% } 
+					} else { %>
+						<a href="http://wiki.creativecommons.org/UESearch_Metadata">
+							<img src="<%=request.getContextPath()%>/icons/help.png" alt="help" border="0" />
+						</a>
+					<% } %>
+			</td>
+			<td align="left" class="license" width="25%">
 	<% if (license_uri != null) { %>
-          <p class="license">
 	    <a href="<%=license_uri%>">
 	      <img src="<%=ResultHelper.getLicenseImage(license_uri)%>"
                title="<%=ResultHelper.getLicenseName(license_uri)%>" 
@@ -46,53 +86,21 @@
 	    <a href="<%=ResultHelper.getLicenseQueryLink(request, license_uri)%>">
 	      <img alt="more like this" src="<%=request.getContextPath()%>/img/magnifier.png" border="0" />
 	    </a>
-	  </p>
-	<% } %>
-
-	<table class="result-meta" width="100%" cellspacing="0">
-		<tr valign="top" align="left">
-			<td align="left" class="source" width="33%"><strong>Curator:</strong> 
-		            <% for (int i_cur = 0; i_cur < curators.length; i_cur++) { %>
-			           <span><%=curators[i_cur]%></span>
-			        <% } %>
-			</td>
-			<td align="left" class="education_level" width="34%"><strong>Education Level:</strong>
-		            <% if (ed_levels != null)
-						for (String ed_level : ed_levels) { %>
-		          		<a href="<%=ResultHelper.getRefinedQueryHref(request, Search.ED_LEVEL_QUERY_FIELD, ed_level)%>">
-			     			<%=ed_level%>
-			  			</a>
-			        <% } %>
-			</td>
-			<td align="left" class="language" width="33%"><strong>Language:</strong>
-					<% if (languages != null) 
-						for (String lang : languages) { %>
-						<a href="<%=ResultHelper.getRefinedQueryHref(request, Search.LANGUAGE_QUERY_FIELD, lang) %>">
-							<%=lang %>
-						</a>
-					<% } %>
+	<% } else { %>&nbsp;<% } %>
 			</td>
 		</tr>
-	</table>
-
-	  <p class="info-links">
-    <%
-      if (showCached) {
-        %>(<a href="<%=request.getContextPath()%>/cached.jsp?<%=id%>"><i18n:message key="cached"/></a>) <%
-    }
-    %>
-	  </p>
-
-          <div class="clear"></div>
-<div>
+<tr><td colspan="4" align="left" valign="top">
 <%
-    if (tags != null && tags.length > 0) { 
-%>
-       <strong>Subject Tags:</strong>
+    if (tags != null && tags.length > 0) {
+		int initial_tags = tags.length;
+		if ((tags.length - Search.MAX_TAGS) > Search.ORPHAN_TAG_LIMIT) initial_tags = Search.MAX_TAGS;
 
-<% int initial_tags = tags.length;
-   if ((tags.length - Search.MAX_TAGS) > Search.ORPHAN_TAG_LIMIT) initial_tags = Search.MAX_TAGS;
-   
+		if (initial_tags != tags.length) { %>
+       		<img class="show_tags" src="<%=request.getContextPath()%>/icons/bullet_toggle_plus.png" />
+		<% } %>
+	<strong>Subject Tags:</strong>
+
+<% 
    for (int i_tag = 0; i_tag < initial_tags; i_tag++) { %>
 
     <a href="<%=ResultHelper.getTagQueryHref(request, tags[i_tag])%>"><%=tags[i_tag]%></a>&nbsp;
@@ -104,10 +112,21 @@
     <% for (int i_tag=Search.MAX_TAGS; i_tag < tags.length; i_tag++) { %>
     <a href="<%=ResultHelper.getTagQueryHref(request, tags[i_tag])%>"><%=tags[i_tag]%></a>&nbsp;
 <% } %>
-</div><a href="#" id="show_<%=i %>" class="show_tags">(more...)</a>
+</div>
 <%    }
     }    %>
-</div>
+</td></tr>
+	</table>
+
+	  <p class="info-links">
+    <%
+      if (showCached) {
+        %>(<a href="<%=request.getContextPath()%>/cached.jsp?<%=id%>"><i18n:message key="cached"/></a>) <%
+    }
+    %>
+	  </p>
+
+          <div class="clear"></div>
 
     <% if (hit.moreFromDupExcluded()) {
     String more =
