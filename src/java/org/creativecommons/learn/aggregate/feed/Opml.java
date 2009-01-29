@@ -120,7 +120,9 @@ public class Opml {
 						}
 					} // if we were able to retrieve the feed
 					else {
-						curator = feed.getCurator();
+						// XXX we were unable to retrieve the feed; bail out
+						continue;
+
 					}
 
 					// set the curator
