@@ -41,6 +41,7 @@
       </implementation>
    </extension>
 
+<!-- 
    <extension id="org.creativecommons.learn.licensesearcher"
               name="License URL Search Filter"
               point="org.apache.nutch.searcher.QueryFilter">
@@ -49,7 +50,8 @@
         <parameter name="fields" value="license"/>
       </implementation>
    </extension>
-
+-->
+ 
    <extension id="org.creativecommons.learn.curatorsearcher"
               name="Curator Search Filter"
               point="org.apache.nutch.searcher.QueryFilter">
