@@ -1,7 +1,7 @@
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <head>
-<title>ccLearn Universal Education Search</title>
+<title>DiscoverED</title>
 <link rel="icon" href="<%=request.getContextPath()%>/img/favicon.ico" type="image/x-icon"/>
 <link rel="shortcut icon" href="<%=request.getContextPath()%>/img/favicon.ico" type="image/x-icon"/>
 
