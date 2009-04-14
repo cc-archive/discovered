@@ -387,6 +387,7 @@ ul.tabs a {
     position: absolute;
     top: 0;
     right: 0;
-    background: url("../img/beta.png") no-repeat top right transparent;
-    
+    background: url("../img/beta.gif") no-repeat top right transparent;
+    width:284px;
+    height: 171px;
 }
