@@ -45,7 +45,8 @@ Ext.onReady(function() {
 </head>
 
 <body onLoad="queryfocus();">
-
+  <div id="beta-box">
+  </div>
   <div id="header-box">
     <div id="header" class="box">
       <div id="title">
