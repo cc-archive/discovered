@@ -382,3 +382,11 @@ ul.tabs a {
 .more_tags {
 	display: none;
 }
+
+#beta-box {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: url("../img/beta.png") no-repeat top right transparent;
+    
+}
