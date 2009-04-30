@@ -189,8 +189,9 @@ function queryfocus() { document.search.query.focus(); }
  <% if (clusteringAvailable) { %>
    <input id="clustbox" type="checkbox" name="clustering" value="yes" <% if (clustering.equals("yes")) { %>CHECKED<% } %>>
     <label for="clustbox"><i18n:message key="clustering"/></label>
- <% } %>
- <a href="http://wiki.creativecommons.org/Universal_Education_Search_FAQ">help</a>
+ <% } %><br/>
+  <a href="http://wiki.creativecommons.org/DiscoverEd_FAQ">learn more
+  about DiscoverEd</a>
  </form>
 
 <%--
@@ -234,18 +235,18 @@ function queryfocus() { document.search.query.focus(); }
 out.flush();
 %>
 
-
-<i18n:message key="hits">
-  <i18n:messageArg value="<%=new Long((end==0)?0:(start+1))%>"/>
-  <i18n:messageArg value="<%=new Long(end)%>"/>
-  <i18n:messageArg value="<%=new Long(hits.getTotal())%>"/>
-</i18n:message>
 </div>
 </div>
 
 <div class="box">
 
      <div id="results">
+
+<i18n:message key="hits">
+  <i18n:messageArg value="<%=new Long((end==0)?0:(start+1))%>"/>
+  <i18n:messageArg value="<%=new Long(end)%>"/>
+  <i18n:messageArg value="<%=new Long(hits.getTotal())%>"/>
+</i18n:message>
 
 <% if (clustering.equals("yes") && length != 0) { %>
 <table border=0 cellspacing="3" cellpadding="0">

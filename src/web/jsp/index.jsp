@@ -26,8 +26,9 @@
 <form name="search" action="<%=request.getContextPath()%>/search.jsp" method="get">
   <input type="hidden" name="lang" value="en"/>
   <input id="q" name="query" size="44"/>&#160;
-  <input id="qsubmit" type="submit" value="Search"/>
-  <a href="http://wiki.creativecommons.org/Universal_Education_Search_FAQ">help</a>
+  <input id="qsubmit" type="submit" value="Search"/><br/>
+  <a href="http://wiki.creativecommons.org/DiscoverEd_FAQ">learn more
+  about DiscoverEd</a>
 </form>
 </div>
 </div>

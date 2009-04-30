@@ -51,7 +51,7 @@
 			           <span><%=curators[i_cur]%></span><br/>
 			        <% } 
 		            } else { %>
-						<a href="http://wiki.creativecommons.org/UES:Missing_Metadata">
+						<a href="http://wiki.creativecommons.org/DiscoverEd:_Missing_Metadata">
 							<img src="<%=request.getContextPath()%>/icons/help.png" alt="help" border="0"/>
 						</a>
 					<% } %>
@@ -65,7 +65,7 @@
 			  			</a>
 			        <% 	}
 		            }else { %>
-						<a href="http://wiki.creativecommons.org/UES:Missing_Metadata">
+						<a href="http://wiki.creativecommons.org/DiscoverEd:_Missing_Metadata">
 							<img src="<%=request.getContextPath()%>/icons/help.png" alt="help" border="0"/>
 						</a>
 					<% } %>
@@ -78,7 +78,7 @@
 						</a>
 					<% } 
 					} else { %>
-						<a href="http://wiki.creativecommons.org/UES:Missing_Metadata">
+						<a href="http://wiki.creativecommons.org/DiscoverEd:_Missing_Metadata">
 							<img src="<%=request.getContextPath()%>/icons/help.png" alt="help" border="0" />
 						</a>
 					<% } %>
@@ -95,7 +95,7 @@
 	      <img alt="more like this" src="<%=request.getContextPath()%>/img/magnifier.png" border="0" />
 	    </a>
 	<% } else { %>
-		<a href="http://wiki.creativecommons.org/UES:Missing_Metadata">
+		<a href="http://wiki.creativecommons.org/DiscoverEd:_Missing_Metadata">
 		<img src="<%=request.getContextPath()%>/icons/help.png" alt="help" border="0" />
 		</a>
 	<% } %>
