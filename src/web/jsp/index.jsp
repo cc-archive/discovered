@@ -27,7 +27,7 @@
   <input type="hidden" name="lang" value="en"/>
   <input id="q" name="query" size="44"/>&#160;
   <input id="qsubmit" type="submit" value="Search"/><br/>
-  <a href="http://wiki.creativecommons.org/DiscoverEd_FAQ">learn more
+  <a href="http://wiki.creativecommons.org/DiscoverEd_FAQ">Learn more
   about DiscoverEd</a>
 </form>
 </div>
