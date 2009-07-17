@@ -53,6 +53,7 @@ Ext.onReady(function() {
 	<h1><a href="<%=request.getContextPath()%>/">
 	    <img src="<%=request.getContextPath()%>/img/oes-logo.png" border="0"/>
 	</a></h1>
+	<h2>Discover the Universe of Open Educational Resources</h2>
       </div>
     </div>
   </div>

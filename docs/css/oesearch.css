@@ -121,6 +121,10 @@ iframe {
   font-size: 3em;
 }
 
+#title h2 {
+  font-size: 1em;
+}
+
 #language_selector {
 		 display: inline;
 }
