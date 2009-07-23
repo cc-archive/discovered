@@ -192,7 +192,9 @@ function queryfocus() { document.search.query.focus(); }
  <% } %><br/>
   <a href="http://wiki.creativecommons.org/DiscoverEd_FAQ">Learn more
   about DiscoverEd</a><br/>
-  <a href="mailto:cclearn-info@creativecommons.org">Please give us feedback!</a>
+  <a href="mailto:cclearn-info@creativecommons.org">Please give us
+   feedback!</a><br/>
+  <a href="http://wiki.creativecommons.org/DiscoverEd_Disclaimer">Disclaimer</a>
  </form>
 
 <%--
