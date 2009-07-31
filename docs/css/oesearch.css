@@ -75,7 +75,7 @@ iframe {
 
 #header-box {
 	background: url('http://creativecommons.org/images/header-main-b.png') repeat-x bottom left ;
-	height: 80px;
+	height: 100px;
 	overflow:hidden;
 }
 #header {
@@ -87,7 +87,7 @@ iframe {
 	position: relative;
 	float: left;
 	width: 480px;
-	height: 60px;
+	height: 80px;
 	/*border-right: 1px solid #b0b0b0;*/
 	margin-right: 0px;
 	margin-bottom: 15px;
@@ -123,6 +123,8 @@ iframe {
 
 #title h2 {
   font-size: 1em;
+  color: white;
+  padding-left: 64px;
 }
 
 #language_selector {
@@ -392,6 +394,6 @@ ul.tabs a {
     top: 0;
     right: 0;
     background: url("../img/beta.gif") no-repeat top right transparent;
-    width:284px;
-    height: 171px;
+    width: 180px;
+    height: 85px;
 }
