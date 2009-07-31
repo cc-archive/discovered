@@ -305,19 +305,10 @@ out.flush();
 if ((hits.totalIsExact() && end < hits.getTotal()) // more hits to show
     || (!hits.totalIsExact() && (hits.getLength() > start+hitsPerPage))) {
 %>
-    <form name="next" action="./search.jsp" method="get">
-    <input type="hidden" name="query" value="<%=htmlQueryString%>">
-    <input type="hidden" name="lang" value="<%=queryLang%>">
-    <input type="hidden" name="start" value="<%=end%>">
-    <input type="hidden" name="hitsPerPage" value="<%=hitsPerPage%>">
-    <input type="hidden" name="hitsPerSite" value="<%=hitsPerSite%>">
-    <input type="hidden" name="clustering" value="<%=clustering%>">
-    <input type="submit" value="<i18n:message key="next"/>">
-<% if (sort != null) { %>
-    <input type="hidden" name="sort" value="<%=sort%>">
-    <input type="hidden" name="reverse" value="<%=reverse%>">
-<% } %>
-    </form>
+   <a name="next"
+      href="./search.jsp?query=<%=htmlQueryString%>&lang=<%=queryLang%>&start=<%=end%>&hitsPerPage=<%=hitsPerPage%>&hitsPerSite=<%=hitsPerSite%>&clustering=<%=clustering%>"
+   ><i18n:message key="next"/></a>
+
 <%
     }
 
@@ -328,18 +319,11 @@ if ((hits.totalIsExact() && end < hits.getTotal()) // more hits to show
 <%
 if ((!hits.totalIsExact() && (hits.getLength() <= start+hitsPerPage))) {
 %>
-    <form name="showAllHits" action="./search.jsp" method="get">
-    <input type="hidden" name="query" value="<%=htmlQueryString%>">
-    <input type="hidden" name="lang" value="<%=queryLang%>">
-    <input type="hidden" name="hitsPerPage" value="<%=hitsPerPage%>">
-    <input type="hidden" name="hitsPerSite" value="0">
-    <input type="hidden" name="clustering" value="<%=clustering%>">
-    <input type="submit" value="<i18n:message key="showAllHits"/>">
-<% if (sort != null) { %>
-    <input type="hidden" name="sort" value="<%=sort%>">
-    <input type="hidden" name="reverse" value="<%=reverse%>">
-<% } %>
-    </form>
+    <a name="showAllHits"
+       href="./search.jsp?query=<%=htmlQueryString%>&lang=<%=queryLang%>&hitsPerPage=<%=hitsPerPage%>&hitsPerSite=0&clustering=<%=clustering%>">
+       <i18n:message key="showAllHits"/>
+    </a>
+
 <%
     }
 %>
