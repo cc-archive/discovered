@@ -2,8 +2,12 @@ package org.creativecommons.learn.feed;
 
 import org.creativecommons.learn.TripleStore;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ResIterator;
+
 public class DumpStore {
 
+	
 	/**
 	 * @param args
 	 * @throws ClassNotFoundException 
@@ -20,10 +24,19 @@ public class DumpStore {
 			System.exit(1);
 		}
 		
+		// determine the output format, defaulting to RDF/XML
 		String format = (args.length > 0) ? args[0] : "RDF/XML";
 		
-		TripleStore.get().getModel().write(System.out, format);
-
+		// get an iterator for all subjects
+		Model store = TripleStore.get().getModel();
+		ResIterator subjects = store.listSubjects();
+		
+		// write out one subject at a time
+		while (subjects.hasNext()) {
+			store.query(new SubjectSelector(subjects.nextResource())).
+					write(System.out, format);
+		}
+		
 	}
 
 }
