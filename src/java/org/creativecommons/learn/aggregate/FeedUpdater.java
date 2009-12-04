@@ -37,7 +37,11 @@ public class FeedUpdater {
 
 		new_entry.getSources().add(feed);
 		new_entry.setTitle(entry.getTitle());
-		new_entry.setDescription(entry.getDescription().getValue());
+		
+		if (new_entry.getDescription() != null) 
+			new_entry.setDescription(entry.getDescription().getValue());
+		else
+			new_entry.setDescription("");
 
 		for (Object category : entry.getCategories()) {
 			new_entry.getSubjects().add(((SyndCategory) category).getName());
