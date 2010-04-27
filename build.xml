@@ -22,12 +22,16 @@
   <property file="${user.home}/build.properties" />
   <property file="${basedir}/build.properties" />
   <property file="${basedir}/default.properties" />
+  <property file="${basedir}/ded/build.properties" />
   <property name="test.junit.output.format" value="plain"/>
  
   <!-- the normal classpath -->
   <path id="classpath">
     <pathelement location="${build.classes}"/>
     <fileset dir="${lib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${ded.lib.dir}">
       <include name="*.jar" />
     </fileset>
   </path>
@@ -97,7 +101,6 @@
   <target name="compile-core" depends="init">
     <javac 
      encoding="${build.encoding}" 
-     srcdir="${src.dir}"
      includes="org/creativecommons/learn/**/*.java org/apache/nutch/**/*.java"
      destdir="${build.classes}"
      debug="${javac.debug}"
@@ -106,6 +109,8 @@
      source="${javac.version}"
      deprecation="${javac.deprecation}">
       <classpath refid="classpath"/>
+      <src path="${src.dir}"/>
+      <src path="${ded.src.dir}"/>
     </javac>    
   </target>
 
