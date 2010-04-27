@@ -13,6 +13,8 @@ import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.crawl.Inlinks;
 import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.IndexingFilter;
+import org.apache.nutch.indexer.NutchDocument;
+import org.apache.nutch.indexer.lucene.LuceneWriter;
 import org.apache.nutch.parse.Parse;
 import org.creativecommons.learn.oercloud.Feed;
 import org.creativecommons.learn.oercloud.Resource;
@@ -51,7 +53,21 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 	}
 
-	public Document filter(Document doc, Parse parse, Text url,
+
+	@Override
+	public void addIndexBackendOptions(Configuration conf) {
+
+		// Define the curator and feed fields
+		LuceneWriter.addFieldOptions(Search.CURATOR_INDEX_FIELD, LuceneWriter.STORE.YES,
+				LuceneWriter.INDEX.UNTOKENIZED, conf);
+
+		LuceneWriter.addFieldOptions(Search.FEED_FIELD, LuceneWriter.STORE.YES,
+				LuceneWriter.INDEX.UNTOKENIZED, conf);
+
+	} // addIndexBackendOptions
+
+	@Override
+	public NutchDocument filter(NutchDocument doc, Parse parse, Text url,
 			CrawlDatum datum, Inlinks inlinks) throws IndexingException {
 
 		try {
@@ -67,19 +83,20 @@ public class TripleStoreIndexer implements IndexingFilter {
 					url.toString()));
 
 		} catch (NotFoundException e) {
-			LOG.warn("Could not find " + url.toString() + " in the Triple Store.");
+			LOG.warn("Could not find " + url.toString()
+					+ " in the Triple Store.");
 			e.printStackTrace();
 		} catch (Exception e) {
 			LOG.error("An error occured while indexing " + url.toString());
 			e.printStackTrace();
 		}
-		
+
 		// Return the document
 		return doc;
 
 	} // public Document filter
 
-	private void indexTriples(Document doc, Text url) {
+	private void indexTriples(NutchDocument doc, Text url) {
 		Model m;
 		try {
 			m = TripleStore.get().getModel();
@@ -110,14 +127,12 @@ public class TripleStoreIndexer implements IndexingFilter {
 		qe.close();
 	}
 
-	private void indexSources(Document document, Resource resource) {
+	private void indexSources(NutchDocument doc, Resource resource) {
 
 		for (Feed source : resource.getSources()) {
 
-			Field sourceField = new Field(Search.FEED_FIELD, source.getUrl(),
-					Field.Store.YES, Field.Index.TOKENIZED);
-			sourceField.setBoost(Search.FEED_BOOST);
-			document.add(sourceField);
+			// add the feed URL to the resource 
+			doc.add(Search.FEED_FIELD, source.getUrl());
 
 			// if this feed has curator information attached, index it as well
 			String curator_url = "";
@@ -125,10 +140,8 @@ public class TripleStoreIndexer implements IndexingFilter {
 				curator_url = source.getCurator().getUrl();
 			}
 
-			Field curator = new Field(Search.CURATOR_INDEX_FIELD, curator_url,
-					Field.Store.YES, Field.Index.UN_TOKENIZED);
-			curator.setBoost(Search.CURATOR_BOOST);
-			document.add(curator);
+			// LuceneWriter.add(doc, curator);
+			doc.add(Search.CURATOR_INDEX_FIELD, curator_url);
 		}
 	}
 
@@ -149,9 +162,10 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 	} // collapseResource
 
-	private void indexStatement(Document doc, RDFNode pred_node,
+	private void indexStatement(NutchDocument doc, RDFNode pred_node,
 			RDFNode obj_node) {
-		Field.Index tokenized = Field.Index.UN_TOKENIZED;
+		
+		Field.Index tokenized = Field.Index.NOT_ANALYZED;
 
 		// index a single statement
 		String predicate = pred_node.toString();
@@ -166,7 +180,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 		// process the object...
 		if (obj_node.isLiteral()) {
 			object = ((Literal) obj_node).getValue().toString();
-			tokenized = Field.Index.TOKENIZED;
+			tokenized = Field.Index.ANALYZED;
 		}
 
 		// add the field to the document
@@ -175,7 +189,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 		LOG.debug("Adding (" + predicate + ", " + object + ").");
 
-		doc.add(statementField);
+		LuceneWriter.add(doc, statementField);
 	}
 
 	public void setConf(Configuration conf) {
