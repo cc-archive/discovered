@@ -62,7 +62,6 @@ public class CCIndexingFilter implements IndexingFilter {
 
       // add the entire license as cc:license=xxx
       addFeature(doc, "license=" + licenseUrl);
-      addField(doc, "license", licenseUrl);
 
       // index license attributes extracted of the license url
       addUrlFeatures(doc, licenseUrl);
