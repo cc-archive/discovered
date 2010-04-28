@@ -46,9 +46,11 @@
 
 	<target name="cc_test" depends="compile-core">
 	    <junit>
+	        <formatter type="plain" usefile="false"/>
 	        <classpath refid="test.classpath"/>
+            <test name="org.creativecommons.learn.Test" />
 	        <batchtest>
-	            <fileset dir="ded/src/java/org/creativecommons/" includes="**/Test.java" />
+	            <formatter type="brief" usefile="false" />
 	        </batchtest>
 	    </junit>
 	</target>
