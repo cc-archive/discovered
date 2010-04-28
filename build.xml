@@ -223,6 +223,9 @@
 				<include name="dom4j*.jar" />
 
       </lib>
+      <lib dir="${ded.lib.dir}">
+        <include name="*.jar"/>
+      </lib>
       <lib dir="${build.dir}">
 	      <include name="${final.name}.jar"/>
       </lib>
