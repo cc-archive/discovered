@@ -185,8 +185,13 @@
     	<outputproperty name="indent" value="yes"/>
     </xslt>
     <war destfile="${build.dir}/${final.name}.war"
-    	webxml="${web.src.dir}/web.xml">
+	 webxml="${web.src.dir}/web.xml"
+	 duplicate="preserve">
+
+      <fileset dir="${ded.web.custom.dir}"/>
+      <fileset dir="${ded.web.src.dir}/jsp"/>
       <fileset dir="${web.src.dir}/jsp"/>
+
       <zipfileset dir="${docs.src}" includes="cc/*.html"/>
       <zipfileset dir="${docs.src}" includes="include/*.html"/>
       <zipfileset dir="${build.docs}" includes="*/include/*.html"/>

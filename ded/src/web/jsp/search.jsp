@@ -32,7 +32,13 @@
   import="org.apache.nutch.clustering.*"
   import="org.apache.hadoop.conf.*"
   import="org.apache.nutch.util.NutchConfiguration"
+
+  import="org.creativecommons.learn.ResultHelper"
+  import="org.creativecommons.learn.Search"
+  import="org.creativecommons.learn.oercloud.*"
+
 %><%!
+  
   /**
    * Number of hits to retrieve and cluster if clustering extension is available
    * and clustering is on. By default, 100. Configurable via nutch-conf.xml.
@@ -261,6 +267,8 @@ out.flush();
       title = url;
     }
     %>
+
+       <%@ include file="cclearn.jsp" %>
     <b><a href="<%=url%>"><%=Entities.encode(title)%></a></b>
     <%@ include file="more.jsp" %>
     <% if (!"".equals(summary) && showSummary) { %>
