@@ -208,10 +208,7 @@
         <include name="commons-logging-*.jar"/>
         <include name="log4j-*.jar"/>
 				
-				<include name="mysql-*.jar" />
-				<include name="jena*.jar" />
 				<include name="xercesImpl.jar" />
-				<include name="arq*.jar" />
 				<include name="stax-*.jar" />
 				<include name="wstx-*.jar" />
 				<include name="xml-*.jar" />
