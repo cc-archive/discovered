@@ -50,16 +50,23 @@
 %>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/i18n" prefix="i18n" %>
 <i18n:bundle baseName="org.nutch.jsp.anchors"/>
+<html lang="<%= language %>">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<head>
+<title>Nutch: <i18n:message key="title"/></title>
+<jsp:include page="/include/style.html"/>
+<base href="<%= base + "/" + language + "/" %>">
+</head>
 
-<%@ include file="./header.jsp" %>
+<body>
 
 <jsp:include page="<%= language + \"/include/header.html\"%>"/>
 
-<h2>
+<h3>
 <i18n:message key="page">
   <i18n:messageArg value="<%=details.getValue(\"url\")%>"/>
 </i18n:message>
-</h2>
+</h3>
 
 <h3><i18n:message key="anchors"/></h3>
 
@@ -73,9 +80,7 @@
 <% } %>
 </ul>
      
-</div></div>
+<jsp:include page="/include/footer.html"/>
 
-<jsp:include page="/footer.jsp"/>
-
-</body>
+</body>     
 </html>

@@ -18,25 +18,11 @@
   session="false"
   import="java.io.*"
   import="java.util.*"
+%><%
+  String language =
+    ResourceBundle.getBundle("org.nutch.jsp.search", request.getLocale())
+    .getLocale().getLanguage();
+  String requestURI = HttpUtils.getRequestURL(request).toString();
+  String base = requestURI.substring(0, requestURI.lastIndexOf('/'));
+  response.sendRedirect(language + "/");
 %>
-<%@ include file="/header.jsp" %>
-
-<div id="searchui" class="box">
-<div id="search-base">
-<form name="search" action="<%=request.getContextPath()%>/search.jsp" method="get">
-  <input type="hidden" name="lang" value="en"/>
-  <input id="q" name="query" size="44"/>&#160;
-  <input id="qsubmit" type="submit" value="Search"/><br/>
-  <a href="http://wiki.creativecommons.org/DiscoverEd_FAQ">Learn more
-  about DiscoverEd</a><br/>
-  <a href="mailto:cclearn-info@creativecommons.org">Please give us
-  feedback!</a><br/>
-  <a href="http://wiki.creativecommons.org/DiscoverEd_Disclaimer">Disclaimer</a>
-</form>
-</div>
-</div>
-
-<jsp:include page="/footer.jsp"/>
-
-</body>
-</html>

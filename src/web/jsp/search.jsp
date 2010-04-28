@@ -37,8 +37,7 @@
   import="org.creativecommons.learn.Search"
   import="org.creativecommons.learn.oercloud.*"
 
-%><%
-  Configuration nutchConf = NutchConfiguration.get(application);
+%><%!
   
   /**
    * Number of hits to retrieve and cluster if clustering extension is available
@@ -146,7 +145,7 @@
     .getLocale().getLanguage();
   String requestURI = HttpUtils.getRequestURL(request).toString();
   String base = requestURI.substring(0, requestURI.lastIndexOf('/'));
-  String rss = "./opensearch?query="+htmlQueryString
+  String rss = "../opensearch?query="+htmlQueryString
     +"&hitsPerSite="+hitsPerSite+"&lang="+queryLang+params;
 %><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <%
@@ -166,7 +165,6 @@
 <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
 <link rel="alternate" type="application/rss+xml" title="RSS" href="<%=rss%>"/>
 <jsp:include page="include/style.html"/>
-<jsp:include page="cc/style.html"/>
 <base href="<%= base  + "/" + language %>/">
 <script type="text/javascript">
 <!--
@@ -179,22 +177,16 @@ function queryfocus() { document.search.query.focus(); }
 
 <jsp:include page="<%= language + \"/include/header.html\"%>"/>
 
-<div id="searchui" class="box">
- <div id="search-base">
- <form name="search" action="./search.jsp" method="get">
- <input id="q" name="query" size=44 value="<%=htmlQueryString%>">
+ <form name="search" action="../search.jsp" method="get">
+ <input name="query" size=44 value="<%=htmlQueryString%>">
  <input type="hidden" name="hitsPerPage" value="<%=hitsPerPage%>">
  <input type="hidden" name="lang" value="<%=language%>">
- <input type="submit" id="qsubmit" value="<i18n:message key="search"/>">
+ <input type="submit" value="<i18n:message key="search"/>">
  <% if (clusteringAvailable) { %>
    <input id="clustbox" type="checkbox" name="clustering" value="yes" <% if (clustering.equals("yes")) { %>CHECKED<% } %>>
     <label for="clustbox"><i18n:message key="clustering"/></label>
- <% } %><br/>
-  <a href="http://wiki.creativecommons.org/DiscoverEd_FAQ">Learn more
-  about DiscoverEd</a><br/>
-  <a href="mailto:cclearn-info@creativecommons.org">Please give us
-   feedback!</a><br/>
-  <a href="http://wiki.creativecommons.org/DiscoverEd_Disclaimer">Disclaimer</a>
+ <% } %>
+ <a href="help.html">help</a>
  </form>
 
 <%--
@@ -233,23 +225,18 @@ function queryfocus() { document.search.query.focus(); }
    bean.LOG.info("total hits: " + hits.getTotal());
 %>
 
-<%
-// be responsive
-out.flush();
-%>
-
-</div>
-</div>
-
-<div class="box">
-
-     <div id="results">
-
 <i18n:message key="hits">
   <i18n:messageArg value="<%=new Long((end==0)?0:(start+1))%>"/>
   <i18n:messageArg value="<%=new Long(end)%>"/>
   <i18n:messageArg value="<%=new Long(hits.getTotal())%>"/>
 </i18n:message>
+
+<%
+// be responsive
+out.flush();
+%>
+
+<br><br>
 
 <% if (clustering.equals("yes") && length != 0) { %>
 <table border=0 cellspacing="3" cellpadding="0">
@@ -270,7 +257,7 @@ out.flush();
     String summary = summaries[i].toHtml(true);
     String caching = detail.getValue("cache");
     boolean showSummary = true;
-    boolean showCached = false;
+    boolean showCached = true;
     if (caching != null) {
       showSummary = !caching.equals(Nutch.CACHING_FORBIDDEN_ALL);
       showCached = !caching.equals(Nutch.CACHING_FORBIDDEN_NONE);
@@ -280,9 +267,32 @@ out.flush();
       title = url;
     }
     %>
-     
-       <%@ include file="cclearn.jsp" %>
 
+       <%@ include file="cclearn.jsp" %>
+    <b><a href="<%=url%>"><%=Entities.encode(title)%></a></b>
+    <%@ include file="more.jsp" %>
+    <% if (!"".equals(summary) && showSummary) { %>
+    <br><%=summary%>
+    <% } %>
+    <br>
+    <span class="url"><%=Entities.encode(url)%></span>
+    <%
+      if (showCached) {
+        %>(<a href="../cached.jsp?<%=id%>"><i18n:message key="cached"/></a>) <%
+    }
+    %>
+    (<a href="../explain.jsp?<%=id%>&query=<%=URLEncoder.encode(queryString, "UTF-8")%>&lang=<%=queryLang%>"><i18n:message key="explain"/></a>)
+    (<a href="../anchors.jsp?<%=id%>"><i18n:message key="anchors"/></a>)
+    <% if (hit.moreFromDupExcluded()) {
+    String more =
+    "query="+URLEncoder.encode("site:"+hit.getDedupValue()+" "+queryString, "UTF8")
+    +params+"&hitsPerSite="+0
+    +"&lang="+queryLang
+    +"&clustering="+clustering;%>
+    (<a href="../search.jsp?<%=more%>"><i18n:message key="moreFrom"/>
+     <%=hit.getDedupValue()%></a>)
+    <% } %>
+    <br><br>
 <% } %>
 
 <% if (clustering.equals("yes") && length != 0) { %>
@@ -305,32 +315,51 @@ out.flush();
 if ((hits.totalIsExact() && end < hits.getTotal()) // more hits to show
     || (!hits.totalIsExact() && (hits.getLength() > start+hitsPerPage))) {
 %>
-   <a name="next"
-      href="./search.jsp?query=<%=htmlQueryString%>&lang=<%=queryLang%>&start=<%=end%>&hitsPerPage=<%=hitsPerPage%>&hitsPerSite=<%=hitsPerSite%>&clustering=<%=clustering%>"
-   ><i18n:message key="next"/></a>
-
+    <form name="next" action="../search.jsp" method="get">
+    <input type="hidden" name="query" value="<%=htmlQueryString%>">
+    <input type="hidden" name="lang" value="<%=queryLang%>">
+    <input type="hidden" name="start" value="<%=end%>">
+    <input type="hidden" name="hitsPerPage" value="<%=hitsPerPage%>">
+    <input type="hidden" name="hitsPerSite" value="<%=hitsPerSite%>">
+    <input type="hidden" name="clustering" value="<%=clustering%>">
+    <input type="submit" value="<i18n:message key="next"/>">
+<% if (sort != null) { %>
+    <input type="hidden" name="sort" value="<%=sort%>">
+    <input type="hidden" name="reverse" value="<%=reverse%>">
+<% } %>
+    </form>
 <%
     }
 
-%>
-<a id="rss-results" href="<%=rss%>">
-	<img src="./img/feed-icon-14x14.png" border="0"/>
-</a>
-<%
 if ((!hits.totalIsExact() && (hits.getLength() <= start+hitsPerPage))) {
 %>
-    <a name="showAllHits"
-       href="./search.jsp?query=<%=htmlQueryString%>&lang=<%=queryLang%>&hitsPerPage=<%=hitsPerPage%>&hitsPerSite=0&clustering=<%=clustering%>">
-       <i18n:message key="showAllHits"/>
-    </a>
-
+    <form name="showAllHits" action="../search.jsp" method="get">
+    <input type="hidden" name="query" value="<%=htmlQueryString%>">
+    <input type="hidden" name="lang" value="<%=queryLang%>">
+    <input type="hidden" name="hitsPerPage" value="<%=hitsPerPage%>">
+    <input type="hidden" name="hitsPerSite" value="0">
+    <input type="hidden" name="clustering" value="<%=clustering%>">
+    <input type="submit" value="<i18n:message key="showAllHits"/>">
+<% if (sort != null) { %>
+    <input type="hidden" name="sort" value="<%=sort%>">
+    <input type="hidden" name="reverse" value="<%=reverse%>">
+<% } %>
+    </form>
 <%
     }
 %>
 
-</div></div>
+<table bgcolor="3333ff" align="right">
+<tr><td bgcolor="ff9900"><a href="<%=rss%>"><font color="ffffff"><b>RSS</b>
+</font></a></td></tr>
+</table>
 
-<jsp:include page="/footer.jsp"/>
+<p>
+<a href="http://wiki.apache.org/nutch/FAQ">
+<img border="0" src="../img/poweredbynutch_01.gif">
+</a>
+
+<jsp:include page="/include/footer.html"/>
 
 </body>
 </html>
