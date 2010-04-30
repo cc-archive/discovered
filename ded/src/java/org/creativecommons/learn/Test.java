@@ -11,14 +11,14 @@ public class Test extends TestCase {
 	/** A unit test that shows adding a curator works. */
 	public void testAddCurator() {
 		/* Like, did it get saved? */
-		TripleStore store = TripleStore.createTemporary();
+		TripleStore store = TripleStore.get();
 
 		/* We have no Curators at the start */
 		Collection<Curator> available_curators = store.load(org.creativecommons.learn.oercloud.Curator.class);
 		assertEquals(available_curators.size(), 0);
 
 		/* Create a Curator, as if we were using the command line */
-		org.creativecommons.learn.feed.AddCurator.addCuratorWithUrlAndName("http://mit.edu/", "MIT");
+		org.creativecommons.learn.feed.AddCurator.addCuratorWithNameAndUrl("MIT", "http://mit.edu/");
 
 		available_curators = store.load(org.creativecommons.learn.oercloud.Curator.class);
 		assertEquals(available_curators.size(), 1);
