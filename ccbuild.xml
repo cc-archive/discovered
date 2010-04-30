@@ -40,9 +40,18 @@
 			<arg path="${cclearn.crawl.seeddir}" />
 			<arg value="-depth" />
 			<arg value="1" />
-			
 			<env key="JAVA_HOME" value="${java.home}" />
 		</exec>
 	</target>
-	
+
+	<target name="cc_test" depends="compile-core">
+	    <junit>
+	        <formatter type="plain" usefile="false"/>
+	        <classpath refid="test.classpath"/>
+            <test name="org.creativecommons.learn.Test" />
+	        <batchtest>
+	            <formatter type="brief" usefile="false" />
+	        </batchtest>
+	    </junit>
+	</target>
 </project>

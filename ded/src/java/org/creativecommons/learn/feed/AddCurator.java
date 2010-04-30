@@ -20,12 +20,13 @@ public class AddCurator {
 
 		String name = args[0];
 		String url = args[1];
+		addCuratorWithNameAndUrl(name, url);
+	}
 		
+	public static void addCuratorWithNameAndUrl(String name, String url) {
 		Curator new_curator = new Curator(url);
 		new_curator.setName(name);
-		
 		TripleStore.get().save(new_curator);
-						
 	}
 
 }
