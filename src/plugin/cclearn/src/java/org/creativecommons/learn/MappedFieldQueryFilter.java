@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.creativecommons.learn.search;
+package org.creativecommons.learn;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.lucene.index.Term;
