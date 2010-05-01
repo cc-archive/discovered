@@ -11,7 +11,7 @@ public class AddFeed {
 	 */
 	public static void main(String[] args) {
 
-		if (args.length < 2) {
+		if (args.length < 3) {
 			System.out.println("AddFeed");
 			System.out
 					.println("usage: AddFeed [feed_type] [feed_url] [curator_url]");
@@ -26,10 +26,8 @@ public class AddFeed {
 		Feed new_feed = new Feed(url);
 		new_feed.setFeedType(type);
 
-		if (args.length > 2) {
-			Curator curator = new Curator(args[2]);
-			new_feed.setCurator(curator);
-		}
+        Curator curator = new Curator(args[2]);
+        new_feed.setCurator(curator);
 
 		TripleStore.get().save(new_feed);
 		
