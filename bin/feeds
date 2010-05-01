@@ -1,6 +1,6 @@
 #!/bin/bash
 # 
-# The Nutch command script
+# The DiscoverEd feed management script
 #
 # Environment Variables
 #
@@ -11,6 +11,17 @@
 #
 #   NUTCH_OPTS      Extra Java runtime options.
 #
+
+# --- We assume this is run from a checkout, so make sure 
+# --- the Nutch job has been generated before proceeding.
+
+if [ ! -f "$NUTCH_HOME/build/nutch-1.1.job" ]; then
+   echo "Please run 'ant' to build Nutch and DiscoverEd before managing feeds."
+   exit 1
+fi
+
+# ---
+
 cygwin=false
 case "`uname`" in
 CYGWIN*) cygwin=true;;

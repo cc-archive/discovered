@@ -268,31 +268,8 @@ out.flush();
     }
     %>
 
-       <%@ include file="cclearn.jsp" %>
-    <b><a href="<%=url%>"><%=Entities.encode(title)%></a></b>
-    <%@ include file="more.jsp" %>
-    <% if (!"".equals(summary) && showSummary) { %>
-    <br><%=summary%>
-    <% } %>
-    <br>
-    <span class="url"><%=Entities.encode(url)%></span>
-    <%
-      if (showCached) {
-        %>(<a href="../cached.jsp?<%=id%>"><i18n:message key="cached"/></a>) <%
-    }
-    %>
-    (<a href="../explain.jsp?<%=id%>&query=<%=URLEncoder.encode(queryString, "UTF-8")%>&lang=<%=queryLang%>"><i18n:message key="explain"/></a>)
-    (<a href="../anchors.jsp?<%=id%>"><i18n:message key="anchors"/></a>)
-    <% if (hit.moreFromDupExcluded()) {
-    String more =
-    "query="+URLEncoder.encode("site:"+hit.getDedupValue()+" "+queryString, "UTF8")
-    +params+"&hitsPerSite="+0
-    +"&lang="+queryLang
-    +"&clustering="+clustering;%>
-    (<a href="../search.jsp?<%=more%>"><i18n:message key="moreFrom"/>
-     <%=hit.getDedupValue()%></a>)
-    <% } %>
-    <br><br>
+    <%@ include file="result.jsp" %>
+
 <% } %>
 
 <% if (clustering.equals("yes") && length != 0) { %>
