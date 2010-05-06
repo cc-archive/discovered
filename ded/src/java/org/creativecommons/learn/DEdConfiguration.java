@@ -14,10 +14,14 @@ public class DEdConfiguration {
   public static Properties load() {
 	  
       Properties props = new Properties();
-      try{
-	  props.load(ClassLoader.getSystemResourceAsStream("discovered.properties"));
+      try {
+    	  InputStream bob = ClassLoader.getSystemResourceAsStream("conf/discovered.properties");
+    	  if (bob == null) {
+    		  throw new RuntimeException();
+    	  }
+    	  props.load(bob);
       } catch (java.io.IOException e) {
-	  e.printStackTrace();
+    	  e.printStackTrace();
       }
 
       return props;
