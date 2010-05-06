@@ -13,8 +13,7 @@ public class AddFeed {
 
 		if (args.length < 2) {
 			System.out.println("AddFeed");
-			System.out
-					.println("usage: AddFeed [feed_type] [feed_url] [curator_url]");
+			System.out.println("usage: AddFeed [feed_type] [feed_url] [curator_url]");
 			System.out.println();
 
 			System.exit(1);
@@ -22,17 +21,19 @@ public class AddFeed {
 
 		String type = args[0];
 		String url = args[1];
-
-		Feed new_feed = new Feed(url);
-		new_feed.setFeedType(type);
-
-		if (args.length > 2) {
-			Curator curator = new Curator(args[2]);
-			new_feed.setCurator(curator);
-		}
-
-		TripleStore.get().save(new_feed);
+		String curator = args[2];
+		
+		addFeed(type, url, curator);
 		
 	}
-
+	
+	public static void addFeed(String type, String url, String curator) {
+		
+		Feed feed = new Feed(url);
+		feed.setFeedType(type);
+		feed.setCurator(new Curator(curator)); // It would be nice if this validated whether the curator exists.
+		TripleStore.get().save(feed);
+		
+	}
+	
 }

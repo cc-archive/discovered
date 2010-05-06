@@ -141,5 +141,9 @@ public class TripleStore {
 	public Resource saveDeep(Object bean) {
 		return saver.saveDeep(bean);
 	}
+	
+	public static void deleteSingleton() {
+		instance = null;
+	}
 
 } // TripleStore

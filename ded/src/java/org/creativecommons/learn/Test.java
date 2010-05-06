@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.Collection;
 
 import org.creativecommons.learn.oercloud.Curator;
+import org.creativecommons.learn.oercloud.Feed;
 
 import thewebsemantic.NotFoundException;
 import junit.framework.*;
@@ -15,6 +16,8 @@ public class Test extends TestCase {
 	
 	public void setUp () throws SQLException {
 
+		TripleStore.deleteSingleton();
+		
 		// Create a database
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/", "root", "aewo4Fen");
 		Statement statement = connection.createStatement();
@@ -56,6 +59,29 @@ public class Test extends TestCase {
 		assertEquals(curator.getUrl(), "http://mit.edu/");
 	}
 
+	/** A unit test that shows adding a curator works. */
+	public void testAddFeed() {
+		
+		this.testAddCurator();
+		
+		TripleStore store = TripleStore.get();
+
+		/* We have no Feeds at the start */
+		Collection<Feed> available_feeds = store.load(org.creativecommons.learn.oercloud.Feed.class);
+		assertEquals(0, available_feeds.size());
+
+		/* Create a Feed, as if we were using the command line */
+		org.creativecommons.learn.feed.AddFeed.addFeed("rss", "http://ocw.nd.edu/courselist/rss", "http://ocw.nd.edu/");
+
+		available_feeds = store.load(org.creativecommons.learn.oercloud.Feed.class);
+		assertEquals(1, available_feeds.size());
+		
+		/* Make sure we saved it correctly */
+		Feed feed = available_feeds.iterator().next();
+		assertEquals(feed.getCurator().getUrl(), "http://ocw.nd.edu/");
+		assertEquals(feed.getFeedType(), "rss");
+		assertEquals(feed.getUrl(), "http://ocw.nd.edu/courselist/rss");
+	}
 		
     public void testIntegration()
     {
