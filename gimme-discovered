@@ -1,0 +1,50 @@
+#!/bin/bash
+set -e
+set +x
+
+# Get the code
+cd /tmp/
+#git clone git://gitorious.org/discovered/repo.git discovered
+git clone ~/cc/ded discovered
+cd discovered
+ant # will take ~30 seconds
+ant war 
+
+# Install the service into tomcat
+#sudo rm -rf /var/lib/tomcat*/webapps/ROOT.war
+#sudo cp build/nutch*.war /var/lib/tomcat*/webapps/
+#sudo service tomcat6 restart # Restart tomcat. This might work
+
+# Set up a database
+echo "Type your mysql root password here"
+echo 'DROP DATABASE IF EXISTS discovered; CREATE DATABASE discovered; GRANT ALL ON discovered.* TO discovered@localhost' | mysql -uroot -p
+
+# Add a curator
+./bin/feeds addcurator "Notre Dame OpenCourseWare" http://ocw.nd.edu/
+
+# Add a feed
+./bin/feeds addfeed rss http://ocw.nd.edu/courselist/rss http://ocw.nd.edu/
+
+# Check that all is well.
+./bin/feeds listfeeds
+
+# Do an aggregation
+./bin/feeds aggregate
+
+mkdir seed
+
+# Create a seed file that Nutch can use when it crawls the web
+./bin/feeds seed > seed/urls
+
+echo "The seed file has this many lines:"
+wc -l seed/urls
+
+# For testing, let's try using nutch directly
+./bin/nutch crawl seed -dir crawl -depth 1 
+
+#ant -f dedbuild.xml crawl
+
+echo "We expect to see at least one hit for the string 'crime'"
+
+# Query the search engine
+./bin/nutch org.apache.nutch.searcher.NutchBean crime
