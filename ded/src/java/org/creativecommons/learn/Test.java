@@ -1,16 +1,38 @@
 package org.creativecommons.learn;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 
 import org.creativecommons.learn.oercloud.Curator;
 
 import thewebsemantic.NotFoundException;
 import junit.framework.*;
+
 public class Test extends TestCase {
+	
+	public void setUp () throws SQLException {
+		// Create a database
+		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/", "root", "aewo4Fen");
+		Statement statement = connection.createStatement();
+		
+		String sql = "CREATE DATABASE test";
+		statement.executeUpdate(sql);
+	}
+	
+	public void tearDown () throws SQLException {
+		// Create a database
+		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/", "root", "aewo4Fen");
+		Statement statement = connection.createStatement();
+		
+		String sql = "DROP DATABASE test";
+		statement.executeUpdate(sql);
+	}
 	
 	/** A unit test that shows adding a curator works. */
 	public void testAddCurator() {
-		/* Like, did it get saved? */
 		TripleStore store = TripleStore.get();
 
 		/* We have no Curators at the start */
