@@ -2,10 +2,15 @@
 set -e
 set +x
 
-# Get the code
 cd /tmp/
-git clone git://gitorious.org/discovered/repo.git discovered
-#git clone ~/cc/ded discovered
+
+# Get the code
+if [ -n "$1" ]; then
+    git clone $1 discovered
+else
+    git clone git://gitorious.org/discovered/repo.git discovered
+fi
+
 cd discovered
 ant # will take ~30 seconds
 ant war 
