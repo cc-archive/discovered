@@ -4,8 +4,8 @@ set +x
 
 # Get the code
 cd /tmp/
-#git clone git://gitorious.org/discovered/repo.git discovered
-git clone ~/cc/ded discovered
+git clone git://gitorious.org/discovered/repo.git discovered
+#git clone ~/cc/ded discovered
 cd discovered
 ant # will take ~30 seconds
 ant war 
