@@ -101,7 +101,7 @@ if [ "$NUTCH_HEAPSIZE" != "" ]; then
 fi
 
 # CLASSPATH initially contains $NUTCH_CONF_DIR, or defaults to $NUTCH_HOME/conf
-CLASSPATH=${NUTCH_CONF_DIR:=$NUTCH_HOME/conf}:/usr/share/java/mysql-connector-java.jar
+CLASSPATH=${NUTCH_CONF_DIR:=$NUTCH_HOME/conf}
 CLASSPATH=${CLASSPATH}:$JAVA_HOME/lib/tools.jar
 
 # so that filenames w/ spaces are handled correctly in loops below
@@ -136,6 +136,11 @@ fi
 
 # add libs to CLASSPATH
 for f in $NUTCH_HOME/lib/*.jar; do
+  CLASSPATH=${CLASSPATH}:$f;
+done
+
+# add ded libs to CLASSPATH
+for f in $NUTCH_HOME/ded/lib/*.jar; do
   CLASSPATH=${CLASSPATH}:$f;
 done
 

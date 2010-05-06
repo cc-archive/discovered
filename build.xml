@@ -165,6 +165,8 @@
       <zipfileset dir="${conf.dir}" excludes="*.template,hadoop*.*"/>
       <zipfileset dir="${lib.dir}" prefix="lib"
                   includes="**/*.jar" excludes="hadoop-*.jar"/>
+      <zipfileset dir="${ded.lib.dir}" prefix="lib"
+                  includes="**/*.jar" />
       <zipfileset dir="${build.plugins}" prefix="plugins"/>
 			<zipfileset dir="${src.dir}" includes="**/*.rdf" />
     </jar>
