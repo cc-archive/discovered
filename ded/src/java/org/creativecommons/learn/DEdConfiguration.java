@@ -1,6 +1,7 @@
 package org.creativecommons.learn;
 
 // JDK imports
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
