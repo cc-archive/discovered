@@ -1,1 +1,1 @@
-echo drop database oercloud  | mysql -uroot  ; echo create database oercloud | mysql -uroot ; ant   -buildfile ccbuild.xml cc_test
+echo drop database oercloud  | mysql -uroot  ; echo create database oercloud | mysql -uroot ; ant   -buildfile dedbuild.xml cc_test
