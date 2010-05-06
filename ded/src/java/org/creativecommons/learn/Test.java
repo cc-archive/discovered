@@ -14,11 +14,16 @@ import junit.framework.*;
 public class Test extends TestCase {
 	
 	public void setUp () throws SQLException {
+
 		// Create a database
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/", "root", "aewo4Fen");
 		Statement statement = connection.createStatement();
 		
-		String sql = "CREATE DATABASE test";
+		statement.executeUpdate("GRANT ALL ON oercloud.* TO discovered");
+		
+		tearDown();
+		
+		String sql = "CREATE DATABASE oercloud";
 		statement.executeUpdate(sql);
 	}
 	
@@ -27,7 +32,7 @@ public class Test extends TestCase {
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/", "root", "aewo4Fen");
 		Statement statement = connection.createStatement();
 		
-		String sql = "DROP DATABASE test";
+		String sql = "DROP DATABASE IF EXISTS oercloud";
 		statement.executeUpdate(sql);
 	}
 	
@@ -37,13 +42,13 @@ public class Test extends TestCase {
 
 		/* We have no Curators at the start */
 		Collection<Curator> available_curators = store.load(org.creativecommons.learn.oercloud.Curator.class);
-		assertEquals(available_curators.size(), 0);
+		assertEquals(0, available_curators.size());
 
 		/* Create a Curator, as if we were using the command line */
 		org.creativecommons.learn.feed.AddCurator.addCuratorWithNameAndUrl("MIT", "http://mit.edu/");
 
 		available_curators = store.load(org.creativecommons.learn.oercloud.Curator.class);
-		assertEquals(available_curators.size(), 1);
+		assertEquals(1, available_curators.size());
 		
 		/* Make sure we saved it correctly */
 		Curator curator = available_curators.iterator().next();
