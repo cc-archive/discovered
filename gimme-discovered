@@ -1,34 +1,36 @@
 #!/bin/bash
-set -e
 set +x
 
 cd /tmp/
 
-ROOT_PASS="aewo4Fen"
+DED_DIR=/var/lib/discovered
+MYSQL_ROOT_PASS="aewo4Fen"
 
 # Move the old directory out of the way
-if [ -d "/tmp/discovered" ]; then
-    mv /tmp/discovered /tmp/discovered.$(date +%s)
+if [ -d "$DED_DIR" ]; then
+    echo "Oops, it looks like you already have a directory called $DED_DIR. To do a fresh install, move that directory, or remove it, then re-run this script."
+    exit 1
 fi
+
+sudo mkdir $DED_DIR
+sudo chown $USER $DED_DIR
+cd $DED_DIR
 
 # Get the code
 if [ -n "$1" ]; then
-    git clone $1 discovered
+    git clone $1 src
 else
-    git clone git://gitorious.org/discovered/repo.git discovered
+    git clone git://gitorious.org/discovered/repo.git src
 fi
 
-cd discovered
+cd src
+
+# Build
 ant # will take ~30 seconds
 ant war 
 
-# Install the service into tomcat
-#sudo rm -rf /var/lib/tomcat*/webapps/ROOT.war
-#sudo cp build/nutch*.war /var/lib/tomcat*/webapps/
-#sudo service tomcat6 restart # Restart tomcat. This might work
-
 # Set up a database
-echo 'DROP DATABASE IF EXISTS discovered; CREATE DATABASE discovered; GRANT ALL ON discovered.* TO discovered@localhost' | mysql -uroot -p"$ROOT_PASS"
+echo 'DROP DATABASE IF EXISTS discovered; CREATE DATABASE discovered; GRANT ALL ON discovered.* TO discovered@localhost' | mysql -uroot -p"$MYSQL_ROOT_PASS"
 
 # Add a curator
 ./bin/feeds addcurator "Notre Dame OpenCourseWare" http://ocw.nd.edu/
@@ -67,3 +69,21 @@ echo "We expect to see at least one hit for the string 'crime'"
 
 # Query the search engine
 ./bin/nutch org.apache.nutch.searcher.NutchBean crime
+
+cd ..
+
+# Get tomcat, install it into this directory
+wget http://mirror.olnevhost.net/pub/apache/tomcat/tomcat-6/v6.0.26/bin/apache-tomcat-6.0.26.tar.gz
+tar xvf apache-tomcat*
+cd apache-tomcat-6.0.26/
+
+# Remove the default webapp
+rm -rf webapps/ROOT
+
+# Install our webapp
+cp -v $DED_DIR/build/nutch*.war webapps/ROOT.war
+
+# Start tomcat
+bin/catalina.sh start
+
+firefox "http://localhost:8080/search.jsp?query=crime"
