@@ -7,7 +7,7 @@
 
 <property>
   <name>searcher.dir</name>
-  <value>crawl</value>
+  <value>/home/rafpaf/cc/ded/crawl</value>
   <description>
   Path to root of crawl.  This directory is searched (in
   order) for either the file search-servers.txt, containing a list of
