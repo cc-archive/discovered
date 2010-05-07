@@ -11,7 +11,7 @@ public class AddFeed {
 	 */
 	public static void main(String[] args) {
 
-		if (args.length < 2) {
+		if (args.length < 3) {
 			System.out.println("AddFeed");
 			System.out.println("usage: AddFeed [feed_type] [feed_url] [curator_url]");
 			System.out.println();
