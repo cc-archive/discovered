@@ -64,4 +64,8 @@ public class Curator {
 		return null;
 	}
 	
+	public String getSource() {
+		return "http://creativecommons.org/#site-configuration";
+	}
+	
 }

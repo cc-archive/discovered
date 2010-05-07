@@ -16,7 +16,7 @@ public class Test extends TestCase {
 	
 	public void setUp () throws SQLException {
 
-		TripleStore.deleteSingleton();
+		QuadStore.deleteSingleton();
 		
 		// Create a database
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/", "root", "aewo4Fen");
@@ -26,22 +26,23 @@ public class Test extends TestCase {
 		
 		tearDown();
 		
-		String sql = "CREATE DATABASE oercloud";
+		String sql = "CREATE DATABASE discovered";
 		statement.executeUpdate(sql);
 	}
 	
 	public void tearDown () throws SQLException {
+		
 		// Create a database
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/", "root", "aewo4Fen");
 		Statement statement = connection.createStatement();
 		
-		String sql = "DROP DATABASE IF EXISTS oercloud";
+		String sql = "DROP DATABASE IF EXISTS discovered";
 		statement.executeUpdate(sql);
 	}
 	
 	/** A unit test that shows adding a curator works. */
 	public void testAddCurator() {
-		TripleStore store = TripleStore.get();
+		QuadStore store = QuadStore.get("http://creativecommons.org/#site-configuration");
 
 		/* We have no Curators at the start */
 		Collection<Curator> available_curators = store.load(org.creativecommons.learn.oercloud.Curator.class);
@@ -55,6 +56,7 @@ public class Test extends TestCase {
 		
 		/* Make sure we saved it correctly */
 		Curator curator = available_curators.iterator().next();
+		assertEquals(curator.getSource(), "http://creativecommons.org/#site-configuration"); // FIXME
 		assertEquals(curator.getName(), "MIT");
 		assertEquals(curator.getUrl(), "http://mit.edu/");
 	}

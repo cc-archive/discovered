@@ -57,20 +57,19 @@ public class TripleStore {
 
 	private void open() throws ClassNotFoundException {
 
-		Properties config = DEdConfiguration.load();
-
 		// register the JDBC driver
-		Class.forName(config.getProperty("rdfstore.db.driver")); // Load the Driver
+		Class.forName("com.mysql.jdbc.Driver"); // Load the Driver
 
 		// Create the Jena database connection
 		this.conn = new DBConnection(
-				config.getProperty("rdfstore.db.url"), 
-				config.getProperty("rdfstore.db.user"), 
-				config.getProperty("rdfstore.db.password"),
-				config.getProperty("rdfstore.db.type"));
+				"jdbc:mysql://localhost/discovered?autoReconnect=true", 
+				"discovered", 
+				"",
+				"mysql");
 		this.maker = ModelFactory.createModelRDBMaker(conn);
 
 	} // open
+
 
 	private void close() {
 		try {
