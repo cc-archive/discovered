@@ -4,6 +4,8 @@ set +x
 
 cd /tmp/
 
+ROOT_PASS="aewo4Fen"
+
 # Get the code
 if [ -n "$1" ]; then
     git clone $1 discovered
@@ -21,8 +23,7 @@ ant war
 #sudo service tomcat6 restart # Restart tomcat. This might work
 
 # Set up a database
-echo "Type your mysql root password here"
-echo 'DROP DATABASE IF EXISTS discovered; CREATE DATABASE discovered; GRANT ALL ON discovered.* TO discovered@localhost' | mysql -uroot -p
+echo 'DROP DATABASE IF EXISTS discovered; CREATE DATABASE discovered; GRANT ALL ON discovered.* TO discovered@localhost' | mysql -uroot -p"$ROOT_PASS"
 
 # Add a curator
 ./bin/feeds addcurator "Notre Dame OpenCourseWare" http://ocw.nd.edu/
