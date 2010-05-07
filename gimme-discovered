@@ -31,15 +31,22 @@ MYSQL_ROOT_PASSWORD="aewo4Fen"
 # "searcher.dir" property in conf/nutch-site.xml.template
 DISCOVER_ED_ROOT=/var/lib/discovered 
 
+function die() {
+    echo 
+    echo "--- Error ---------------"
+    echo $1
+    echo "-------------------------"
+    exit 1
+}
+
 # Set up a database
-echo 'DROP DATABASE IF EXISTS discovered; CREATE DATABASE discovered; GRANT ALL ON discovered.* TO discovered@localhost' | mysql -uroot -p"$MYSQL_ROOT_PASSWORD" || echo 'Please edit this script, and change the MYSQL_ROOT_PASSWORD variable to your MySQL root password.' && exit 1
+echo 'DROP DATABASE IF EXISTS discovered; CREATE DATABASE discovered; GRANT ALL ON discovered.* TO discovered@localhost' | mysql -uroot -p"$MYSQL_ROOT_PASSWORD" || die 'Please edit this script, and change the MYSQL_ROOT_PASSWORD variable to your MySQL root password.'
 
 cd /tmp/
 
 # Move the old directory out of the way
 if [ -d "$DISCOVER_ED_ROOT" ]; then
-    echo "Oops, it looks like you already have a directory called $DISCOVER_ED_ROOT. To do a fresh install, move that directory, or remove it, then re-run this script."
-    exit 1
+    die "Oops, it looks like you already have a directory called $DISCOVER_ED_ROOT. To do a fresh install, move that directory, or remove it, then re-run this script."
 fi
 
 sudo mkdir $DISCOVER_ED_ROOT
@@ -111,5 +118,9 @@ cp -v $DISCOVER_ED_ROOT/src/build/nutch*.war webapps/ROOT.war
 
 # Start tomcat
 bin/catalina.sh start
+
+# FIXME: Detect whether a tomcat instance has started and complain if so.
+# FIXME: Or use an exotic port number that's unlikely to conflict with an
+# already-running tomcat instance.
 
 firefox "http://localhost:8080/search.jsp?query=crime"
