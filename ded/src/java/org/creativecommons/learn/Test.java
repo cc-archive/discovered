@@ -16,8 +16,6 @@ public class Test extends TestCase {
 	
 	public void setUp () throws SQLException {
 
-		QuadStore.deleteSingleton();
-		
 		// Create a database
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/", "root", "aewo4Fen");
 		Statement statement = connection.createStatement();
@@ -41,9 +39,10 @@ public class Test extends TestCase {
 	}
 	
 	/** A unit test that shows adding a curator works. */
-	public void testAddCurator() {
-		QuadStore store = QuadStore.get("http://creativecommons.org/#site-configuration");
-
+	public QuadStore testAddCurator() {
+		
+		QuadStore store = new QuadStore("http://creativecommons.org/#site-configuration");
+		
 		/* We have no Curators at the start */
 		Collection<Curator> available_curators = store.load(org.creativecommons.learn.oercloud.Curator.class);
 		assertEquals(0, available_curators.size());
@@ -59,14 +58,22 @@ public class Test extends TestCase {
 		assertEquals(curator.getSource(), "http://creativecommons.org/#site-configuration"); // FIXME
 		assertEquals(curator.getName(), "MIT");
 		assertEquals(curator.getUrl(), "http://mit.edu/");
+		
+		/* Get a different QuadStore */
+		QuadStore aDifferentStore = new QuadStore("http://example.com/#site-configuration");
+		
+		/* We have no Curators in the different QuadStore */
+		Collection<Curator> aDifferentListOfCurators = aDifferentStore.load(org.creativecommons.learn.oercloud.Curator.class);
+		assertEquals(0, aDifferentListOfCurators.size());
+		
+		return store;
+
 	}
 
 	/** A unit test that shows adding a curator works. */
 	public void testAddFeed() {
 		
-		this.testAddCurator();
-		
-		TripleStore store = TripleStore.get();
+		QuadStore store = this.testAddCurator(); 
 
 		/* We have no Feeds at the start */
 		Collection<Feed> available_feeds = store.load(org.creativecommons.learn.oercloud.Feed.class);
@@ -80,6 +87,7 @@ public class Test extends TestCase {
 		
 		/* Make sure we saved it correctly */
 		Feed feed = available_feeds.iterator().next();
+		assertEquals(feed.getSource(), "http://creativecommons.org/#site-configuration"); // FIXME
 		assertEquals(feed.getCurator().getUrl(), "http://ocw.nd.edu/");
 		assertEquals(feed.getFeedType(), "rss");
 		assertEquals(feed.getUrl(), "http://ocw.nd.edu/courselist/rss");
