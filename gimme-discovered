@@ -51,7 +51,15 @@ echo "The seed file has this many lines:"
 wc -l seed/urls
 
 # For testing, let's try using nutch directly
-./bin/nutch crawl seed -dir crawl -depth 1 
+#./bin/nutch crawl seed -dir crawl -depth 1 
+
+./bin/nutch inject crawl/crawldb seed
+./bin/nutch generate crawl/crawldb crawl/segments
+./bin/nutch fetch crawl/segments/*
+./bin/nutch updatedb crawl/crawldb crawl/segments/*
+./bin/nutch invertlinks crawl/linkdb crawl/segments/*
+./bin/nutch index crawl/indexes crawl/crawldb crawl/linkdb crawl/segments/*
+./bin/nutch org.apache.nutch.searcher.NutchBean crime
 
 #ant -f dedbuild.xml crawl
 
