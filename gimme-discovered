@@ -6,6 +6,11 @@ cd /tmp/
 
 ROOT_PASS="aewo4Fen"
 
+# Move the old directory out of the way
+if [ -d "/tmp/discovered" ]; then
+    mv /tmp/discovered /tmp/discovered.$(date +%s)
+fi
+
 # Get the code
 if [ -n "$1" ]; then
     git clone $1 discovered
