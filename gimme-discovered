@@ -24,6 +24,16 @@ function die() {
     exit 1
 }
 
+dependencies="ant mysql git wc wget"
+failed_dependencies=""
+for dep in $dependencies; do
+    which $dep > /dev/null || failed_dependencies="$failed_dependencies $dep"
+done
+
+if [ "${failed_dependencies}" ]; then
+    die "DiscoverEd requires the following missing dependencies:" "${failed_dependencies}" "You might be able to install this/these with a package manager like apt-get or yum."
+fi
+
 stty -echo
 read -p "MySQL root password: " MYSQL_ROOT_PASSWORD; echo
 stty echo
