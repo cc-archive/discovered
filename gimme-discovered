@@ -55,13 +55,12 @@ wc -l seed/urls
 # For testing, let's try using nutch directly
 #./bin/nutch crawl seed -dir crawl -depth 1 
 
-./bin/nutch inject crawl/crawldb seed
-./bin/nutch generate crawl/crawldb crawl/segments
-./bin/nutch fetch crawl/segments/*
-./bin/nutch updatedb crawl/crawldb crawl/segments/*
-./bin/nutch invertlinks crawl/linkdb crawl/segments/*
-./bin/nutch index crawl/indexes crawl/crawldb crawl/linkdb crawl/segments/*
-./bin/nutch org.apache.nutch.searcher.NutchBean crime
+./bin/nutch inject $DED_DIR/crawl/crawldb seed
+./bin/nutch generate $DED_DIR/crawl/crawldb $DED_DIR/crawl/segments
+./bin/nutch fetch $DED_DIR/crawl/segments/*
+./bin/nutch updatedb $DED_DIR/crawl/crawldb $DED_DIR/crawl/segments/*
+./bin/nutch invertlinks $DED_DIR/crawl/linkdb $DED_DIR/crawl/segments/*
+./bin/nutch index $DED_DIR/crawl/indexes $DED_DIR/crawl/crawldb $DED_DIR/crawl/linkdb $DED_DIR/crawl/segments/*
 
 #ant -f dedbuild.xml crawl
 
@@ -70,18 +69,18 @@ echo "We expect to see at least one hit for the string 'crime'"
 # Query the search engine
 ./bin/nutch org.apache.nutch.searcher.NutchBean crime
 
-cd ..
+cd $DED_DIR
 
 # Get tomcat, install it into this directory
 wget http://mirror.olnevhost.net/pub/apache/tomcat/tomcat-6/v6.0.26/bin/apache-tomcat-6.0.26.tar.gz
-tar xvf apache-tomcat*
+tar xf apache-tomcat*
 cd apache-tomcat-6.0.26/
 
 # Remove the default webapp
 rm -rf webapps/ROOT
 
 # Install our webapp
-cp -v $DED_DIR/build/nutch*.war webapps/ROOT.war
+cp -v $DED_DIR/src/build/nutch*.war webapps/ROOT.war
 
 # Start tomcat
 bin/catalina.sh start
