@@ -203,9 +203,13 @@ elif [ "$COMMAND" = "dump" ] ; then
   CLASS=org.creativecommons.learn.feed.DumpStore
 elif [ "$COMMAND" = "seed" ] ; then
   CLASS=org.creativecommons.learn.feed.MakeSeed
+elif [ "$COMMAND" = "raffi" ] ; then
+  CLASS=org.creativecommons.learn.feed.RaffiTest
 else
   CLASS=$COMMAND
 fi
+
+echo $CLASSPATH
 
 # run it
 exec "$JAVA" $JAVA_HEAP_MAX $NUTCH_OPTS -classpath "$CLASSPATH" $CLASS "$@"

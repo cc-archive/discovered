@@ -9,6 +9,8 @@ import java.util.Collection;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
 
+import com.hp.hpl.jena.rdf.model.Model;
+
 import thewebsemantic.NotFoundException;
 import junit.framework.*;
 
@@ -30,7 +32,7 @@ public class Test extends TestCase {
 	
 	public void tearDown () throws SQLException {
 		
-		// Create a database
+		// Destroy the database
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/", "root", "aewo4Fen");
 		Statement statement = connection.createStatement();
 		
@@ -38,17 +40,24 @@ public class Test extends TestCase {
 		statement.executeUpdate(sql);
 	}
 	
-	/** A unit test that shows adding a curator works. */
-	public QuadStore testAddCurator() {
+	/** A unit test that shows adding a curator works. 
+	 * @throws SQLException 
+	 * @throws ClassNotFoundException */
+	public QuadStore testAddCurator() throws SQLException, ClassNotFoundException {
 		
-		QuadStore store = new QuadStore("http://creativecommons.org/#site-configuration");
+		String graphName = "http://creativecommons.org/#site-configuration";
+		QuadStore store = new QuadStore(graphName);
+		
+		Model model = store.getModel();
 		
 		/* We have no Curators at the start */
 		Collection<Curator> available_curators = store.load(org.creativecommons.learn.oercloud.Curator.class);
 		assertEquals(0, available_curators.size());
 
 		/* Create a Curator, as if we were using the command line */
-		org.creativecommons.learn.feed.AddCurator.addCuratorWithNameAndUrl("MIT", "http://mit.edu/");
+		String graphName2 = store.getGraph().getGraphName().toString();
+		assertEquals(graphName, graphName2);
+		org.creativecommons.learn.feed.AddCurator.addCurator(graphName, "MIT", "http://mit.edu/");
 
 		available_curators = store.load(org.creativecommons.learn.oercloud.Curator.class);
 		assertEquals(1, available_curators.size());
@@ -70,10 +79,12 @@ public class Test extends TestCase {
 
 	}
 
-	/** A unit test that shows adding a curator works. */
-	public void testAddFeed() {
+	/** A unit test that shows adding a curator works. 
+	 * @throws SQLException 
+	 * @throws ClassNotFoundException */
+	public void testAddFeed() throws SQLException, ClassNotFoundException {
 		
-		QuadStore store = this.testAddCurator(); 
+		QuadStore store = this.testAddCurator();
 
 		/* We have no Feeds at the start */
 		Collection<Feed> available_feeds = store.load(org.creativecommons.learn.oercloud.Feed.class);
@@ -102,5 +113,5 @@ public class Test extends TestCase {
     	// ...? 
         assertTrue( "TestExample", true );
     }
-
+    
 }
