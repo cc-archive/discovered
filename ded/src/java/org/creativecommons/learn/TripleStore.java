@@ -48,11 +48,13 @@ public class TripleStore {
 
 	public static TripleStore get() {
 
+		throw new RuntimeException("bad");
+/*		
 		if (instance == null) {
 			instance = new TripleStore();
 		}
 
-		return instance;
+		return instance;*/
 	}
 
 	private void open() throws ClassNotFoundException {

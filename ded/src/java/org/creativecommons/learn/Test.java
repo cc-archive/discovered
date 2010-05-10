@@ -43,7 +43,7 @@ public class Test extends TestCase {
 	/** A unit test that shows adding a curator works. 
 	 * @throws SQLException 
 	 * @throws ClassNotFoundException */
-	public QuadStore testAddCurator() throws SQLException, ClassNotFoundException {
+	public QuadStore addCurator() throws SQLException, ClassNotFoundException {
 		
 		String graphName = "http://creativecommons.org/#site-configuration";
 		QuadStore store = new QuadStore(graphName);
@@ -64,27 +64,35 @@ public class Test extends TestCase {
 		
 		/* Make sure we saved it correctly */
 		Curator curator = available_curators.iterator().next();
-		assertEquals(curator.getSource(), "http://creativecommons.org/#site-configuration"); // FIXME
 		assertEquals(curator.getName(), "MIT");
 		assertEquals(curator.getUrl(), "http://mit.edu/");
 		
 		/* Get a different QuadStore */
 		QuadStore aDifferentStore = new QuadStore("http://example.com/#site-configuration");
+		assertNotSame(aDifferentStore.getGraph().getGraphName().toString(), store.getGraph().getGraphName().toString());
 		
 		/* We have no Curators in the different QuadStore */
 		Collection<Curator> aDifferentListOfCurators = aDifferentStore.load(org.creativecommons.learn.oercloud.Curator.class);
 		assertEquals(0, aDifferentListOfCurators.size());
 		
+		Curator curator2 = aDifferentListOfCurators.iterator().next();
+		System.out.println(curator2.getName());
+		System.out.println(curator2.getUrl());
+		
 		return store;
 
 	}
-
+	
+	public void testAddCurator() throws SQLException, ClassNotFoundException {
+		this.addCurator();
+	}
+	
 	/** A unit test that shows adding a curator works. 
 	 * @throws SQLException 
 	 * @throws ClassNotFoundException */
 	public void testAddFeed() throws SQLException, ClassNotFoundException {
 		
-		QuadStore store = this.testAddCurator();
+		QuadStore store = this.addCurator();
 
 		/* We have no Feeds at the start */
 		Collection<Feed> available_feeds = store.load(org.creativecommons.learn.oercloud.Feed.class);
