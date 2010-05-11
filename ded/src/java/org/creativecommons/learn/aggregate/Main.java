@@ -83,8 +83,9 @@ public class Main {
     	
     	// set the update interval
     	// (one day)
-    	Calendar calendar = Calendar.getInstance();    	
-    	calendar.add(Calendar.DATE, -1);
+    	Calendar oneDayAgo = Calendar.getInstance();
+    	// Well, let's subtract a day.
+    	oneDayAgo.add(Calendar.DATE, -1);
     	
     	// get a list of all available feeds
     	Collection<Feed> all_feeds = QuadStore.getSiteConfigurationStore().loadDeep(Feed.class);
@@ -119,7 +120,7 @@ public class Main {
         	Date import_date = new Date();
 
         	// see if this feed needs to be re-imported
-            if (force || feed.getLastImport().before( calendar.getTime() )) {
+            if (force || feed.getLastImport().before( oneDayAgo.getTime() )) {
                 try {
                     // re-import necessary
                 	System.out.println("updating...");
