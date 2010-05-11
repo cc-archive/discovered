@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.Properties;
 
 import thewebsemantic.Bean2RDF;
 import thewebsemantic.Filler;
@@ -17,6 +16,8 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
 import com.hp.hpl.jena.rdf.model.Resource;
+
+import org.apache.hadoop.conf.Configuration;
 
 /**
  * 
@@ -57,17 +58,17 @@ public class TripleStore {
 
 	private void open() throws ClassNotFoundException {
 
-		Properties config = DEdConfiguration.load();
+	    Configuration config = DEdConfiguration.create();
 
 		// register the JDBC driver
-		Class.forName(config.getProperty("rdfstore.db.driver")); // Load the Driver
+		Class.forName(config.get("rdfstore.db.driver")); // Load the Driver
 
 		// Create the Jena database connection
 		this.conn = new DBConnection(
-				config.getProperty("rdfstore.db.url"), 
-				config.getProperty("rdfstore.db.user"), 
-				config.getProperty("rdfstore.db.password"),
-				config.getProperty("rdfstore.db.type"));
+				config.get("rdfstore.db.url"), 
+				config.get("rdfstore.db.user"), 
+				config.get("rdfstore.db.password"),
+				config.get("rdfstore.db.type"));
 		this.maker = ModelFactory.createModelRDBMaker(conn);
 
 	} // open
