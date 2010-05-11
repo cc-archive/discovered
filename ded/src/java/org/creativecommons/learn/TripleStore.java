@@ -33,10 +33,14 @@ public class TripleStore {
 	private RDF2Bean loader = null;
 	private Bean2RDF saver = null;
 
-	private TripleStore() {
-		// private constructor
+	public TripleStore(ModelMaker maker, IDBConnection connection) {
 		super();
-
+		this.maker = maker;
+		this.conn = connection;
+		this.init();
+	}
+	
+	private void init() {
 		try {
 			this.loader = new RDF2Bean(this.getModel());
 			this.saver = new Bean2RDF(this.getModel());
@@ -44,24 +48,26 @@ public class TripleStore {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+	}
+	
+	@SuppressWarnings("unused")
+	private TripleStore() {
+		// private constructor
+		super();
+		init();
 	}
 
 	public static TripleStore get() {
-
-		throw new RuntimeException("bad");
-/*		
-		if (instance == null) {
-			instance = new TripleStore();
-		}
-
-		return instance;*/
+		
+		throw new RuntimeException();
 	}
 
 	private void open() throws ClassNotFoundException {
 
 		// register the JDBC driver
 		Class.forName("com.mysql.jdbc.Driver"); // Load the Driver
-
+		if (true) {throw new RuntimeException("lollerskates");}
 		// Create the Jena database connection
 		this.conn = new DBConnection(
 				"jdbc:mysql://localhost/discovered?autoReconnect=true", 
@@ -83,6 +89,14 @@ public class TripleStore {
 		}
 
 	} // close
+	
+	public void setMaker(ModelMaker m) {
+		this.maker = m;
+	}
+	
+	public void setModel(Model m) {
+		this.model = m;
+	}
 
 	public Model getModel() throws ClassNotFoundException {
 

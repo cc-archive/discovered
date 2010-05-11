@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +33,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.VCARD;
+import com.mysql.jdbc.PreparedStatement;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
@@ -42,169 +45,44 @@ import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
  * @author nathan
  */
 public class QuadStore {
-
-	private IDBConnection conn = null;
-	private ModelMaker maker = null;
-	private Model model = null;
-
-	private RDF2Bean loader = null;
-	private Bean2RDF saver = null;
 	
-	private NamedGraph graph;
+	// lollerskates
+	// don't need it yet
+	// private HashMap<String, TripleStore> provenance2triplestore;
 	
-	private NamedGraphSet graphset;
-
-	public QuadStore(String graphName) throws SQLException {
-		
-		String url = "jdbc:mysql://localhost/discovered?autoReconnect=true", 
-			user = "discovered", 
-			pass = "";
-		
-		Connection connection = DriverManager.getConnection(url, user, pass);
-		
-		
-		if (graphset == null) {
-			graphset = new NamedGraphSetDB(connection);
-		}
-		
-		this.graph = graphset.createGraph(graphName);
-		// ^^ FIXME We don't enforce that this is a NEW graph name. Is that safe?
-		
-		try {
-			this.loader = new RDF2Bean(this.getModel());
-			this.saver = new Bean2RDF(this.getModel());
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private void close() {
-		try {
-			// Close the database connection
-			conn.close();
-		} catch (SQLException ex) {
-			Logger.getLogger(QuadStore.class.getName()).log(Level.SEVERE,
-					null, ex);
-		}
-
-	} // close
-
-	public Model getModel() throws ClassNotFoundException {
-
-		if (model == null) {
-			// create or open the default model
-			this.model = graphset.asJenaModel(this.graph.getGraphName().getURI());
-		}
-
-		return this.model;
-
-	} // getModel
-	
-	public void printCurators() {
-		Query sparql = QueryFactory.create(
-				"SELECT * WHERE { GRAPH ?graph { ?s ?p ?o } }");
-		QueryExecution qe = QueryExecutionFactory.create(
-				sparql, (Dataset) this.graphset);
+	public static String uri2database_name(String uri) {
+		/* FIXME: This is likely to give us conflicts */
+		int hash = Math.abs(uri.hashCode());
+		return "ded_" + hash;
 	}
 	
-	public NamedGraph getGraph() {
-		return this.graph;
-	}
-	
-	public void addACuratorAndPrint() {
-		/* Raffi is learning how to use this stuff. */
+	public static TripleStore uri2TripleStore(String uri) throws SQLException {
+		System.err.println("making triple store for " + uri);
+		/** FIXME:
+		 * One day, cache these in a HashMap.
+		 */
+		// Calculate the right database name to use.
+		String dbname = uri2database_name(uri);
 		
-		// some definitions
-		String personURI    = "http://mantinea/Diotima";
-		String givenName    = "Diotima";
-		String familyName   = "Mantinea";
-		String fullName     = givenName + " " + familyName;
-
-		// create an empty Model
-		Model model = ModelFactory.createDefaultModel();
-
-		// create the resource
-		//   and add the properties cascading style
-		Resource diotima
-		  = model.createResource(personURI)
-		         .addProperty(VCARD.FN, fullName)
-		         .addProperty(VCARD.N,
-		                      model.createResource()
-		                           .addProperty(VCARD.Given, givenName)
-		                           .addProperty(VCARD.Family, familyName));
+		// Make sure we have permission to use it
+		Connection root_connection = DriverManager.getConnection("jdbc:mysql://localhost/", "root", "aewo4Fen");
+		java.sql.Statement grant_statement = root_connection.createStatement();
+		grant_statement.executeUpdate("GRANT ALL ON " + dbname  + ".* TO discovered");
 		
-		StmtIterator iter = model.listStatements();
+		// Create the Jena database connection
+		DBConnection conn = new DBConnection(
+				"jdbc:mysql://localhost/" + dbname + "?autoReconnect=true", 
+				"discovered", 
+				"",
+				"mysql");
+		ModelMaker maker = ModelFactory.createModelRDBMaker(conn);
 		
-		while(iter.hasNext()) {
-			Statement stmt = iter.nextStatement();
-			Resource subject = stmt.getSubject();
-			Property predicate = stmt.getPredicate();
-			RDFNode object = stmt.getObject();
-			
-			System.out.print(subject.toString() +
-					" " + predicate.toString() + " ");
-			if (object instanceof Resource) {
-				System.out.print(object.toString());
-			}
-			else {
-				// object is a literal, which means it's just a string of characters
-				System.out.print(" \"" + object.toString() + "\"");
-			}
-			
-			System.out.println(" .");
-			
-		}
+		return new TripleStore(maker, conn);
 	}
 	
-	
-	
-
-	/* Delegate Methods */
-	/* **************** */
-
-	public boolean exists(Class<?> c, String id) {
-		return loader.exists(c, id);
-	}
-
-	public boolean exists(String uri) {
-		return loader.exists(uri);
-	}
-
-	public void fill(Object o, String propertyName) {
-		loader.fill(o, propertyName);
-	}
-
-	public Filler fill(Object o) {
-		return loader.fill(o);
-	}
-
-	public <T> T load(Class<T> c, String id) throws NotFoundException {
-		return loader.load(c, id);
-	}
-
-	public <T> Collection<T> load(Class<T> c) {
-		return loader.load(c);
-	}
-
-	public <T> T loadDeep(Class<T> c, String id) throws NotFoundException {
-		return loader.loadDeep(c, id);
-	}
-
-	public <T> Collection<T> loadDeep(Class<T> c) {
-		return loader.loadDeep(c);
-	}
-
-	public void delete(Object bean) {
-		saver.delete(bean);
-	}
-
-	public Resource save(Object bean) {
-		return saver.save(bean);
-	}
-
-	public Resource saveDeep(Object bean) {
-		return saver.saveDeep(bean);
+	@SuppressWarnings("unchecked")
+	public static List getAllKnownTripleStoreUris() {
+		return null;
 	}
 
 } // QuadStore

@@ -16,21 +16,20 @@ public class AddCurator {
 		
 		if (args.length < 2) {
 			System.out.println("AddCurator");
-			System.out.println("usage: AddCurator [source_uri] [curator_name] [url] ");
+			System.out.println("usage: AddCurator [curator_name] [url] ");
 			System.out.println();
 			
 			System.exit(1);
 		}
 
-		String graphName = args[0];
 		String name = args[1];
 		String url = args[2];
-		addCurator(graphName, name, url);
+		addCurator(name, url);
 	}
 		
-	public static void addCurator(String graphName, String name, String url) throws SQLException {
-		
-		QuadStore store = new QuadStore(graphName);
+	public static void addCurator(String name, String url) throws SQLException {
+		String graphName = "http://creativecommons.org/#site-configuration";
+		TripleStore store = QuadStore.uri2TripleStore(graphName);
 		
 		Curator new_curator = new Curator(url);
 		new_curator.setName(name);
