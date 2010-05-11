@@ -3,14 +3,16 @@ set +x
 
 # This script installs DiscoverEd, adds some sample data, and runs a test search.
 #
-# Check out these wiki articles for more information:
-# * http://wiki.creativecommons.org/DiscoverEd_Quickstart
-
+# For more information see <http://wiki.creativecommons.org/DiscoverEd_Quickstart>.
 # --------------------------------------------------------
 
 # If you change this directory, be sure to update the value of the
 # "searcher.dir" property in conf/nutch-site.xml.template
 DISCOVER_ED_ROOT=/var/lib/discovered 
+
+TOMCAT_HTTP_PORT=8472
+TOMCAT_SERVER_PORT=8006
+TOMCAT_REDIRECT_PORT=8444
 
 function die() {
     echo 
@@ -24,10 +26,17 @@ function die() {
     exit 1
 }
 
-dependencies="ant mysql git wc wget"
+dependencies="nc ant mysql git wc wget"
 failed_dependencies=""
 for dep in $dependencies; do
     which $dep > /dev/null || failed_dependencies="$failed_dependencies $dep"
+done
+
+# If this has exit code 1, then the port is closed
+for port in $TOMCAT_HTTP_PORT $TOMCAT_SERVER_PORT $TOMCAT_REDIRECT_PORT; do
+    if nc -z localhost $port; then
+        die "To run this quickstart, you'll need to make port $port available. Another process is using that port (most likely something previously launched by this script). You can also change the values of the TOMCAT*PORT variables in the script if you need."
+    fi
 done
 
 if [ "${failed_dependencies}" ]; then
@@ -63,10 +72,10 @@ else
     git clone git://gitorious.org/discovered/repo.git src
 fi
 
+cd src
+
 # At the moment, master isn't working.
 git checkout deploy_script
-
-cd src
 
 # Build
 ant -q # will take ~30 seconds
@@ -116,6 +125,11 @@ wget http://mirror.olnevhost.net/pub/apache/tomcat/tomcat-6/v6.0.26/bin/apache-t
 tar xf apache-tomcat*
 cd apache-tomcat-6.0.26/
 
+# Change the port numbers, so conflicts are less likely
+sed -i "s/\<8080\>/$TOMCAT_HTTP_PORT/g" conf/server.xml
+sed -i "s/\<8443\>/$TOMCAT_REDIRECT_PORT/g" conf/server.xml
+sed -i "s/\<8005\>/$TOMCAT_SERVER_PORT/g" conf/server.xml
+
 # Remove the default webapp
 rm -rf webapps/ROOT
 
@@ -129,4 +143,12 @@ bin/catalina.sh start
 # FIXME: Or use an exotic port number that's unlikely to conflict with an
 # already-running tomcat instance.
 
-firefox "http://localhost:8080/search.jsp?query=crime"
+echo "Waiting for Tomcat to start..."
+
+WAIT=20
+# Now, wait up to $WAIT seconds for Tomcat to start
+if nc -w $WAIT -z localhost $TOMCAT_HTTP_PORT; then
+	firefox "http://localhost:$TOMCAT_HTTP_PORT/search.jsp?query=crime"
+else
+	echo "Eek, Tomcat took more than $WAIT seconds to start. Try waiting a bit longer and visiting http://localhost:$TOMCAT_HTTP_PORT/search.jsp?query=crime in your web browser."
+fi
