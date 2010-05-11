@@ -174,5 +174,6 @@
 	<classpathentry kind="lib" path="ded/lib/jena.jar"/>
 	<classpathentry kind="lib" path="ded/lib/mysql-connector-java-5.1.6-bin.jar"/>
 	<classpathentry kind="lib" path="ded/lib/ng4j-0.9.3.jar"/>
+	<classpathentry kind="lib" path="ded/lib/jena-2.6.2.jar"/>
 	<classpathentry kind="output" path="tmp_build"/>
 </classpath>
