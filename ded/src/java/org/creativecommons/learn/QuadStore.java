@@ -92,8 +92,14 @@ public class QuadStore {
 	 * adds when configuring this DiscoverEd instance.
 	 * @throws SQLException 
 	 * */
-	public static TripleStore getSiteConfigurationStore() throws SQLException {
-		return QuadStore.uri2TripleStore(QuadStore.SITE_CONFIG_URI);
+	public static TripleStore getSiteConfigurationStore() {
+		try {
+			return QuadStore.uri2TripleStore(QuadStore.SITE_CONFIG_URI);
+		}
+		catch(SQLException e) {
+			throw new RuntimeException("Merde, there was an SQL error "
+					+ "while trying access the site configuration database.");
+		}
 	}
 
 } // QuadStore

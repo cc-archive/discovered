@@ -4,6 +4,8 @@
  */
 
 package org.creativecommons.learn.aggregate.feed;
+import org.creativecommons.learn.QuadStore;
+
 
 import java.io.IOException;
 import java.net.MalformedURLException;

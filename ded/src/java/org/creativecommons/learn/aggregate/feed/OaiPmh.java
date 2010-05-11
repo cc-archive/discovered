@@ -1,4 +1,6 @@
 package org.creativecommons.learn.aggregate.feed;
+import org.creativecommons.learn.QuadStore;
+
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;

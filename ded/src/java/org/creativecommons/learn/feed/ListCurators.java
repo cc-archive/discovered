@@ -1,4 +1,6 @@
 package org.creativecommons.learn.feed;
+import org.creativecommons.learn.QuadStore;
+
 
 import java.util.Collection;
 

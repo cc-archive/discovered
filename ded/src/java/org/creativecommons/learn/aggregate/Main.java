@@ -4,6 +4,8 @@
  */
 
 package org.creativecommons.learn.aggregate;
+import org.creativecommons.learn.QuadStore;
+
 
 import java.io.IOException;
 import java.util.Calendar;

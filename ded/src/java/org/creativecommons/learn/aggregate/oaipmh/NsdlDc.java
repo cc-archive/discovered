@@ -1,4 +1,6 @@
 package org.creativecommons.learn.aggregate.oaipmh;
+import org.creativecommons.learn.QuadStore;
+
 
 import org.creativecommons.learn.TripleStore;
 import org.creativecommons.learn.feed.IResourceExtractor;
