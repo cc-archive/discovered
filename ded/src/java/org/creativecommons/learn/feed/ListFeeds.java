@@ -13,7 +13,7 @@ public class ListFeeds {
 	public static void main(String[] args) {
 		
 		// list feeds we're tracking
-		Collection<Feed> feeds = TripleStore.get().load(Feed.class);
+		Collection<Feed> feeds = QuadStore.getSiteConfigurationStore().load(Feed.class);
 			
 		for (Feed f : feeds) {
 			System.out.println(f.getUrl() + " (" + f.getFeedType() + ", " + f.getCurator().getUrl() + " )");

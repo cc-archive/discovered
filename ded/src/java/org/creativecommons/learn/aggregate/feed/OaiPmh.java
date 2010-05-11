@@ -175,10 +175,10 @@ public class OaiPmh {
 
 					// create the OaiResource if needed
 					OaiResource resource = null;
-					if (TripleStore.get().exists(OaiResource.class,
+					if (QuadStore.getSiteConfigurationStore().exists(OaiResource.class,
 							header.getIdentifier())) {
 						try {
-							resource = TripleStore.get().load(
+							resource = QuadStore.getSiteConfigurationStore().load(
 									OaiResource.class, header.getIdentifier());
 						} catch (NotFoundException e) {
 						}
@@ -194,7 +194,7 @@ public class OaiPmh {
 					}
 					
 					try {
-						TripleStore.get().save(resource);
+						QuadStore.getSiteConfigurationStore().save(resource);
 					} catch (NullPointerException e) {
 						System.out.println(resource);
 						System.out.println(resource.getId());

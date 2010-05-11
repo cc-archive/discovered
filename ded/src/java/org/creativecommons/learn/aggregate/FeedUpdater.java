@@ -68,7 +68,7 @@ public class FeedUpdater {
 		List<String> contributors = dc_metadata.getContributors();
 		new_entry.getContributors().addAll(contributors);
 
-		TripleStore.get().saveDeep(new_entry);
+		QuadStore.getSiteConfigurationStore().saveDeep(new_entry);
 	} // addEntry
 
 	public void update(boolean force) throws IOException {

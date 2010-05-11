@@ -71,7 +71,7 @@ public class Feed {
 			+ "   }\n";
 		
 		try {
-			return Sparql.exec(TripleStore.get().getModel(), Resource.class, query);
+			return Sparql.exec(QuadStore.getSiteConfigurationStore().getModel(), Resource.class, query);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

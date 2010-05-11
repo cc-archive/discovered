@@ -79,7 +79,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 			// Follow special cases (curator)
 			LOG.debug("TripleStore: indexing special cases.");
-			this.indexSources(doc, TripleStore.get().loadDeep(Resource.class,
+			this.indexSources(doc, QuadStore.getSiteConfigurationStore().loadDeep(Resource.class,
 					url.toString()));
 
 		} catch (NotFoundException e) {
@@ -99,7 +99,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 	private void indexTriples(NutchDocument doc, Text url) {
 		Model m;
 		try {
-			m = TripleStore.get().getModel();
+			m = QuadStore.getSiteConfigurationStore().getModel();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			LOG.error("Unable to get model; " + e.toString());

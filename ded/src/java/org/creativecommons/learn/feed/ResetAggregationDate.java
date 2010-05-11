@@ -26,7 +26,7 @@ public class ResetAggregationDate {
 		
 		Feed feed = null;
 		try {
-			feed = TripleStore.get().load(Feed.class, feed_url);
+			feed = QuadStore.getSiteConfigurationStore().load(Feed.class, feed_url);
 		} catch (NotFoundException e) {
 			
 			System.out.println("Feed " + feed_url + " not found.");
@@ -35,7 +35,7 @@ public class ResetAggregationDate {
 
 		feed.setLastImport(new Date(0));
 				
-		TripleStore.get().save(feed);
+		QuadStore.getSiteConfigurationStore().save(feed);
 						
 	}
 

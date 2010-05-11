@@ -26,12 +26,12 @@ public class SetCurator {
 
 		Feed feed;
 		try {
-			feed = TripleStore.get().load(Feed.class, feed_url);
+			feed = QuadStore.getSiteConfigurationStore().load(Feed.class, feed_url);
 			Curator curator = new Curator(curator_url);
 
 			feed.setCurator(curator);
 			
-			TripleStore.get().save(feed);
+			QuadStore.getSiteConfigurationStore().save(feed);
 		} catch (NotFoundException e) {
 
 			System.out.println("Feed (" + feed_url + ") not found.");

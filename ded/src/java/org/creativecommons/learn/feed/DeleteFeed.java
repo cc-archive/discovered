@@ -24,14 +24,14 @@ public class DeleteFeed {
 		String url = args[0];
 		
 		//  make sure the feed exists
-		if (!(TripleStore.get().exists(Feed.class, url))) {			
+		if (!(QuadStore.getSiteConfigurationStore().exists(Feed.class, url))) {			
 			System.out.println("Feed does not exist");
 			System.exit(1);
 		}
 		
 		try {
-			TripleStore.get().delete(
-					TripleStore.get().load(Feed.class, url)
+			QuadStore.getSiteConfigurationStore().delete(
+					QuadStore.getSiteConfigurationStore().load(Feed.class, url)
 					);
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block

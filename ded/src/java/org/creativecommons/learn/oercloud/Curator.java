@@ -55,7 +55,7 @@ public class Curator {
 			+ "   }\n";
 		
 		try {
-			return Sparql.exec(TripleStore.get().getModel(), Feed.class, query);
+			return Sparql.exec(QuadStore.getSiteConfigurationStore().getModel(), Feed.class, query);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

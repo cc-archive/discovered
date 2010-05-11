@@ -85,7 +85,7 @@ public class Main {
     	calendar.add(Calendar.DATE, -1);
     	
     	// get a list of all available feeds
-    	Collection<Feed> all_feeds = TripleStore.get().loadDeep(Feed.class);
+    	Collection<Feed> all_feeds = QuadStore.getSiteConfigurationStore().loadDeep(Feed.class);
     	
     	// filter by curator if necessary
     	if (line.hasOption("curator")) {
@@ -127,7 +127,7 @@ public class Main {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
                     feed.setLastImport(import_date);
-                    TripleStore.get().save(feed);
+                    QuadStore.getSiteConfigurationStore().save(feed);
                 }
             }
             

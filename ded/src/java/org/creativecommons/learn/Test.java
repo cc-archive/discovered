@@ -119,6 +119,10 @@ public class Test extends TestCase {
 		assertEquals(feed.getFeedType(), "rss");
 		assertEquals(feed.getUrl(), "http://ocw.nd.edu/courselist/rss");
 	}
+	
+	// List feeds
+	// List curators
+	// Aggregate
 		
     public void testIntegration()
     {

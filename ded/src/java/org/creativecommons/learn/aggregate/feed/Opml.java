@@ -91,7 +91,7 @@ public class Opml {
 					
 					// check if this feed already exists
 					System.out.println(feed_url);
-					if (TripleStore.get().exists(Feed.class, feed_url))
+					if (QuadStore.getSiteConfigurationStore().exists(Feed.class, feed_url))
 						continue;
 
 					// create the new Feed object
@@ -107,15 +107,15 @@ public class Opml {
 						// see if we already have a Curator with the URL
 						if (rome_feed.getLink() != null) {
 							// the feed has a link
-							if (TripleStore.get().exists(Curator.class,
+							if (QuadStore.getSiteConfigurationStore().exists(Curator.class,
 									rome_feed.getLink())) {
-								curator = TripleStore.get().load(Curator.class,
+								curator = QuadStore.getSiteConfigurationStore().load(Curator.class,
 										rome_feed.getLink());
 							} else {
 								curator = new Curator(rome_feed.getLink());
 								curator.setName(rome_feed.getTitle());
 
-								TripleStore.get().save(curator);
+								QuadStore.getSiteConfigurationStore().save(curator);
 							}
 						}
 					} // if we were able to retrieve the feed
@@ -130,7 +130,7 @@ public class Opml {
 					
 				} // non-OPML feed
 
-				TripleStore.get().save(node_feed);
+				QuadStore.getSiteConfigurationStore().save(node_feed);
 				// XXX poll here?
 			}
 

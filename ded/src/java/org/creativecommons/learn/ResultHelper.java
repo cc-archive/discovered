@@ -114,7 +114,7 @@ public class ResultHelper {
 			System.out.println(curators[i]);
 			Curator c;
 			try {
-				c = (Curator)TripleStore.get().load(Curator.class, curators[i]);
+				c = (Curator)QuadStore.getSiteConfigurationStore().load(Curator.class, curators[i]);
 			} catch (NotFoundException e) {
 				c = null;
 			}

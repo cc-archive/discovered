@@ -99,7 +99,7 @@ public class MakeSeed {
 			}
 		}
 
-		Model store_model = TripleStore.get().getModel();
+		Model store_model = QuadStore.getSiteConfigurationStore().getModel();
 
 		// see if we're dealing with all resources or for a specific curator
 		if (!line.hasOption("curator")) {

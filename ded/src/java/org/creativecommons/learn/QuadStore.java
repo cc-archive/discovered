@@ -50,6 +50,8 @@ public class QuadStore {
 	// don't need it yet
 	// private HashMap<String, TripleStore> provenance2triplestore;
 	
+	private static final String SITE_CONFIG_URI = "http://example.com#site-configuration";
+	
 	public static String uri2database_name(String uri) {
 		/* FIXME: This is likely to give us conflicts */
 		int hash = Math.abs(uri.hashCode());
@@ -83,6 +85,15 @@ public class QuadStore {
 	@SuppressWarnings("unchecked")
 	public static List getAllKnownTripleStoreUris() {
 		return null;
+	}
+	
+	/**
+	 * Returns the TripleStore devoted to feeds that the system administrator
+	 * adds when configuring this DiscoverEd instance.
+	 * @throws SQLException 
+	 * */
+	public static TripleStore getSiteConfigurationStore() throws SQLException {
+		return QuadStore.uri2TripleStore(QuadStore.SITE_CONFIG_URI);
 	}
 
 } // QuadStore

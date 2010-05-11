@@ -30,9 +30,9 @@ public abstract class OaiMetadataFormat implements IResourceExtractor{
 		
 		Resource result = null;
 		
-		if (TripleStore.get().exists(Resource.class, url)) {
+		if (QuadStore.getSiteConfigurationStore().exists(Resource.class, url)) {
 			try {
-				result = TripleStore.get().load(Resource.class, url);
+				result = QuadStore.getSiteConfigurationStore().load(Resource.class, url);
 			} catch (NotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -50,13 +50,13 @@ public class OerRecommender extends OaiMetadataFormat implements IResourceExtrac
 		
 		// see also
 		try {
-			resource.getSeeAlso().add(TripleStore.get().load(OaiResource.class, identifier));
+			resource.getSeeAlso().add(QuadStore.getSiteConfigurationStore().load(OaiResource.class, identifier));
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		TripleStore.get().save(resource);
+		QuadStore.getSiteConfigurationStore().save(resource);
 
 	}
 

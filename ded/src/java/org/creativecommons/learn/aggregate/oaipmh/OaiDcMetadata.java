@@ -85,14 +85,14 @@ public class OaiDcMetadata extends OaiMetadataFormat implements IResourceExtract
 		
 		// see also
 		try {
-			item.getSeeAlso().add(TripleStore.get().load(OaiResource.class, identifier));
+			item.getSeeAlso().add(QuadStore.getSiteConfigurationStore().load(OaiResource.class, identifier));
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		// persist the Resource
-		TripleStore.get().save(item);
+		QuadStore.getSiteConfigurationStore().save(item);
 	}
 
 }
