@@ -114,7 +114,6 @@
 	<classpathentry kind="lib" path="lib/stax-api-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/wstx-asl-3.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/xalan.jar"/>
-	<classpathentry kind="lib" path="lib/xerces.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
@@ -171,7 +170,6 @@
 	<classpathentry kind="lib" path="ded/lib/arq-extra.jar"/>
 	<classpathentry kind="lib" path="ded/lib/arq.jar"/>
 	<classpathentry kind="lib" path="ded/lib/jenatest.jar"/>
-	<classpathentry kind="lib" path="ded/lib/jena.jar"/>
 	<classpathentry kind="lib" path="ded/lib/mysql-connector-java-5.1.6-bin.jar"/>
 	<classpathentry kind="lib" path="ded/lib/ng4j-0.9.3.jar"/>
 	<classpathentry kind="lib" path="ded/lib/jena-2.6.2.jar"/>
