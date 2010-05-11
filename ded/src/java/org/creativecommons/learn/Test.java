@@ -8,6 +8,7 @@ import java.util.Collection;
 
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
+import org.creativecommons.learn.oercloud.Resource;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
@@ -120,9 +121,22 @@ public class Test extends TestCase {
 		assertEquals(feed.getUrl(), "http://ocw.nd.edu/courselist/rss");
 	}
 	
-	// List feeds
-	// List curators
-	// Aggregate
+	public void testURLTitleProvenance() throws SQLException {
+		// Add a curator
+		
+		String curatorURI = "http://ocw.nd.edu/";
+		org.creativecommons.learn.feed.AddCurator.addCurator("Notre Dame OpenCourseWare", curatorURI);
+		
+		// Add a feed to that curator's triple store. This feed says, in effect, "here's a URL, and here's its title".
+		org.creativecommons.learn.feed.AddFeed.addFeed("rss", "http://ocw.nd.edu/courselist/rss", curatorURI);
+		
+		// Query that curator's TripleStore, find the triple URI-title-literal
+		TripleStore store = QuadStore.uri2TripleStore(curatorURI);
+		Collection<Resource> resources = store.load(org.creativecommons.learn.oercloud.Resource.class);
+		Resource r = resources.iterator().next();
+		String title = r.getTitle();
+		assertTrue(title.length() > 0);
+	}
 		
     public void testIntegration()
     {
