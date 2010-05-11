@@ -17,6 +17,8 @@ import junit.framework.*;
 public class Test extends TestCase {
 	
 	public void runSqlAsRoot(String sql) throws SQLException {
+		// FIXME: This is vulnerable to SQL injection (perhaps by one of us by accident).
+		// But we should nuke this method anyhow.
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/mysql", "root", "aewo4Fen");
 		Statement statement = connection.createStatement();
 		statement.executeUpdate(sql);
@@ -41,17 +43,17 @@ public class Test extends TestCase {
 			"http://creativecommons.org/#site-configuration",
 	};
 
-	public void setUp () throws SQLException {
+	public void setUp() throws SQLException {
 		for (String uri : list_of_quadstores_used) {
 			String dbname = QuadStore.uri2database_name(uri);
 			setDatabasePermissions(dbname);
 			dropDatabase(dbname);
 			createDatabase(dbname);
-			System.err.println("set up " + dbname);
+			System.err.println("Create a MySQL database named " + dbname);
 		}
 	}
 	
-	public void tearDown()  throws SQLException {
+	public void tearDown() throws SQLException {
 		for (String uri : list_of_quadstores_used) {
 			String dbname = QuadStore.uri2database_name(uri);
 			dropDatabase(dbname);
@@ -61,7 +63,7 @@ public class Test extends TestCase {
 	/** A unit test that shows adding a curator works. 
 	 * @throws SQLException 
 	 * @throws ClassNotFoundException */
-	public TripleStore addCurator() throws SQLException, ClassNotFoundException {
+	public void addCurator() throws SQLException, ClassNotFoundException {
 		String graphName = "http://creativecommons.org/#site-configuration";
 		TripleStore store = QuadStore.uri2TripleStore(graphName);
 		
@@ -80,13 +82,12 @@ public class Test extends TestCase {
 		assertEquals(curator.getName(), "MIT");
 		assertEquals(curator.getUrl(), "http://mit.edu/");
 		
-		/* Get a different QuadStore */
+		/* Get a different TripleStore */
 		TripleStore aDifferentStore = QuadStore.uri2TripleStore("http://other.example.com/#site-configuration");
 		
 		/* We have no Curators in the different QuadStore */
 		Collection<Curator> aDifferentListOfCurators = aDifferentStore.load(org.creativecommons.learn.oercloud.Curator.class);
 		assertEquals(0, aDifferentListOfCurators.size());
-		return store;
 	}
 	
 	public void testAddCurator() throws SQLException, ClassNotFoundException {
@@ -98,7 +99,9 @@ public class Test extends TestCase {
 	 * @throws ClassNotFoundException */
 	public void testAddFeed() throws SQLException, ClassNotFoundException {
 		
-		TripleStore store = this.addCurator();
+		TripleStore store = QuadStore.uri2TripleStore("http://creativecommons.org/#site-configuration");
+		
+		this.addCurator();
 
 		/* We have no Feeds at the start */
 		Collection<Feed> available_feeds = store.load(org.creativecommons.learn.oercloud.Feed.class);

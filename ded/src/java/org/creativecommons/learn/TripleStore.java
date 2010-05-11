@@ -44,6 +44,7 @@ public class TripleStore {
 		try {
 			this.loader = new RDF2Bean(this.getModel());
 			this.saver = new Bean2RDF(this.getModel());
+			this.model = maker.createDefaultModel();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -58,27 +59,6 @@ public class TripleStore {
 		init();
 	}
 
-	public static TripleStore get() {
-		
-		throw new RuntimeException();
-	}
-
-	private void open() throws ClassNotFoundException {
-
-		// register the JDBC driver
-		Class.forName("com.mysql.jdbc.Driver"); // Load the Driver
-		if (true) {throw new RuntimeException("lollerskates");}
-		// Create the Jena database connection
-		this.conn = new DBConnection(
-				"jdbc:mysql://localhost/discovered?autoReconnect=true", 
-				"discovered", 
-				"",
-				"mysql");
-		this.maker = ModelFactory.createModelRDBMaker(conn);
-
-	} // open
-
-
 	private void close() {
 		try {
 			// Close the database connection
@@ -90,27 +70,8 @@ public class TripleStore {
 
 	} // close
 	
-	public void setMaker(ModelMaker m) {
-		this.maker = m;
-	}
-	
-	public void setModel(Model m) {
-		this.model = m;
-	}
-
 	public Model getModel() throws ClassNotFoundException {
-
-		if (maker == null) {
-			this.open();
-		}
-
-		if (model == null) {
-			// create or open the default model
-			this.model = maker.createDefaultModel();
-		}
-
 		return this.model;
-
 	} // getModel
 
 	/* Delegate Methods */

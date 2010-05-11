@@ -53,3 +53,6 @@ echo "We expect to see at least one hit for the string 'crime'"
 
 # Query the search engine
 ./bin/nutch org.apache.nutch.searcher.NutchBean crime
+
+
+# 
