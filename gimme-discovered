@@ -69,8 +69,8 @@ git checkout deploy_script
 cd src
 
 # Build
-ant # will take ~30 seconds
-ant war 
+ant -q # will take ~30 seconds
+ant war -q
 
 # Add a curator
 ./bin/feeds addcurator "Notre Dame OpenCourseWare" http://ocw.nd.edu/
