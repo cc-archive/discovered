@@ -42,9 +42,9 @@ public class TripleStore {
 	
 	private void init() {
 		try {
+			this.model = maker.createDefaultModel();
 			this.loader = new RDF2Bean(this.getModel());
 			this.saver = new Bean2RDF(this.getModel());
-			this.model = maker.createDefaultModel();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
