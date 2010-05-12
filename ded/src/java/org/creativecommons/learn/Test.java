@@ -12,6 +12,8 @@ import org.creativecommons.learn.oercloud.Resource;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
+import org.apache.hadoop.conf.Configuration;
+
 import thewebsemantic.NotFoundException;
 import junit.framework.*;
 
@@ -20,7 +22,11 @@ public class Test extends TestCase {
 	public void runSqlAsRoot(String sql) throws SQLException {
 		// FIXME: This is vulnerable to SQL injection (perhaps by one of us by accident).
 		// But we should nuke this method anyhow.
-		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/mysql", "root", "aewo4Fen");
+
+		Configuration config = DEdConfiguration.create();
+
+		Connection connection = DriverManager.getConnection(config.get("rdfstore.db.server_url"), config.get("rdfstore.db.root_user"), config.get("rdfstore.db.root_password"));
+
 		Statement statement = connection.createStatement();
 		statement.executeUpdate(sql);
 	}

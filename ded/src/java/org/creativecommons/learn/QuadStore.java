@@ -17,6 +17,8 @@ import thewebsemantic.Filler;
 import thewebsemantic.NotFoundException;
 import thewebsemantic.RDF2Bean;
 
+import org.apache.hadoop.conf.Configuration;
+
 import com.hp.hpl.jena.db.DBConnection;
 import com.hp.hpl.jena.db.IDBConnection;
 import com.hp.hpl.jena.query.Dataset;
@@ -59,24 +61,31 @@ public class QuadStore {
 	}
 	
 	public static TripleStore uri2TripleStore(String uri) throws SQLException {
+
+	    Configuration config = DEdConfiguration.create();
+
 		System.err.println("making triple store for " + uri);
 		/** FIXME:
 		 * One day, cache these in a HashMap.
 		 */
 		// Calculate the right database name to use.
 		String dbname = uri2database_name(uri);
+
+
+		// XXX register the JDBC driver
+		// Class.forName(config.get("rdfstore.db.driver")); // Load the Driver
 		
 		// Make sure we have permission to use it
-		Connection root_connection = DriverManager.getConnection("jdbc:mysql://localhost/", "root", "aewo4Fen");
+		Connection root_connection = DriverManager.getConnection(config.get("rdfstore.db.server_url"), config.get("rdfstore.db.root_user"), config.get("rdfstore.db.root_password"));
 		java.sql.Statement grant_statement = root_connection.createStatement();
 		grant_statement.executeUpdate("GRANT ALL ON " + dbname  + ".* TO discovered");
 		
 		// Create the Jena database connection
 		DBConnection conn = new DBConnection(
-				"jdbc:mysql://localhost/" + dbname + "?autoReconnect=true", 
-				"discovered", 
-				"",
-				"mysql");
+				config.get("rdfstore.db.server_url") + dbname + "?autoReconnect=true", 
+				config.get("rdfstore.db.user"), 
+				config.get("rdfstore.db.password"),
+				config.get("rdfstore.db.type"));
 		ModelMaker maker = ModelFactory.createModelRDBMaker(conn);
 		
 		return new TripleStore(maker, conn);
