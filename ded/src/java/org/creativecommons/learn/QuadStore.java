@@ -50,7 +50,7 @@ public class QuadStore {
 	// don't need it yet
 	// private HashMap<String, TripleStore> provenance2triplestore;
 	
-	private static final String SITE_CONFIG_URI = "http://example.com#site-configuration";
+	private static final String SITE_CONFIG_URI = "http://creativecommons.org/#site-configuration";
 	
 	public static String uri2database_name(String uri) {
 		/* FIXME: This is likely to give us conflicts */
