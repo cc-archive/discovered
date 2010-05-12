@@ -41,7 +41,9 @@ public class Test extends TestCase {
 	
 	private String[] list_of_quadstores_used = {
 			"http://other.example.com/#site-configuration",
+			"http://example.com/#site-configuration",
 			"http://creativecommons.org/#site-configuration",
+			"http://ocw.nd.edu/"
 	};
 
 	public void setUp() throws SQLException {
@@ -122,13 +124,17 @@ public class Test extends TestCase {
 	}
 	
 	public void testURLTitleProvenance() throws SQLException {
-		// Add a curator
-		
+
+		// Add a curator		
 		String curatorURI = "http://ocw.nd.edu/";
 		org.creativecommons.learn.feed.AddCurator.addCurator("Notre Dame OpenCourseWare", curatorURI);
 		
 		// Add a feed to that curator's triple store. This feed says, in effect, "here's a URL, and here's its title".
 		org.creativecommons.learn.feed.AddFeed.addFeed("rss", "http://ocw.nd.edu/courselist/rss", curatorURI);
+		
+		// Aggregate
+		String[] args = {};
+		org.creativecommons.learn.aggregate.Main.main(args);
 		
 		// Query that curator's TripleStore, find the triple URI-title-literal
 		TripleStore store = QuadStore.uri2TripleStore(curatorURI);
