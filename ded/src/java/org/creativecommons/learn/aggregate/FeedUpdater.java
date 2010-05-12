@@ -5,6 +5,7 @@ import org.creativecommons.learn.QuadStore;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +33,7 @@ public class FeedUpdater {
 		this.feed = feed;
 	}
 
-	protected void addEntry(SyndEntry entry) {
+	protected void addEntry(TripleStore store, SyndEntry entry) {
 
 		// XXX check if the entry exists first...
 		Resource new_entry = new Resource(entry.getUri());
@@ -70,12 +71,13 @@ public class FeedUpdater {
 		List<String> contributors = dc_metadata.getContributors();
 		new_entry.getContributors().addAll(contributors);
 
-		QuadStore.getSiteConfigurationStore().saveDeep(new_entry);
+		store.saveDeep(new_entry);
 	} // addEntry
 
-	public void update(boolean force) throws IOException {
+	public void update(boolean force) throws IOException, SQLException {
 		// get the contents of the feed and emit events for each
-
+		TripleStore store = QuadStore.uri2TripleStore(feed.getCurator().getUrl());
+			
 		// OPML
 		if (feed.getFeedType().toLowerCase().equals("opml")) {
 
@@ -102,7 +104,7 @@ public class FeedUpdater {
 				for (SyndEntry entry : feed_entries) {
 
 					// emit an event with the entry information
-					this.addEntry(entry);
+					this.addEntry(store, entry);
 
 				} // for each entry
 			} catch (IllegalArgumentException ex) {

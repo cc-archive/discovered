@@ -8,6 +8,7 @@ import org.creativecommons.learn.QuadStore;
 
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -58,8 +59,9 @@ public class Main {
 
     /**
      * @param args the command line arguments
+     * @throws SQLException 
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
 		// create the parser
 		CommandLineParser parser = new GnuParser();
