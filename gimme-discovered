@@ -84,8 +84,7 @@ fi
 
 cd src
 
-# XXX At the moment, master isn't working.
-git checkout deploy_script
+git checkout master # make sure we are on the master branch, which should always be stable
 
 # Build
 ant -q # will take ~30 seconds
