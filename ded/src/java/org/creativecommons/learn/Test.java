@@ -159,5 +159,23 @@ public class Test extends TestCase {
     	// ...? 
         assertTrue( "TestExample", true );
     }
+
+    public void testAddFeedMustPointToCuratorWithinTheStore() throws SQLException {
+    	try {
+			RdfStore store = RdfStore.getSiteConfigurationStore();
+			
+			/* Try adding a feed where we have no data stored about
+			 * the curator. */
+			Collection<Feed> available_feeds = store.load(org.creativecommons.learn.oercloud.Feed.class);
+			assertEquals(0, available_feeds.size());
+	
+			/* Create a Feed, as if we were using the command line */
+			org.creativecommons.learn.feed.AddFeed.addFeed("rss", "http://ocw.nd.edu/courselist/rss", "http://ocw.nd.edu/");
+    	} catch (IllegalArgumentException e) {
+    		// sweet.
+    		return;
+    	}
+    	assertFalse(true);
+	}
     
 }
