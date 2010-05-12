@@ -162,6 +162,8 @@ for i in `seq 0 $WAIT`; do
     if nc -z localhost $TOMCAT_HTTP_PORT; then
     	firefox "http://localhost:$TOMCAT_HTTP_PORT/search.jsp?query=crime"
         exit 0
+    else
+        sleep 1 # wait one second before retrying; because the loop is run $WAIT times, we wait that long
     fi
 done
 
