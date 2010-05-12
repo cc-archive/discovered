@@ -158,8 +158,11 @@ echo "Waiting for Tomcat to start..."
 
 WAIT=20
 # Now, wait up to $WAIT seconds for Tomcat to start
-if nc -w $WAIT -z localhost $TOMCAT_HTTP_PORT; then
-	firefox "http://localhost:$TOMCAT_HTTP_PORT/search.jsp?query=crime"
-else
-	echo "Eek, Tomcat took more than $WAIT seconds to start. Try waiting a bit longer and visiting http://localhost:$TOMCAT_HTTP_PORT/search.jsp?query=crime in your web browser."
-fi
+for i in `seq 0 $WAIT`; do
+    if nc -z localhost $TOMCAT_HTTP_PORT; then
+    	firefox "http://localhost:$TOMCAT_HTTP_PORT/search.jsp?query=crime"
+        exit 0
+    fi
+done
+
+echo "Eek, Tomcat took more than $WAIT seconds to start. Try waiting a bit longer and visiting http://localhost:$TOMCAT_HTTP_PORT/search.jsp?query=crime in your web browser."
