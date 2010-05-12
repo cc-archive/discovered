@@ -28,8 +28,6 @@ import org.apache.hadoop.conf.Configuration;
  */
 public class RdfStore {
 
-	private static RdfStore instance = null;
-
 	private IDBConnection conn = null;
 	private ModelMaker maker = null;
 	private Model model = null;
@@ -90,12 +88,12 @@ public class RdfStore {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List getAllKnownRdfStoreUris() {
+	public static List getAllKnownTripleStoreUris() {
 		return null;
 	}
 	
 	/**
-	 * Returns the RdfStore devoted to feeds that the system administrator
+	 * Returns the TripleStore devoted to feeds that the system administrator
 	 * adds when configuring this DiscoverEd instance.
 	 * @throws SQLException 
 	 * */
@@ -177,8 +175,4 @@ public class RdfStore {
 		return saver.saveDeep(bean);
 	}
 	
-	public static void deleteSingleton() {
-		instance = null;
-	}
-
-} // RdfStore
+} // TripleStore
