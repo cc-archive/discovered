@@ -17,7 +17,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.creativecommons.learn.CCLEARN;
-import org.creativecommons.learn.TripleStore;
+import org.creativecommons.learn.RdfStore;
 
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;

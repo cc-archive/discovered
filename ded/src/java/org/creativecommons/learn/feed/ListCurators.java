@@ -4,7 +4,7 @@ import org.creativecommons.learn.QuadStore;
 
 import java.util.Collection;
 
-import org.creativecommons.learn.TripleStore;
+import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.oercloud.Curator;
 
 public class ListCurators {

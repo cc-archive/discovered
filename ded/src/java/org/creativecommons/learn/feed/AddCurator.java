@@ -3,7 +3,7 @@ package org.creativecommons.learn.feed;
 import java.sql.SQLException;
 
 import org.creativecommons.learn.QuadStore;
-import org.creativecommons.learn.TripleStore;
+import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.oercloud.Curator;
 
 public class AddCurator {
@@ -29,7 +29,7 @@ public class AddCurator {
 		
 	public static void addCurator(String name, String url) throws SQLException {
 		String graphName = "http://creativecommons.org/#site-configuration";
-		TripleStore store = QuadStore.uri2TripleStore(graphName);
+		RdfStore store = QuadStore.uri2TripleStore(graphName);
 		
 		Curator new_curator = new Curator(url);
 		new_curator.setName(name);

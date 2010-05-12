@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.creativecommons.learn.TripleStore;
+import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.aggregate.oaipmh.NsdlDc;
 import org.creativecommons.learn.aggregate.oaipmh.OaiDcMetadata;
 import org.creativecommons.learn.aggregate.oaipmh.OerRecommender;

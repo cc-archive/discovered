@@ -23,9 +23,9 @@ import org.apache.hadoop.conf.Configuration;
  * 
  * @author nathan
  */
-public class TripleStore {
+public class RdfStore {
 
-	private static TripleStore instance = null;
+	private static RdfStore instance = null;
 
 	private IDBConnection conn = null;
 	private ModelMaker maker = null;
@@ -34,7 +34,7 @@ public class TripleStore {
 	private RDF2Bean loader = null;
 	private Bean2RDF saver = null;
 
-	public TripleStore(ModelMaker maker, IDBConnection connection) {
+	public RdfStore(ModelMaker maker, IDBConnection connection) {
 		super();
 		this.maker = maker;
 		this.conn = connection;
@@ -48,7 +48,7 @@ public class TripleStore {
 	}
 	
 	@SuppressWarnings("unused")
-	private TripleStore() {
+	private RdfStore() {
 		// private constructor
 		super();
 		init();
@@ -59,7 +59,7 @@ public class TripleStore {
 			// Close the database connection
 			conn.close();
 		} catch (SQLException ex) {
-			Logger.getLogger(TripleStore.class.getName()).log(Level.SEVERE,
+			Logger.getLogger(RdfStore.class.getName()).log(Level.SEVERE,
 					null, ex);
 		}
 

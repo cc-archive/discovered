@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.creativecommons.learn.TripleStore;
+import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.aggregate.feed.OaiPmh;
 import org.creativecommons.learn.aggregate.feed.Opml;
 import org.creativecommons.learn.oercloud.Feed;
@@ -33,7 +33,7 @@ public class FeedUpdater {
 		this.feed = feed;
 	}
 
-	protected void addEntry(TripleStore store, SyndEntry entry) {
+	protected void addEntry(RdfStore store, SyndEntry entry) {
 
 		// XXX check if the entry exists first...
 		Resource new_entry = new Resource(entry.getUri());
@@ -76,7 +76,7 @@ public class FeedUpdater {
 
 	public void update(boolean force) throws IOException, SQLException {
 		// get the contents of the feed and emit events for each
-		TripleStore store = QuadStore.uri2TripleStore(feed.getCurator().getUrl());
+		RdfStore store = QuadStore.uri2TripleStore(feed.getCurator().getUrl());
 			
 		// OPML
 		if (feed.getFeedType().toLowerCase().equals("opml")) {

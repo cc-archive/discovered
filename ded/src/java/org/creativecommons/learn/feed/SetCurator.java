@@ -2,7 +2,7 @@ package org.creativecommons.learn.feed;
 import org.creativecommons.learn.QuadStore;
 
 
-import org.creativecommons.learn.TripleStore;
+import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
 

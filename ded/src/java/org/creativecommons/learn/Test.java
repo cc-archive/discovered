@@ -19,7 +19,7 @@ import junit.framework.*;
 
 public class Test extends TestCase {
 	
-	public void runSqlAsRoot(String sql) throws SQLException {
+	public static void runSqlAsRoot(String sql) throws SQLException {
 		// FIXME: This is vulnerable to SQL injection (perhaps by one of us by accident).
 		// But we should nuke this method anyhow.
 
@@ -31,17 +31,17 @@ public class Test extends TestCase {
 		statement.executeUpdate(sql);
 	}
 	
-	public void dropDatabase(String dbname) throws SQLException {
+	public static void dropDatabase(String dbname) throws SQLException {
 		// Destroy the database
 		String sql = "DROP DATABASE IF EXISTS " + dbname + ";";
 		runSqlAsRoot(sql);
 	}
 	
-	public void setDatabasePermissions(String dbname) throws SQLException {
+	public static void setDatabasePermissions(String dbname) throws SQLException {
 		runSqlAsRoot("GRANT ALL ON " + dbname + ".* TO discovered");
 	}
 	
-	public void createDatabase(String dbname) throws SQLException {
+	public static void createDatabase(String dbname) throws SQLException {
 		runSqlAsRoot("CREATE DATABASE " + dbname + ";");
 	}
 	
@@ -74,7 +74,7 @@ public class Test extends TestCase {
 	 * @throws ClassNotFoundException */
 	public void addCurator() throws SQLException, ClassNotFoundException {
 		String graphName = "http://creativecommons.org/#site-configuration";
-		TripleStore store = QuadStore.uri2TripleStore(graphName);
+		RdfStore store = QuadStore.uri2TripleStore(graphName);
 		
 		/* We have no Curators at the start */
 		Collection<Curator> available_curators = store.load(org.creativecommons.learn.oercloud.Curator.class);
@@ -92,7 +92,7 @@ public class Test extends TestCase {
 		assertEquals(curator.getUrl(), "http://mit.edu/");
 		
 		/* Get a different TripleStore */
-		TripleStore aDifferentStore = QuadStore.uri2TripleStore("http://other.example.com/#site-configuration");
+		RdfStore aDifferentStore = QuadStore.uri2TripleStore("http://other.example.com/#site-configuration");
 		
 		/* We have no Curators in the different QuadStore */
 		Collection<Curator> aDifferentListOfCurators = aDifferentStore.load(org.creativecommons.learn.oercloud.Curator.class);
@@ -108,7 +108,7 @@ public class Test extends TestCase {
 	 * @throws ClassNotFoundException */
 	public void testAddFeed() throws SQLException, ClassNotFoundException {
 		
-		TripleStore store = QuadStore.uri2TripleStore("http://creativecommons.org/#site-configuration");
+		RdfStore store = QuadStore.uri2TripleStore("http://creativecommons.org/#site-configuration");
 		
 		this.addCurator();
 
@@ -143,7 +143,7 @@ public class Test extends TestCase {
 		org.creativecommons.learn.aggregate.Main.main(args);
 		
 		// Query that curator's TripleStore, find the triple URI-title-literal
-		TripleStore store = QuadStore.uri2TripleStore(curatorURI);
+		RdfStore store = QuadStore.uri2TripleStore(curatorURI);
 		Collection<Resource> resources = store.load(org.creativecommons.learn.oercloud.Resource.class);
 		Resource r = resources.iterator().next();
 		String title = r.getTitle();

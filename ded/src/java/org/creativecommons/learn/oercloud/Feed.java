@@ -5,7 +5,7 @@ import org.creativecommons.learn.QuadStore;
 import java.util.Collection;
 import java.util.Date;
 
-import org.creativecommons.learn.TripleStore;
+import org.creativecommons.learn.RdfStore;
 
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfProperty;

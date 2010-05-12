@@ -30,7 +30,7 @@ public class QuadStore {
 		return "ded_" + hash;
 	}
 	
-	public static TripleStore uri2TripleStore(String uri) throws SQLException {
+	public static RdfStore uri2TripleStore(String uri) throws SQLException {
 
 	    Configuration config = DEdConfiguration.create();
 
@@ -58,7 +58,7 @@ public class QuadStore {
 				config.get("rdfstore.db.type"));
 		ModelMaker maker = ModelFactory.createModelRDBMaker(conn);
 		
-		return new TripleStore(maker, conn);
+		return new RdfStore(maker, conn);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -71,7 +71,7 @@ public class QuadStore {
 	 * adds when configuring this DiscoverEd instance.
 	 * @throws SQLException 
 	 * */
-	public static TripleStore getSiteConfigurationStore() {
+	public static RdfStore getSiteConfigurationStore() {
 		try {
 			return QuadStore.uri2TripleStore(QuadStore.SITE_CONFIG_URI);
 		}
