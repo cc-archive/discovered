@@ -24,6 +24,10 @@ public class Curator {
 		
 		this.url = url;		
 	}
+	
+	public static Curator getByUrl(RdfStore store, String url) {
+		return null;
+	}
 
 	@RdfProperty("http://purl.org/dc/elements/1.1/title")
 	public String getName() {

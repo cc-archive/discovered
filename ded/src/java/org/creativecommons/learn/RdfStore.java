@@ -113,7 +113,7 @@ public class RdfStore {
 		init();
 	}
 
-	private void close() {
+	public void close() {
 		try {
 			// Close the database connection
 			conn.close();

@@ -28,6 +28,7 @@ public class Test extends TestCase {
 		Connection connection = DriverManager.getConnection(config.get("rdfstore.db.server_url"), config.get("rdfstore.db.root_user"), config.get("rdfstore.db.root_password"));
 
 		Statement statement = connection.createStatement();
+		System.err.println(sql);
 		statement.executeUpdate(sql);
 	}
 	
@@ -81,15 +82,15 @@ public class Test extends TestCase {
 		assertEquals(0, available_curators.size());
 
 		/* Create a Curator, as if we were using the command line */
-		org.creativecommons.learn.feed.AddCurator.addCurator("MIT", "http://mit.edu/");
+		org.creativecommons.learn.feed.AddCurator.addCurator("Notre Dame OCW", "http://ocw.nd.edu/");
 
 		available_curators = store.load(org.creativecommons.learn.oercloud.Curator.class);
 		assertEquals(1, available_curators.size());
 		
 		/* Make sure we saved it correctly */
 		Curator curator = available_curators.iterator().next();
-		assertEquals(curator.getName(), "MIT");
-		assertEquals(curator.getUrl(), "http://mit.edu/");
+		assertEquals(curator.getName(), "Notre Dame OCW");
+		assertEquals(curator.getUrl(), "http://ocw.nd.edu/");
 		
 		/* Get a different RdfStore */
 		RdfStore aDifferentStore = RdfStore.uri2RdfStore("http://other.example.com/#site-configuration");
@@ -97,6 +98,7 @@ public class Test extends TestCase {
 		/* We have no Curators in the different RdfStore */
 		Collection<Curator> aDifferentListOfCurators = aDifferentStore.load(org.creativecommons.learn.oercloud.Curator.class);
 		assertEquals(0, aDifferentListOfCurators.size());
+		store.close();
 	}
 	
 	public void testAddCurator() throws SQLException, ClassNotFoundException {
@@ -109,7 +111,6 @@ public class Test extends TestCase {
 	public void testAddFeed() throws SQLException, ClassNotFoundException {
 		
 		RdfStore store = RdfStore.uri2RdfStore("http://creativecommons.org/#site-configuration");
-		
 		this.addCurator();
 
 		/* We have no Feeds at the start */

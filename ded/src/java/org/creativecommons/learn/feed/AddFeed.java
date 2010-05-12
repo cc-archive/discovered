@@ -1,6 +1,7 @@
 package org.creativecommons.learn.feed;
 
 import java.sql.SQLException;
+import java.util.Collection;
 
 import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.RdfStore;
@@ -35,9 +36,22 @@ public class AddFeed {
 		String graphName = "http://creativecommons.org/#site-configuration";
 		RdfStore store = RdfStore.uri2RdfStore(graphName);
 		
+		/* Make sure we already have heard of that Curator. */
+		Collection<Curator> curator_objs = store.load(Curator.class);
+		Curator curator_obj = null;
+		for (Curator c : curator_objs) {
+			if (c.getUrl().equals(curator)) {
+				curator_obj = c;
+				break;
+			}
+		}
+		if (curator_obj == null) {
+			throw new IllegalArgumentException("You passed in a Curator about whom we have no data.");
+		}
+		
 		Feed feed = new Feed(url);
 		feed.setFeedType(type);
-		feed.setCurator(new Curator(curator)); // It would be nice if this validated whether the curator exists.
+		feed.setCurator(curator_obj); // It would be nice if this validated whether the curator exists.
 		store.save(feed);
 		
 	}
