@@ -30,12 +30,6 @@ if [ -d "$DISCOVER_ED_ROOT" ]; then
     die "Oops, it looks like you already have a directory called $DISCOVER_ED_ROOT. To do a fresh install, move that directory, or remove it, then re-run this script."
 fi
 
-mkdir $DISCOVER_ED_ROOT
-cd $DISCOVER_ED_ROOT
-
-# Turn the root directory into an absolute pathname
-DISCOVER_ED_ROOT=`pwd`
-
 # check for dependencies
 dependencies="nc ant mysql git wc wget"
 failed_dependencies=""
@@ -70,6 +64,16 @@ fi
 if [ -z $JAVA_HOME ]; then
     die "To run this script, you'll need to set the environment variable \$JAVA_HOME. This might work:" "   export JAVA_HOME=/usr/lib/jvm/java-6-sun/"
 fi
+
+### Okay, all the prerequisites are set. Now we can mkdir and move forward.
+
+mkdir $DISCOVER_ED_ROOT
+cd $DISCOVER_ED_ROOT
+
+# Turn the root directory into an absolute pathname
+DISCOVER_ED_ROOT=`pwd`
+
+
 
 # Get the code
 if [ -n "$1" ]; then
