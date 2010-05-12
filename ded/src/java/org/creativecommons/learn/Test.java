@@ -54,7 +54,7 @@ public class Test extends TestCase {
 
 	public void setUp() throws SQLException {
 		for (String uri : list_of_quadstores_used) {
-			String dbname = QuadStore.uri2database_name(uri);
+			String dbname = RdfStore.uri2database_name(uri);
 			setDatabasePermissions(dbname);
 			dropDatabase(dbname);
 			createDatabase(dbname);
@@ -64,7 +64,7 @@ public class Test extends TestCase {
 	
 	public void tearDown() throws SQLException {
 		for (String uri : list_of_quadstores_used) {
-			String dbname = QuadStore.uri2database_name(uri);
+			String dbname = RdfStore.uri2database_name(uri);
 			dropDatabase(dbname);
 		}
 	}
@@ -74,7 +74,7 @@ public class Test extends TestCase {
 	 * @throws ClassNotFoundException */
 	public void addCurator() throws SQLException, ClassNotFoundException {
 		String graphName = "http://creativecommons.org/#site-configuration";
-		RdfStore store = QuadStore.uri2TripleStore(graphName);
+		RdfStore store = RdfStore.uri2RdfStore(graphName);
 		
 		/* We have no Curators at the start */
 		Collection<Curator> available_curators = store.load(org.creativecommons.learn.oercloud.Curator.class);
@@ -91,10 +91,10 @@ public class Test extends TestCase {
 		assertEquals(curator.getName(), "MIT");
 		assertEquals(curator.getUrl(), "http://mit.edu/");
 		
-		/* Get a different TripleStore */
-		RdfStore aDifferentStore = QuadStore.uri2TripleStore("http://other.example.com/#site-configuration");
+		/* Get a different RdfStore */
+		RdfStore aDifferentStore = RdfStore.uri2RdfStore("http://other.example.com/#site-configuration");
 		
-		/* We have no Curators in the different QuadStore */
+		/* We have no Curators in the different RdfStore */
 		Collection<Curator> aDifferentListOfCurators = aDifferentStore.load(org.creativecommons.learn.oercloud.Curator.class);
 		assertEquals(0, aDifferentListOfCurators.size());
 	}
@@ -108,7 +108,7 @@ public class Test extends TestCase {
 	 * @throws ClassNotFoundException */
 	public void testAddFeed() throws SQLException, ClassNotFoundException {
 		
-		RdfStore store = QuadStore.uri2TripleStore("http://creativecommons.org/#site-configuration");
+		RdfStore store = RdfStore.uri2RdfStore("http://creativecommons.org/#site-configuration");
 		
 		this.addCurator();
 
@@ -142,8 +142,8 @@ public class Test extends TestCase {
 		String[] args = {};
 		org.creativecommons.learn.aggregate.Main.main(args);
 		
-		// Query that curator's TripleStore, find the triple URI-title-literal
-		RdfStore store = QuadStore.uri2TripleStore(curatorURI);
+		// Query that curator's RdfStore, find the triple URI-title-literal
+		RdfStore store = RdfStore.uri2RdfStore(curatorURI);
 		Collection<Resource> resources = store.load(org.creativecommons.learn.oercloud.Resource.class);
 		Resource r = resources.iterator().next();
 		String title = r.getTitle();

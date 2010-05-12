@@ -4,7 +4,7 @@
  */
 
 package org.creativecommons.learn.aggregate;
-import org.creativecommons.learn.QuadStore;
+import org.creativecommons.learn.RdfStore;
 
 
 import java.io.IOException;
@@ -90,7 +90,7 @@ public class Main {
     	oneDayAgo.add(Calendar.DATE, -1);
     	
     	// get a list of all available feeds
-    	Collection<Feed> all_feeds = QuadStore.getSiteConfigurationStore().loadDeep(Feed.class);
+    	Collection<Feed> all_feeds = RdfStore.getSiteConfigurationStore().loadDeep(Feed.class);
     	
     	// filter by curator if necessary
     	if (line.hasOption("curator")) {
@@ -132,7 +132,7 @@ public class Main {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
                     feed.setLastImport(import_date);
-                    QuadStore.getSiteConfigurationStore().save(feed);
+                    RdfStore.getSiteConfigurationStore().save(feed);
                 }
             }
             

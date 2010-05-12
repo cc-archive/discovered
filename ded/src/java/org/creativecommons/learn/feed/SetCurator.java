@@ -1,5 +1,5 @@
 package org.creativecommons.learn.feed;
-import org.creativecommons.learn.QuadStore;
+import org.creativecommons.learn.RdfStore;
 
 
 import org.creativecommons.learn.RdfStore;
@@ -28,12 +28,12 @@ public class SetCurator {
 
 		Feed feed;
 		try {
-			feed = QuadStore.getSiteConfigurationStore().load(Feed.class, feed_url);
+			feed = RdfStore.getSiteConfigurationStore().load(Feed.class, feed_url);
 			Curator curator = new Curator(curator_url);
 
 			feed.setCurator(curator);
 			
-			QuadStore.getSiteConfigurationStore().save(feed);
+			RdfStore.getSiteConfigurationStore().save(feed);
 		} catch (NotFoundException e) {
 
 			System.out.println("Feed (" + feed_url + ") not found.");

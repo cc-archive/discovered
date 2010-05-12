@@ -1,5 +1,5 @@
 package org.creativecommons.learn.feed;
-import org.creativecommons.learn.QuadStore;
+import org.creativecommons.learn.RdfStore;
 
 
 import java.util.Collection;
@@ -15,7 +15,7 @@ public class ListFeeds {
 	public static void main(String[] args) {
 		
 		// list feeds we're tracking
-		Collection<Feed> feeds = QuadStore.getSiteConfigurationStore().load(Feed.class);
+		Collection<Feed> feeds = RdfStore.getSiteConfigurationStore().load(Feed.class);
 			
 		for (Feed f : feeds) {
 			System.out.println(f.getUrl() + " (" + f.getFeedType() + ", " + f.getCurator().getUrl() + " )");

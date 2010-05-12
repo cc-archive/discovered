@@ -1,5 +1,5 @@
 package org.creativecommons.learn.aggregate;
-import org.creativecommons.learn.QuadStore;
+import org.creativecommons.learn.RdfStore;
 
 
 import java.io.IOException;
@@ -76,7 +76,7 @@ public class FeedUpdater {
 
 	public void update(boolean force) throws IOException, SQLException {
 		// get the contents of the feed and emit events for each
-		RdfStore store = QuadStore.uri2TripleStore(feed.getCurator().getUrl());
+		RdfStore store = RdfStore.uri2RdfStore(feed.getCurator().getUrl());
 			
 		// OPML
 		if (feed.getFeedType().toLowerCase().equals("opml")) {

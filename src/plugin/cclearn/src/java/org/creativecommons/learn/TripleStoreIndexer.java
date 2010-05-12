@@ -1,5 +1,5 @@
 package org.creativecommons.learn;
-import org.creativecommons.learn.QuadStore;
+import org.creativecommons.learn.RdfStore;
 
 
 import java.util.HashMap;
@@ -73,15 +73,15 @@ public class TripleStoreIndexer implements IndexingFilter {
 			CrawlDatum datum, Inlinks inlinks) throws IndexingException {
 
 		try {
-			LOG.info("TripleStore: indexing " + url.toString());
+			LOG.info("RdfStore: indexing " + url.toString());
 
 			// Index all triples
-			LOG.debug("TripleStore: indexing all triples.");
+			LOG.debug("RdfStore: indexing all triples.");
 			indexTriples(doc, url);
 
 			// Follow special cases (curator)
-			LOG.debug("TripleStore: indexing special cases.");
-			this.indexSources(doc, QuadStore.getSiteConfigurationStore().loadDeep(Resource.class,
+			LOG.debug("RdfStore: indexing special cases.");
+			this.indexSources(doc, RdfStore.getSiteConfigurationStore().loadDeep(Resource.class,
 					url.toString()));
 
 		} catch (NotFoundException e) {
@@ -101,7 +101,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 	private void indexTriples(NutchDocument doc, Text url) {
 		Model m;
 		try {
-			m = QuadStore.getSiteConfigurationStore().getModel();
+			m = RdfStore.getSiteConfigurationStore().getModel();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			LOG.error("Unable to get model; " + e.toString());

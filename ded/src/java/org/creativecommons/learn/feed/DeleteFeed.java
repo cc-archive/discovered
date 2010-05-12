@@ -1,5 +1,5 @@
 package org.creativecommons.learn.feed;
-import org.creativecommons.learn.QuadStore;
+import org.creativecommons.learn.RdfStore;
 
 
 import org.creativecommons.learn.RdfStore;
@@ -26,14 +26,14 @@ public class DeleteFeed {
 		String url = args[0];
 		
 		//  make sure the feed exists
-		if (!(QuadStore.getSiteConfigurationStore().exists(Feed.class, url))) {			
+		if (!(RdfStore.getSiteConfigurationStore().exists(Feed.class, url))) {			
 			System.out.println("Feed does not exist");
 			System.exit(1);
 		}
 		
 		try {
-			QuadStore.getSiteConfigurationStore().delete(
-					QuadStore.getSiteConfigurationStore().load(Feed.class, url)
+			RdfStore.getSiteConfigurationStore().delete(
+					RdfStore.getSiteConfigurationStore().load(Feed.class, url)
 					);
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block

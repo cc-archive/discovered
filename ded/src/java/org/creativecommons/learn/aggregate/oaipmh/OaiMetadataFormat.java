@@ -1,5 +1,5 @@
 package org.creativecommons.learn.aggregate.oaipmh;
-import org.creativecommons.learn.QuadStore;
+import org.creativecommons.learn.RdfStore;
 
 
 import java.net.MalformedURLException;
@@ -32,9 +32,9 @@ public abstract class OaiMetadataFormat implements IResourceExtractor{
 		
 		Resource result = null;
 		
-		if (QuadStore.getSiteConfigurationStore().exists(Resource.class, url)) {
+		if (RdfStore.getSiteConfigurationStore().exists(Resource.class, url)) {
 			try {
-				result = QuadStore.getSiteConfigurationStore().load(Resource.class, url);
+				result = RdfStore.getSiteConfigurationStore().load(Resource.class, url);
 			} catch (NotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -1,5 +1,5 @@
 package org.creativecommons.learn.oercloud;
-import org.creativecommons.learn.QuadStore;
+import org.creativecommons.learn.RdfStore;
 
 
 import java.util.Collection;
@@ -57,7 +57,7 @@ public class Curator {
 			+ "   }\n";
 		
 		try {
-			return Sparql.exec(QuadStore.getSiteConfigurationStore().getModel(), Feed.class, query);
+			return Sparql.exec(RdfStore.getSiteConfigurationStore().getModel(), Feed.class, query);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

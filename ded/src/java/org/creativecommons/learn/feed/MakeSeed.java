@@ -1,5 +1,5 @@
 package org.creativecommons.learn.feed;
-import org.creativecommons.learn.QuadStore;
+import org.creativecommons.learn.RdfStore;
 
 
 import java.io.File;
@@ -101,7 +101,7 @@ public class MakeSeed {
 			}
 		}
 
-		Model store_model = QuadStore.getSiteConfigurationStore().getModel();
+		Model store_model = RdfStore.getSiteConfigurationStore().getModel();
 
 		// see if we're dealing with all resources or for a specific curator
 		if (!line.hasOption("curator")) {

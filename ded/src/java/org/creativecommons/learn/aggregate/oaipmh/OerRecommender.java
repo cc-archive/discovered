@@ -1,5 +1,5 @@
 package org.creativecommons.learn.aggregate.oaipmh;
-import org.creativecommons.learn.QuadStore;
+import org.creativecommons.learn.RdfStore;
 
 
 import org.creativecommons.learn.RdfStore;
@@ -52,13 +52,13 @@ public class OerRecommender extends OaiMetadataFormat implements IResourceExtrac
 		
 		// see also
 		try {
-			resource.getSeeAlso().add(QuadStore.getSiteConfigurationStore().load(OaiResource.class, identifier));
+			resource.getSeeAlso().add(RdfStore.getSiteConfigurationStore().load(OaiResource.class, identifier));
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		QuadStore.getSiteConfigurationStore().save(resource);
+		RdfStore.getSiteConfigurationStore().save(resource);
 
 	}
 

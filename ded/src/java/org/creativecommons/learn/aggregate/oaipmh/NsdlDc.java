@@ -1,5 +1,5 @@
 package org.creativecommons.learn.aggregate.oaipmh;
-import org.creativecommons.learn.QuadStore;
+import org.creativecommons.learn.RdfStore;
 
 
 import org.creativecommons.learn.RdfStore;
@@ -88,14 +88,14 @@ public class NsdlDc extends OaiMetadataFormat implements IResourceExtractor {
 				
 		// see also
 		try {
-			item.getSeeAlso().add(QuadStore.getSiteConfigurationStore().load(OaiResource.class, identifier));
+			item.getSeeAlso().add(RdfStore.getSiteConfigurationStore().load(OaiResource.class, identifier));
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		// persist the Resource
-		QuadStore.getSiteConfigurationStore().save(item);
+		RdfStore.getSiteConfigurationStore().save(item);
 	}
 
 }

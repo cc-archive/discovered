@@ -1,5 +1,5 @@
 package org.creativecommons.learn.feed;
-import org.creativecommons.learn.QuadStore;
+import org.creativecommons.learn.RdfStore;
 
 
 import org.creativecommons.learn.RdfStore;
@@ -30,7 +30,7 @@ public class DumpStore {
 		String format = (args.length > 0) ? args[0] : "RDF/XML";
 		
 		// get an iterator for all subjects
-		Model store = QuadStore.getSiteConfigurationStore().getModel();
+		Model store = RdfStore.getSiteConfigurationStore().getModel();
 		ResIterator subjects = store.listSubjects();
 		
 		// write out one subject at a time

@@ -1,5 +1,5 @@
 package org.creativecommons.learn.feed;
-import org.creativecommons.learn.QuadStore;
+import org.creativecommons.learn.RdfStore;
 
 
 import java.util.Date;
@@ -28,7 +28,7 @@ public class ResetAggregationDate {
 		
 		Feed feed = null;
 		try {
-			feed = QuadStore.getSiteConfigurationStore().load(Feed.class, feed_url);
+			feed = RdfStore.getSiteConfigurationStore().load(Feed.class, feed_url);
 		} catch (NotFoundException e) {
 			
 			System.out.println("Feed " + feed_url + " not found.");
@@ -37,7 +37,7 @@ public class ResetAggregationDate {
 
 		feed.setLastImport(new Date(0));
 				
-		QuadStore.getSiteConfigurationStore().save(feed);
+		RdfStore.getSiteConfigurationStore().save(feed);
 						
 	}
 

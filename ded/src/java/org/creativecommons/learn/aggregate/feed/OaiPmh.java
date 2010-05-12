@@ -1,5 +1,5 @@
 package org.creativecommons.learn.aggregate.feed;
-import org.creativecommons.learn.QuadStore;
+import org.creativecommons.learn.RdfStore;
 
 
 import java.text.SimpleDateFormat;
@@ -177,10 +177,10 @@ public class OaiPmh {
 
 					// create the OaiResource if needed
 					OaiResource resource = null;
-					if (QuadStore.getSiteConfigurationStore().exists(OaiResource.class,
+					if (RdfStore.getSiteConfigurationStore().exists(OaiResource.class,
 							header.getIdentifier())) {
 						try {
-							resource = QuadStore.getSiteConfigurationStore().load(
+							resource = RdfStore.getSiteConfigurationStore().load(
 									OaiResource.class, header.getIdentifier());
 						} catch (NotFoundException e) {
 						}
@@ -196,7 +196,7 @@ public class OaiPmh {
 					}
 					
 					try {
-						QuadStore.getSiteConfigurationStore().save(resource);
+						RdfStore.getSiteConfigurationStore().save(resource);
 					} catch (NullPointerException e) {
 						System.out.println(resource);
 						System.out.println(resource.getId());

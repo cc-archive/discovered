@@ -1,5 +1,5 @@
 package org.creativecommons.learn.oercloud;
-import org.creativecommons.learn.QuadStore;
+import org.creativecommons.learn.RdfStore;
 
 
 import java.util.Collection;
@@ -73,7 +73,7 @@ public class Feed {
 			+ "   }\n";
 		
 		try {
-			return Sparql.exec(QuadStore.getSiteConfigurationStore().getModel(), Resource.class, query);
+			return Sparql.exec(RdfStore.getSiteConfigurationStore().getModel(), Resource.class, query);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

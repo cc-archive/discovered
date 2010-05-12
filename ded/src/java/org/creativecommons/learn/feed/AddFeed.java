@@ -2,7 +2,7 @@ package org.creativecommons.learn.feed;
 
 import java.sql.SQLException;
 
-import org.creativecommons.learn.QuadStore;
+import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
@@ -33,7 +33,7 @@ public class AddFeed {
 	
 	public static void addFeed(String type, String url, String curator) throws SQLException {
 		String graphName = "http://creativecommons.org/#site-configuration";
-		RdfStore store = QuadStore.uri2TripleStore(graphName);
+		RdfStore store = RdfStore.uri2RdfStore(graphName);
 		
 		Feed feed = new Feed(url);
 		feed.setFeedType(type);

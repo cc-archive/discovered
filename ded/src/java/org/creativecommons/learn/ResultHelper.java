@@ -1,6 +1,5 @@
 package org.creativecommons.learn;
-import org.creativecommons.learn.QuadStore;
-
+import org.creativecommons.learn.RdfStore;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -116,7 +115,7 @@ public class ResultHelper {
 			System.out.println(curators[i]);
 			Curator c;
 			try {
-				c = (Curator)QuadStore.getSiteConfigurationStore().load(Curator.class, curators[i]);
+				c = (Curator)RdfStore.getSiteConfigurationStore().load(Curator.class, curators[i]);
 			} catch (NotFoundException e) {
 				c = null;
 			}
