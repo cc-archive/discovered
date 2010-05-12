@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.Properties;
 
 import thewebsemantic.Bean2RDF;
 import thewebsemantic.Filler;
@@ -17,6 +16,8 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
 import com.hp.hpl.jena.rdf.model.Resource;
+
+import org.apache.hadoop.conf.Configuration;
 
 /**
  * 

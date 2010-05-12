@@ -1,28 +1,99 @@
 #!/bin/bash
-set -e
 set +x
 
-cd /tmp/
+# This script installs DiscoverEd, adds some sample data, and runs a test search.
+#
+# For more information see <http://wiki.creativecommons.org/DiscoverEd_Quickstart>.
+# --------------------------------------------------------
+
+DISCOVER_ED_ROOT=./discovered
+DED_DB_NAME=discovered
+
+TOMCAT_HTTP_PORT=8472
+TOMCAT_SERVER_PORT=8006
+TOMCAT_REDIRECT_PORT=8444
+
+function die() {
+    echo 
+    echo "--- Error ---------------"
+    numargs=$#
+    for ((i=1; i <= numargs; i++)); do
+        echo "$1"
+        shift
+    done
+    echo "-------------------------"
+    exit 1
+}
+
+# Make sure the target directory does not already exist
+if [ -d "$DISCOVER_ED_ROOT" ]; then
+    die "Oops, it looks like you already have a directory called $DISCOVER_ED_ROOT. To do a fresh install, move that directory, or remove it, then re-run this script."
+fi
+
+# check for dependencies
+dependencies="nc ant mysql git wc wget"
+failed_dependencies=""
+for dep in $dependencies; do
+    which $dep > /dev/null || failed_dependencies="$failed_dependencies $dep"
+done
+
+# If this has exit code 1, then the port is closed
+for port in $TOMCAT_HTTP_PORT $TOMCAT_SERVER_PORT $TOMCAT_REDIRECT_PORT; do
+    if nc -z localhost $port; then
+        die "To run this quickstart, you'll need to make port $port available. Another process is using that port (most likely something previously launched by this script). You can also change the values of the TOMCAT*PORT variables in the script if you need."
+    fi
+done
+
+if [ "${failed_dependencies}" ]; then
+    die "DiscoverEd requires the following missing dependencies:" "${failed_dependencies}" "You might be able to install this/these with a package manager like apt-get or yum."
+fi
+
+stty -echo
+read -p "MySQL root password: " MYSQL_ROOT_PASSWORD; echo
+stty echo
+
+# Set up a database
+if mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "SHOW DATABASES" | grep -q $DED_DB_NAME; then 
+    die "Database $DED_DB_NAME already exists; please drop it before continuing."
+else 
+    echo "CREATE DATABASE $DED_DB_NAME ; GRANT ALL ON discovered.* TO discovered@localhost" | mysql -uroot -p"$MYSQL_ROOT_PASSWORD"    
+fi
+ 
+# echo 'DROP DATABASE IF EXISTS discovered; CREATE DATABASE discovered; GRANT ALL ON discovered.* TO discovered@localhost' | mysql -uroot -p"$MYSQL_ROOT_PASSWORD" || die 'Please edit this script, and change the MYSQL_ROOT_PASSWORD variable to your MySQL root password.'
+
+if [ -z $JAVA_HOME ]; then
+    die "To run this script, you'll need to set the environment variable \$JAVA_HOME. This might work:" "   export JAVA_HOME=/usr/lib/jvm/java-6-sun/"
+fi
+
+### Okay, all the prerequisites are set. Now we can mkdir and move forward.
+
+mkdir $DISCOVER_ED_ROOT
+cd $DISCOVER_ED_ROOT
+
+# Turn the root directory into an absolute pathname
+DISCOVER_ED_ROOT=`pwd`
+
+
 
 # Get the code
 if [ -n "$1" ]; then
-    git clone $1 discovered
+    git clone $1 src
 else
-    git clone git://gitorious.org/discovered/repo.git discovered
+    git clone git://gitorious.org/discovered/repo.git src
 fi
 
-cd discovered
-ant # will take ~30 seconds
-ant war 
+cd src
 
-# Install the service into tomcat
-#sudo rm -rf /var/lib/tomcat*/webapps/ROOT.war
-#sudo cp build/nutch*.war /var/lib/tomcat*/webapps/
-#sudo service tomcat6 restart # Restart tomcat. This might work
+git checkout master # make sure we are on the master branch, which should always be stable
 
-# Set up a database
-echo "Type your mysql root password here"
-echo 'DROP DATABASE IF EXISTS discovered; CREATE DATABASE discovered; GRANT ALL ON discovered.* TO discovered@localhost' | mysql -uroot -p
+# Build
+ant -q # will take ~30 seconds
+
+# update the configuration with our crawl directory
+sed -i "s,CRAWL_DIR_LOCATION,$DISCOVER_ED_ROOT/crawl,g" conf/nutch-site.xml
+
+# build the WAR file
+ant war -q
 
 # Add a curator
 ./bin/feeds addcurator "Notre Dame OpenCourseWare" http://ocw.nd.edu/
@@ -45,7 +116,14 @@ echo "The seed file has this many lines:"
 wc -l seed/urls
 
 # For testing, let's try using nutch directly
-./bin/nutch crawl seed -dir crawl -depth 1 
+#./bin/nutch crawl seed -dir crawl -depth 1 
+
+./bin/nutch inject $DISCOVER_ED_ROOT/crawl/crawldb seed
+./bin/nutch generate $DISCOVER_ED_ROOT/crawl/crawldb $DISCOVER_ED_ROOT/crawl/segments
+./bin/nutch fetch $DISCOVER_ED_ROOT/crawl/segments/*
+./bin/nutch updatedb $DISCOVER_ED_ROOT/crawl/crawldb $DISCOVER_ED_ROOT/crawl/segments/*
+./bin/nutch invertlinks $DISCOVER_ED_ROOT/crawl/linkdb $DISCOVER_ED_ROOT/crawl/segments/*
+./bin/nutch index $DISCOVER_ED_ROOT/crawl/indexes $DISCOVER_ED_ROOT/crawl/crawldb $DISCOVER_ED_ROOT/crawl/linkdb $DISCOVER_ED_ROOT/crawl/segments/*
 
 #ant -f dedbuild.xml crawl
 
@@ -54,5 +132,43 @@ echo "We expect to see at least one hit for the string 'crime'"
 # Query the search engine
 ./bin/nutch org.apache.nutch.searcher.NutchBean crime
 
+cd $DISCOVER_ED_ROOT
 
-# 
+# Get tomcat, install it into this directory
+wget http://mirror.olnevhost.net/pub/apache/tomcat/tomcat-6/v6.0.26/bin/apache-tomcat-6.0.26.tar.gz
+tar xf apache-tomcat*
+cd apache-tomcat-6.0.26/
+
+# Change the port numbers, so conflicts are less likely
+sed -i "s/\<8080\>/$TOMCAT_HTTP_PORT/g" conf/server.xml
+sed -i "s/\<8443\>/$TOMCAT_REDIRECT_PORT/g" conf/server.xml
+sed -i "s/\<8005\>/$TOMCAT_SERVER_PORT/g" conf/server.xml
+
+# Remove the default webapp
+rm -rf webapps/ROOT
+
+# Install our webapp
+cp -v $DISCOVER_ED_ROOT/src/build/nutch*.war webapps/ROOT.war
+
+# Start tomcat
+bin/catalina.sh start
+
+# FIXME: Detect whether a tomcat instance has started and complain if so.
+# FIXME: Or use an exotic port number that's unlikely to conflict with an
+# already-running tomcat instance.
+
+echo "Waiting for Tomcat to start..."
+
+WAIT=20
+# Now, wait up to $WAIT seconds for Tomcat to start
+for i in `seq 0 $WAIT`; do
+    if nc -z localhost $TOMCAT_HTTP_PORT; then
+    	firefox "http://localhost:$TOMCAT_HTTP_PORT/search.jsp?query=crime"
+        echo "Loaded a search for 'crime' in Firefox. This script will now exit."
+        exit 0
+    else
+        sleep 1 # wait one second before retrying; because the loop is run $WAIT times, we wait that long
+    fi
+done
+
+echo "Eek, Tomcat took more than $WAIT seconds to start. Try waiting a bit longer and visiting http://localhost:$TOMCAT_HTTP_PORT/search.jsp?query=crime in your web browser."
