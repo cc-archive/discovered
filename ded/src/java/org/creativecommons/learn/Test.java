@@ -131,7 +131,18 @@ public class Test extends TestCase {
 	}
 	
 	public void testURLTitleProvenance() throws SQLException {
+		// When you have X in the site configuration triple store
+		// and you take action Y
+		// metadata Z is stored with provenance A
+		// TripleStore.get()
+			// getSiteConfigurationStore()
+				// all of our calls ought to be audited: is the siteConfigurationStore the right one? If not, what is the right provenance?
 
+		// X: Curator and RSS Feed 
+		// Y: Aggregate
+		// Z: The title of a Resource found by aggregating data from the feed
+		// A: The URI of the Curator of the Feed
+		
 		// Add a curator		
 		String curatorURI = "http://ocw.nd.edu/";
 		org.creativecommons.learn.feed.AddCurator.addCurator("Notre Dame OpenCourseWare", curatorURI);
@@ -150,8 +161,64 @@ public class Test extends TestCase {
 		String title = r.getTitle();
 		assertTrue(title.length() > 0);
 	}
+
+	public void testResourcesCanGiveThemselvesATitle() throws SQLException {
+		// Even if we have no curators and feeds, what if *right now* we are doing aggregate() on a Resource
+		// that has its own dc:title stored in it using RDFa.
 		
-    public void testIntegration()
+		// Let's say the Resource has URI "http://example.com/barbie" and dc:title "My Barbie Land"
+		
+		// So that means having this triple:
+		// <http://example.com/barbie> <dc:title> "My Barbie Land"
+		
+		// Let's say the page also has this triple:
+		// <http://microsoft.com/> <dc:license> "http://creativecommons.org/licenses/by-sa/3.0/us/"
+		// since RDFa pages can contain metadata about *any* page.
+		// 
+		// With what provenance are these triples stored? (Note that all triples must have a provenance
+		// because otherwise we wouldn't know what Jena triple store to look at.)
+		
+		// Let's store the triple with the provenance of "http://example.com/barbie"
+		
+		// Add a curator
+		String curatorURI = "http://ocw.nd.edu/";
+		org.creativecommons.learn.feed.AddCurator.addCurator("Notre Dame OpenCourseWare", curatorURI);
+		
+		// Add a feed to that curator's triple store. This feed says, in effect, "here's a URL, and here's its title".
+		org.creativecommons.learn.feed.AddFeed.addFeed("rss", "http://ocw.nd.edu/courselist/rss", curatorURI);
+		
+		// Three tests
+		// Can we get a title triple for URI u from a URI v, where u and v are in the same feed?
+		// Can we get a title triple for URI u from the HTML content of v?
+		// Can we get a title triple for URI u from its feed?
+		
+		// Aggregate
+		String[] args = {};
+		org.creativecommons.learn.aggregate.Main.main(args);
+		
+		// Query that curator's RdfStore, find the triple URI-title-literal
+		RdfStore curatorStore = RdfStore.uri2RdfStore(curatorURI);
+		Resource resourceInCuratorsStore = curatorStore.load(org.creativecommons.learn.oercloud.Resource.class).iterator().next();
+		
+		// Just double check that the curator's store's copy of the resource doesn't have a title
+		assertEquals(resourceInCuratorsStore.getTitle(), null);
+		
+		// Now query the RdfStore for r.getURL()
+		// This will give us the same resource, but when we access its getTitle method we'll see the title it uses to describe itself
+		RdfStore store = RdfStore.uri2RdfStore(resourceInCuratorsStore.getUrl());
+		Resource resourceInItsOwnStore = store.load(org.creativecommons.learn.oercloud.Resource.class).iterator().next();
+		
+		// Now there should be a title
+		assertTrue(resourceInItsOwnStore.getTitle().length() > 0);
+		
+	}
+
+	// X: Curator and OAI-PMH Feed
+	// Y: Aggregate
+	// Z: The title of a Resource found by aggregating data from the feed
+	// A: The URI of the Curator of the Feed
+
+	public void testIntegration()
     {
     	// Steps:
     	// 1. Add a curator to the triple store
