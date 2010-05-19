@@ -21,8 +21,6 @@ public class Feed {
 	private Date lastImport = new Date(0);
 	
 	public Feed(String url) {
-		super();
-
 		this.url = url;
 	}
 

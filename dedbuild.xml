@@ -46,7 +46,21 @@
 	    <junit>
 	        <formatter type="plain" usefile="false"/>
 	        <classpath refid="test.classpath"/>
-            <test name="org.creativecommons.learn.Test" />
+            <test name="org.creativecommons.learn.TestCuratorFeed" />
+            <test name="org.creativecommons.learn.TestRDFaTitle" />
+	        <batchtest>
+	            <formatter type="brief" usefile="false" />
+	        </batchtest>
+	    </junit>
+	</target>
+
+	<target name="cc_test_current" depends="compile-core">
+        <!-- The idea is that this target will contain the test we're working
+          on right now -->
+	    <junit>
+	        <formatter type="plain" usefile="false"/>
+	        <classpath refid="test.classpath"/>
+            <test name="org.creativecommons.learn.TestRDFaTitle" />
 	        <batchtest>
 	            <formatter type="brief" usefile="false" />
 	        </batchtest>
