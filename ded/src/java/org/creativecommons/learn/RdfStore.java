@@ -15,6 +15,7 @@ import thewebsemantic.RDF2Bean;
 
 import com.hp.hpl.jena.db.DBConnection;
 import com.hp.hpl.jena.db.IDBConnection;
+import com.hp.hpl.jena.db.impl.IRDBDriver;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
@@ -66,8 +67,7 @@ public class RdfStore {
 		 */
 		// Calculate the right database name to use.
 		String dbname = uri2database_name(uri);
-
-
+		
 		// XXX register the JDBC driver
 		// Class.forName(config.get("rdfstore.db.driver")); // Load the Driver
 		
@@ -82,6 +82,10 @@ public class RdfStore {
 				config.get("rdfstore.db.user"), 
 				config.get("rdfstore.db.password"),
 				config.get("rdfstore.db.type"));
+		
+		IRDBDriver driver = conn.getDriver();
+		driver.setTableNamePrefix(dbname); // FIXME: This variable should be called table name now.
+		
 		ModelMaker maker = ModelFactory.createModelRDBMaker(conn);
 		
 		return new RdfStore(maker, conn);

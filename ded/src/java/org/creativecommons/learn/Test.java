@@ -31,19 +31,19 @@ public class Test extends TestCase {
 		System.err.println(sql);
 		statement.executeUpdate(sql);
 	}
-	
+	/*
 	public static void dropDatabase(String dbname) throws SQLException {
 		// Destroy the database
 		String sql = "DROP DATABASE IF EXISTS " + dbname + ";";
 		runSqlAsRoot(sql);
-	}
+	}*/
 	
 	public static void setDatabasePermissions(String dbname) throws SQLException {
 		runSqlAsRoot("GRANT ALL ON " + dbname + ".* TO discovered");
 	}
 	
 	public static void createDatabase(String dbname) throws SQLException {
-		runSqlAsRoot("CREATE DATABASE " + dbname + ";");
+		runSqlAsRoot("CREATE DATABASE IF NOT EXISTS " + dbname + ";");
 	}
 	
 	protected String[] list_of_quadstores_used = {
@@ -61,7 +61,7 @@ public class Test extends TestCase {
 		for (String uri : list_of_quadstores_used) {
 			String dbname = RdfStore.uri2database_name(uri);
 			setDatabasePermissions(dbname);
-			dropDatabase(dbname);
+			// FIXME: Put this back dropDatabase(dbname);
 			createDatabase(dbname);
 			System.err.println("Create a MySQL database named " + dbname);
 		}
@@ -70,7 +70,7 @@ public class Test extends TestCase {
 	public void tearDown() throws SQLException {
 		for (String uri : list_of_quadstores_used) {
 			String dbname = RdfStore.uri2database_name(uri);
-			dropDatabase(dbname);
+			// FIXME: Put this back dropDatabase(dbname);
 		}
 	}
 	
