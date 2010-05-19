@@ -46,7 +46,7 @@ public class AddFeed {
 			}
 		}
 		if (curator_obj == null) {
-			throw new IllegalArgumentException("You passed in a Curator about whom we have no data.");
+			throw new IllegalArgumentException("You passed in a Curator about whom we have no data. You must run \"addcurator\" first (or maybe you typo'd the curator; check that argument).");
 		}
 		
 		Feed feed = new Feed(url);

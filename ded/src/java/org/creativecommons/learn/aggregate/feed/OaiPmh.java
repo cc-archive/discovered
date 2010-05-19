@@ -94,7 +94,7 @@ public class OaiPmh {
 			return sets;
 		}
 
-		// post-process to handle heirarchical sets
+		// post-process to handle hierarchical sets
 		for (String set_spec : raw_setmap.keySet()) {
 
 			String[] spec_pieces = set_spec.split(":");

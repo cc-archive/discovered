@@ -46,12 +46,13 @@ public class Test extends TestCase {
 		runSqlAsRoot("CREATE DATABASE " + dbname + ";");
 	}
 	
-	private String[] list_of_quadstores_used = {
+	protected String[] list_of_quadstores_used = {
 			"http://other.example.com/#site-configuration",
 			"http://example.com/#site-configuration",
 			"http://creativecommons.org/#site-configuration",
 			"http://ocw.nd.edu/",
 			"http://example.com/",
+			"http://ocw.nd.edu/courselist/rss",
 			"http://a6.creativecommons.org/~raffi/html_for_discovered_unit_tests/rss_pointing_to_i_know_my_title.xml",
 			"http://a6.creativecommons.org/~raffi/html_for_discovered_unit_tests/i_know_my_title"
 	};

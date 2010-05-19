@@ -33,21 +33,38 @@ public class FeedUpdater {
 		this.feed = feed;
 	}
 
+	/** Take the SyndEntry "entry", and add or update
+	 * a corresponding Resource in our RdfStore. */
 	protected void addEntry(RdfStore store, SyndEntry entry) {
 
 		// XXX check if the entry exists first...
-		Resource new_entry = new Resource(entry.getUri());
-
-		new_entry.getSources().add(feed);
-		new_entry.setTitle(entry.getTitle());
+		Resource r = new Resource(entry.getUri());
 		
-		if (new_entry.getDescription() != null) 
-			new_entry.setDescription(entry.getDescription().getValue());
-		else
-			new_entry.setDescription("");
+		// Back when SyndFeed parsed the feed, it read in from the feed
+		// all of the metadata it could find for this URI. Now it's
+		// made that metadata available in the object "entry".
 
+		// In fact, this feed is one of the resource's "sources".
+		// So let's add this feed to the resource's list of sources.
+		r.getSources().add(feed);
+		r.setTitle(entry.getTitle());
+		
+		// If the resource doesn't have a description, set it to the empty string.
+		// FIXME: Write a test checking the right behavior here.
+		// (Is that meant to be entry.getDescription()?) 
+		if (r.getDescription() == null) {
+			r.setDescription("");
+		}
+		else {
+			r.setDescription(entry.getDescription().getValue());
+		}
+
+		// FIXME: How is this different from dc:category below?
+		
+		// Could we learn anything from the feed about the various
+		// "categories" this resource belongs in? 
 		for (Object category : entry.getCategories()) {
-			new_entry.getSubjects().add(((SyndCategory) category).getName());
+			r.getSubjects().add(((SyndCategory) category).getName());
 		}
 
 		// add actual Dublin Core metadata using the DC Module
@@ -56,27 +73,28 @@ public class FeedUpdater {
 		// dc:category
 		List<DCSubject> subjects = dc_metadata.getSubjects();
 		for (DCSubject s : subjects) {
-			new_entry.getSubjects().add(s.getValue());
+			r.getSubjects().add(s.getValue());
 		}
 
 		// dc:type
 		List<String> types = dc_metadata.getTypes();
-		new_entry.getTypes().addAll(types);
+		r.getTypes().addAll(types);
 
 		// dc:format
 		List<String> formats = dc_metadata.getFormats();
-		new_entry.getFormats().addAll(formats);
+		r.getFormats().addAll(formats);
 
 		// dc:contributor
 		List<String> contributors = dc_metadata.getContributors();
-		new_entry.getContributors().addAll(contributors);
+		r.getContributors().addAll(contributors);
 
-		store.saveDeep(new_entry);
+		store.saveDeep(r);
 	} // addEntry
 
 	public void update(boolean force) throws IOException, SQLException {
 		// get the contents of the feed and emit events for each
-		RdfStore store = RdfStore.uri2RdfStore(feed.getCurator().getUrl());
+		// FIXME: each what?
+		RdfStore store = RdfStore.uri2RdfStore(feed.getUrl());
 			
 		// OPML
 		if (feed.getFeedType().toLowerCase().equals("opml")) {

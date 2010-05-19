@@ -34,6 +34,10 @@ import org.creativecommons.learn.oercloud.Feed;
  */
 public class Main {
 
+	/**
+	 * Create an object that will allow us to parse the arguments
+	 * passed to this class on the command line.
+	 */
 	@SuppressWarnings("static-access")
 	private static Options getOptions() {
 
@@ -58,6 +62,9 @@ public class Main {
 	}
 
     /**
+     * Get a list of feeds from the site configuration store.
+     * (more needs to be written here)
+     * 
      * @param args the command line arguments
      * @throws SQLException 
      */
@@ -73,6 +80,9 @@ public class Main {
 		} catch (ParseException exp) {
 			// oops, something went wrong
 			System.err.println("Parsing failed.  Reason: " + exp.getMessage());
+			
+			// exit with an exit code of 1
+			System.exit(1);
 		}
 
 		if (line.hasOption("help")) {
@@ -83,16 +93,17 @@ public class Main {
 			System.exit(0);
 		}
     	
-    	// set the update interval
-    	// (one day)
+    	// All date calculations will be made with respect to yesterday.
+		
+		// Create a Calendar object that means "yesterday"
     	Calendar oneDayAgo = Calendar.getInstance();
-    	// Well, let's subtract a day.
     	oneDayAgo.add(Calendar.DATE, -1);
     	
-    	// get a list of all available feeds
+    	// Get a list of all available feeds in the site configuration store
     	Collection<Feed> all_feeds = RdfStore.getSiteConfigurationStore().loadDeep(Feed.class);
     	
-    	// filter by curator if necessary
+    	// If the user specifies a particular curator,
+    	// only collect feeds by that curator
     	if (line.hasOption("curator")) {
     		Collection<Feed> filtered_feeds = new Vector<Feed>();
     		
@@ -111,28 +122,30 @@ public class Main {
     		all_feeds = filtered_feeds;
     	}
     	
-    	// see if we're forcing updates
+    	// Are we forcing updates?
     	boolean force = false;
     	if (line.hasOption("force")) force = true;
     	
-        // process each one
+        // Process each feed
         for (Feed feed : all_feeds) {
 
         	System.out.println(feed.getUrl());
         	Date import_date = new Date();
 
         	// see if this feed needs to be re-imported
-            if (force || feed.getLastImport().before( oneDayAgo.getTime() )) {
+        	boolean feedIsOld = feed.getLastImport().before( oneDayAgo.getTime() );
+            if (force || feedIsOld) {
                 try {
                     // re-import necessary
                 	System.out.println("updating...");
 
-                	new FeedUpdater(feed).update(force);
+                	FeedUpdater updater = new FeedUpdater(feed);
+                	updater.update(force);
                 } catch (IOException ex) {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
-                    feed.setLastImport(import_date);
-                    RdfStore.getSiteConfigurationStore().save(feed);
+                	feed.setLastImport(import_date);
+                	RdfStore.getSiteConfigurationStore().save(feed);
                 }
             }
             

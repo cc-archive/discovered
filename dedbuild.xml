@@ -47,7 +47,6 @@
 	        <formatter type="plain" usefile="false"/>
 	        <classpath refid="test.classpath"/>
             <test name="org.creativecommons.learn.TestCuratorFeed" />
-            <test name="org.creativecommons.learn.TestRDFaTitle" />
 	        <batchtest>
 	            <formatter type="brief" usefile="false" />
 	        </batchtest>
