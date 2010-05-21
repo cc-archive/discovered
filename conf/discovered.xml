@@ -42,5 +42,11 @@
   <name>rdfstore.db.type</name>
   <value>MySQL</value>
 </property>
+	<property>
+		<name>rdfstore.db.database_name</name>
+		<value>discovered</value></property>
+	<property>
+		<name>rdfstore.db.database_name_for_test_suite</name>
+		<value>discovered_test</value></property>
 
 </configuration>

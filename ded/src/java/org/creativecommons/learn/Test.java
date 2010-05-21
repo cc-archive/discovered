@@ -19,31 +19,26 @@ import junit.framework.*;
 
 public class Test extends TestCase {
 	
-	public static void runSqlAsRoot(String sql) throws SQLException {
+	public static void runSQL(String sql) throws SQLException {
 		// FIXME: This is vulnerable to SQL injection (perhaps by one of us by accident).
 		// But we should nuke this method anyhow.
 
 		Configuration config = DEdConfiguration.create();
-
-		Connection connection = DriverManager.getConnection(config.get("rdfstore.db.server_url"), config.get("rdfstore.db.root_user"), config.get("rdfstore.db.root_password"));
+		Connection connection = DriverManager.getConnection(config.get("rdfstore.db.server_url"), config.get("rdfstore.db.user"), config.get("rdfstore.db.password"));
 
 		Statement statement = connection.createStatement();
 		System.err.println(sql);
 		statement.executeUpdate(sql);
 	}
-	/*
+	
 	public static void dropDatabase(String dbname) throws SQLException {
 		// Destroy the database
 		String sql = "DROP DATABASE IF EXISTS " + dbname + ";";
-		runSqlAsRoot(sql);
-	}*/
-	
-	public static void setDatabasePermissions(String dbname) throws SQLException {
-		runSqlAsRoot("GRANT ALL ON " + dbname + ".* TO discovered");
+		runSQL(sql);
 	}
 	
 	public static void createDatabase(String dbname) throws SQLException {
-		runSqlAsRoot("CREATE DATABASE IF NOT EXISTS " + dbname + ";");
+		runSQL("CREATE DATABASE " + dbname + ";");
 	}
 	
 	protected String[] list_of_quadstores_used = {
@@ -58,20 +53,26 @@ public class Test extends TestCase {
 	};
 
 	public void setUp() throws SQLException {
-		for (String uri : list_of_quadstores_used) {
-			String dbname = RdfStore.uri2database_name(uri);
-			setDatabasePermissions(dbname);
-			// FIXME: Put this back dropDatabase(dbname);
-			createDatabase(dbname);
-			System.err.println("Create a MySQL database named " + dbname);
+		RdfStore.setDatabaseName(getDatabaseName());
+		String dbname = getDatabaseName();
+		dropDatabase(dbname);
+		createDatabase(dbname);
+		System.err.println("Created a MySQL database named " + dbname);
+	}
+	
+	public static String getDatabaseName() {
+		// FIXME: Add the "Couldn't find a value" complaint to config.get()
+		Configuration config = DEdConfiguration.create();
+		String configPropertyName = "rdfstore.db.database_name_for_test_suite";
+		String dbName = config.get(configPropertyName);
+		if (dbName == null) {
+			throw new RuntimeException("Couldn't find a value in the configuration file for " + configPropertyName);
 		}
+		return dbName;
 	}
 	
 	public void tearDown() throws SQLException {
-		for (String uri : list_of_quadstores_used) {
-			String dbname = RdfStore.uri2database_name(uri);
-			// FIXME: Put this back dropDatabase(dbname);
-		}
+		dropDatabase(getDatabaseName());
 	}
 	
 	    

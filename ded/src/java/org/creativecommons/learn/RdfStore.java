@@ -35,6 +35,8 @@ public class RdfStore {
 
 	private RDF2Bean loader = null;
 	private Bean2RDF saver = null;
+	
+	private static String databaseName = null;
 
 	public RdfStore(ModelMaker maker, IDBConnection connection) {
 		super();
@@ -51,44 +53,52 @@ public class RdfStore {
 	
 	public static final String SITE_CONFIG_URI = "http://creativecommons.org/#site-configuration";
 	
-	public static String uri2database_name(String uri) {
+	public static String uri2tableNamePrefix(String uri) {
 		/* FIXME: This is likely to give us conflicts */
 		int hash = Math.abs(uri.hashCode());
-		return "ded_" + hash;
+		return "" + hash;
 	}
 	
-	public static RdfStore uri2RdfStore(String uri) throws SQLException {
-
+	public static String getDatabaseName() {
+		if (RdfStore.databaseName == null) {
+			Configuration config = DEdConfiguration.create();
+			RdfStore.databaseName = config.get("rdfstore.db.database_name");
+		}
+		return RdfStore.databaseName;
+	}
+	
+	public static RdfStore uri2RdfStore(String uri, String databaseName) throws SQLException {
+		/** FIXME:
+		 * One day, cache these mappings (uri to rdfstore) in a HashMap.
+		 */
 	    Configuration config = DEdConfiguration.create();
 
 		System.err.println("making triple store for " + uri);
-		/** FIXME:
-		 * One day, cache these in a HashMap.
-		 */
-		// Calculate the right database name to use.
-		String dbname = uri2database_name(uri);
-		
+
 		// XXX register the JDBC driver
 		// Class.forName(config.get("rdfstore.db.driver")); // Load the Driver
 		
-		// Make sure we have permission to use it
-		Connection root_connection = DriverManager.getConnection(config.get("rdfstore.db.server_url"), config.get("rdfstore.db.root_user"), config.get("rdfstore.db.root_password"));
-		java.sql.Statement grant_statement = root_connection.createStatement();
-		grant_statement.executeUpdate("GRANT ALL ON " + dbname  + ".* TO discovered");
-		
 		// Create the Jena database connection
 		DBConnection conn = new DBConnection(
-				config.get("rdfstore.db.server_url") + dbname + "?autoReconnect=true", 
+				config.get("rdfstore.db.server_url") +
+				databaseName +
+				"?autoReconnect=true", 
 				config.get("rdfstore.db.user"), 
 				config.get("rdfstore.db.password"),
 				config.get("rdfstore.db.type"));
 		
 		IRDBDriver driver = conn.getDriver();
-		driver.setTableNamePrefix(dbname); // FIXME: This variable should be called table name now.
+		
+		String tableNamePrefix = uri2tableNamePrefix(uri);
+		driver.setTableNamePrefix(tableNamePrefix);
 		
 		ModelMaker maker = ModelFactory.createModelRDBMaker(conn);
 		
 		return new RdfStore(maker, conn);
+	}
+	
+	public static RdfStore uri2RdfStore(String uri) throws SQLException {
+		return uri2RdfStore(uri, getDatabaseName());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -177,6 +187,10 @@ public class RdfStore {
 
 	public Resource saveDeep(Object bean) {
 		return saver.saveDeep(bean);
+	}
+
+	public static void setDatabaseName(String databaseName) {
+		RdfStore.databaseName = databaseName;
 	}
 	
 } // TripleStore
