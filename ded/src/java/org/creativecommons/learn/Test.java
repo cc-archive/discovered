@@ -49,7 +49,7 @@ public class Test extends TestCase {
 			"http://example.com/",
 			"http://ocw.nd.edu/courselist/rss",
 			"http://a6.creativecommons.org/~raffi/html_for_discovered_unit_tests/rss_pointing_to_i_know_my_title.xml",
-			"http://a6.creativecommons.org/~raffi/html_for_discovered_unit_tests/i_know_my_title"
+			"http://a6.creativecommons.org/~raffi/html_for_discovered_unit_tests/i_know_my_title.html"
 	};
 
 	public void setUp() throws SQLException {
