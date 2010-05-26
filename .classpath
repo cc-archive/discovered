@@ -109,7 +109,7 @@
 	<classpathentry kind="lib" path="lib/jaxen-jdom.jar"/>
 	<classpathentry kind="lib" path="lib/json.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
-	<classpathentry kind="lib" path="lib/rome-0.9.jar"/>
+	<classpathentry kind="lib" path="lib/rome-0.9.jar" sourcepath="/tmp"/>
 	<classpathentry kind="lib" path="lib/saxpath.jar"/>
 	<classpathentry kind="lib" path="lib/stax-api-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/wstx-asl-3.0.0.jar"/>
@@ -173,5 +173,7 @@
 	<classpathentry kind="lib" path="ded/lib/mysql-connector-java-5.1.6-bin.jar"/>
 	<classpathentry kind="lib" path="ded/lib/ng4j-0.9.3.jar"/>
 	<classpathentry kind="lib" path="ded/lib/jena-2.6.2.jar"/>
+	<classpathentry kind="lib" path="ded/lib/java-rdfa-0.3.jar" sourcepath="/home/raffi/cc/java-rdfa/src"/>
+	<classpathentry kind="lib" path="ded/lib/mockito-all-1.8.4.jar"/>
 	<classpathentry kind="output" path="tmp_build"/>
 </classpath>

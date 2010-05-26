@@ -1,7 +1,10 @@
 package org.creativecommons.learn.oercloud;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Vector;
+
+import org.creativecommons.learn.RdfStore;
 
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfProperty;
@@ -137,6 +140,5 @@ public class Resource {
 	public void setSeeAlso(Collection<OaiResource> seeAlso) {
 		this.seeAlso = seeAlso;
 	}
-
 }
 

@@ -38,6 +38,13 @@
                       class="org.creativecommons.nutch.CCParseFilter"/>
    </extension>
 
+   <extension id="org.creativecommons.nutch.CCRDFaParser"
+              name="Creative Commons RDFa Parser"
+              point="org.apache.nutch.parse.HtmlParseFilter">
+      <implementation id="CCRDFaParser"
+                      class="org.creativecommons.nutch.CCRDFaParser"/>
+   </extension>
+
    <extension id="org.creativecommons.nutch.CCIndexingFilter"
               name="Creative Commons Indexing Filter"
               point="org.apache.nutch.indexer.IndexingFilter">

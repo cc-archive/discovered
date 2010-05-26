@@ -1,8 +1,11 @@
 package org.creativecommons.learn.aggregate;
+
+
 import org.creativecommons.learn.RdfStore;
 
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.SQLException;
@@ -15,6 +18,8 @@ import org.creativecommons.learn.aggregate.feed.OaiPmh;
 import org.creativecommons.learn.aggregate.feed.Opml;
 import org.creativecommons.learn.oercloud.Feed;
 import org.creativecommons.learn.oercloud.Resource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import com.sun.syndication.feed.module.DCModule;
 import com.sun.syndication.feed.module.DCSubject;
@@ -25,23 +30,33 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 
+import net.rootdev.javardfa.JenaStatementSink;
+import net.rootdev.javardfa.NTripleSink;
+import net.rootdev.javardfa.ParserFactory;
+import net.rootdev.javardfa.StatementSink;
+import net.rootdev.javardfa.URIResolver;
+import net.rootdev.javardfa.ParserFactory.Format;
+
 public class FeedUpdater {
 
 	private Feed feed;
+	public static int howManyGETsSoFar;
+	private static boolean pleaseCountGETs = false;
 
 	public FeedUpdater(Feed feed) {
 		this.feed = feed;
 	}
 
 	/** Take the SyndEntry "entry", and add or update
-	 * a corresponding Resource in our RdfStore. */
-	protected void addEntry(RdfStore store, SyndEntry entry) {
+	 * a corresponding Resource in our RdfStore. 
+	 * @throws SQLException */
+	protected void addEntry(RdfStore store, SyndEntry entry) throws SQLException {
 
 		// XXX check if the entry exists first...
 		Resource r = new Resource(entry.getUri());
 		
 		// Back when SyndFeed parsed the feed, it read in from the feed
-		// all of the metadata it could find for this URI. Now it's
+		// all of the metadata it could find for this URI. Now it has
 		// made that metadata available in the object "entry".
 
 		// In fact, this feed is one of the resource's "sources".
@@ -89,13 +104,18 @@ public class FeedUpdater {
 		r.getContributors().addAll(contributors);
 
 		store.saveDeep(r);
+		
+		// Learn more about this resource from its RDFa
+
 	} // addEntry
+	
+
 
 	public void update(boolean force) throws IOException, SQLException {
 		// get the contents of the feed and emit events for each
 		// FIXME: each what?
 		RdfStore store = RdfStore.uri2RdfStore(feed.getUrl());
-			
+		
 		// OPML
 		if (feed.getFeedType().toLowerCase().equals("opml")) {
 
@@ -108,14 +128,14 @@ public class FeedUpdater {
 		} else {
 			
 			try {
+						
 				SyndFeedInput input = new SyndFeedInput();
 				URLConnection feed_connection = new URL(feed.getUrl())
 						.openConnection();
 				feed_connection.setConnectTimeout(30000);
 				feed_connection.setReadTimeout(60000);
-
-				SyndFeed rome_feed = input
-						.build(new XmlReader(feed_connection));
+			 
+				SyndFeed rome_feed = input.build(new XmlReader(feed_connection));
 
 				List<SyndEntry> feed_entries = rome_feed.getEntries();
 
@@ -139,8 +159,28 @@ public class FeedUpdater {
 				Logger.getLogger(Feed.class.getName()).log(Level.SEVERE, null,
 						ex);
 			}
+			finally {
+
+				/*
+				 * The following code is used for testing. Not sure how I could
+				 * have improved this without resorting to drastic measures à la
+				 * the replies to this StackOverflow post: http://ur1.ca/03f3d
+				 */
+				if (pleaseCountGETs) {
+					howManyGETsSoFar++;
+				}
+			}
 
 		} // not opml...
 	} // poll
-
+	
+	public static void startCountingGETs() {
+		assert ! pleaseCountGETs;
+		howManyGETsSoFar = 0;
+		pleaseCountGETs = true;
+	}
+	
+	public static int getHowManyGETsSoFar() {
+		return howManyGETsSoFar;
+	}
 }
