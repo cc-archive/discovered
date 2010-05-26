@@ -4,6 +4,7 @@
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
+    BREAK
 
 <property>
   <name>searcher.dir</name>
