@@ -37,7 +37,7 @@
 -.*(/[^/]+)/[^/]+\1/[^/]+\1/
 
 # accept hosts in MY.DOMAIN.NAME
-+^http://([a-z0-9]*\.)*MY.DOMAIN.NAME/
++^http://([a-z0-9]*\.)*creativecommons.org/
 
 # skip everything else
 -.
