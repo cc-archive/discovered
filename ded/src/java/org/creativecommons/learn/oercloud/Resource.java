@@ -179,11 +179,18 @@ public class Resource {
 			sink = new JenaStatementSink(store.getModel());
 			reader = ParserFactory.createReaderForFormat(sink, format);
 			reader.parse(uri);
+			
+			
+			// FIXME: Curiously, when we run this, we always get zero resources!
+			// Dropping this on the floor...
+			Collection<Resource> resources = store.load(org.creativecommons.learn.oercloud.Resource.class);
+			System.err.println("How many resources?: " + resources.size());
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 		catch (IOException e) { e.printStackTrace(); }
 		catch (SAXException e) { e.printStackTrace(); }
 		catch (ClassNotFoundException e) { e.printStackTrace(); }
+		
 	}
 }
 
