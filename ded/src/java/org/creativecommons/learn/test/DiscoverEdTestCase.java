@@ -12,7 +12,7 @@ import org.apache.hadoop.conf.Configuration;
 
 import junit.framework.*;
 
-public class DiscoverEdTestCase extends TestCase {
+public abstract class DiscoverEdTestCase extends TestCase {
 	
 	public static void runSQL(String sql) throws SQLException {
 		// FIXME: This is vulnerable to SQL injection (perhaps by one of us by accident).

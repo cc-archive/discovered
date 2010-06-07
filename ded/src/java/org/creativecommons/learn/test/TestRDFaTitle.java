@@ -18,7 +18,7 @@ public class TestRDFaTitle extends DiscoverEdTestCase {
 	final String URI_PREFIX_FOR_TEST_PAGES = "http://a6.creativecommons.org/~raffi/html_for_discovered_unit_tests/";
 	
 	public void testResourcesCanGiveThemselvesATitle() throws Exception {
-		
+		// 
 		// Here are some URI we will use / expect to encounter during this test.
 		String feedURI = URI_PREFIX_FOR_TEST_PAGES + "rss_pointing_to_i_know_my_title.xml";
 		String uriOfPageWithRDFa = URI_PREFIX_FOR_TEST_PAGES + "i_know_my_title.html";

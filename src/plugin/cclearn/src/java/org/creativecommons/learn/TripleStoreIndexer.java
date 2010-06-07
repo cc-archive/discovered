@@ -169,15 +169,25 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 	} // collapseResource
 
+	public Field createFieldFromPredicateAndObject(String predicate,
+			String object, Field.Index tokenized) {
+		
+		// add the field to the document
+		Field statementField = new Field(predicate, object, Field.Store.YES,
+				tokenized);
+		return statementField;
+	}
+	
 	private void indexStatement(NutchDocument doc, RDFNode pred_node,
 			RDFNode obj_node) {
-		
+
 		Field.Index tokenized = Field.Index.NOT_ANALYZED;
 
+		
 		// index a single statement
 		String predicate = pred_node.toString();
 		String object = obj_node.toString();
-
+		
 		// see if we want to collapse the predicate into a shorter convenience
 		// value
 		if (pred_node.isResource()) {
@@ -189,11 +199,9 @@ public class TripleStoreIndexer implements IndexingFilter {
 			object = ((Literal) obj_node).getValue().toString();
 			tokenized = Field.Index.ANALYZED;
 		}
-
-		// add the field to the document
-		Field statementField = new Field(predicate, object, Field.Store.YES,
-				tokenized);
-
+		
+		Field statementField = this.createFieldFromPredicateAndObject(predicate, object, tokenized);
+		
 		LOG.debug("Adding (" + predicate + ", " + object + ").");
 
 		LuceneWriter.add(doc, statementField);
