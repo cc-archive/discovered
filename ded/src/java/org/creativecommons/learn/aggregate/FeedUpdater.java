@@ -105,7 +105,7 @@ public class FeedUpdater {
 
 		store.saveDeep(r);
 		
-		// Learn more about this resource from its RDFa
+		Resource.parseURIForRDFa(r.getUrl());
 
 	} // addEntry
 	

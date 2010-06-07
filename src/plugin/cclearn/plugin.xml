@@ -12,6 +12,12 @@
       </library>
    </runtime>
 
+   <extension id="org.creativecommons.learn.RDFaParser"
+              name="RDFa Parser"
+              point="org.apache.nutch.parse.Parser">
+      <implementation id="RDFaParser"
+                      class="org.creativecommons.learn.RDFaParser" />
+   </extension>
 
    <!-- The TripleStoreIndexer extends the IndexingFilter in order to add
    		metadata stored in the Triple Store to the Lucene index.
@@ -79,10 +85,4 @@
       </implementation>
    </extension>
 
-   <extension id="org.creativecommons.learn.RDFaParser"
-              name="RDFa Parser"
-              point="org.apache.nutch.searcher.QueryFilter">
-      <implementation id="RDFaParser"
-                      class="org.creativecommons.learn.RDFaParser" />
-   </extension>
 </plugin>

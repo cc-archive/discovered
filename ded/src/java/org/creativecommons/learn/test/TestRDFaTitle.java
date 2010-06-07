@@ -14,7 +14,15 @@ import org.creativecommons.learn.oercloud.Resource;
 
 public class TestRDFaTitle extends DiscoverEdTestCase {
 
-	public void testResourcesCanGiveThemselvesATitle() throws SQLException {
+	// The URIs in the following code will all begin with this path:
+	final String URI_PREFIX_FOR_TEST_PAGES = "http://a6.creativecommons.org/~raffi/html_for_discovered_unit_tests/";
+	
+	public void testResourcesCanGiveThemselvesATitle() throws Exception {
+		
+		// Here are some URI we will use / expect to encounter during this test.
+		String feedURI = URI_PREFIX_FOR_TEST_PAGES + "rss_pointing_to_i_know_my_title.xml";
+		String uriOfPageWithRDFa = URI_PREFIX_FOR_TEST_PAGES + "i_know_my_title.html";
+		
 		// Let's say we're aggregating a Resource with URI "http://example.com/barbie" and dc:title "My Barbie Land"
 		
 		// So that means having this triple:
@@ -30,33 +38,38 @@ public class TestRDFaTitle extends DiscoverEdTestCase {
 		org.creativecommons.learn.feed.AddCurator.addCurator("This doesn't matter for this test", curatorURI);
 		
 		// Add a feed to that curator's triple store. This feed says, in effect, "here's a URL".
-		String testURIPrefix = "http://a6.creativecommons.org/~raffi/html_for_discovered_unit_tests/";
-		String feedURI = testURIPrefix + "rss_pointing_to_i_know_my_title.xml";
+		
 		org.creativecommons.learn.feed.AddFeed.addFeed("rss", feedURI, curatorURI);
 		
 		// Aggregate
 		String[] args = {};
 		org.creativecommons.learn.aggregate.Main.main(args);
 		
-		// Query the RdfStore corresponding to the feed. Find the triple URI, title, literal.
+		// Query the RdfStore corresponding to the feed.
 		RdfStore feedStore = RdfStore.uri2RdfStore(feedURI);
 		Collection<Resource> resourcesInFeedStore = feedStore.load(org.creativecommons.learn.oercloud.Resource.class);
+		
+		// There should be a resource corresponding to the feed.
 		assertEquals(1, resourcesInFeedStore.size());
 		Resource resourceInFeedStore = resourcesInFeedStore.iterator().next();
 		
-		// Just double check that the feed store's copy of the resource doesn't have a title
+		// Just double check that the feed store's copy of the resource doesn't
+		// have a title. This isn't the primary thing we're checking in this
+		// test, but it is nice to know by the end of the test that even pages
+		// whose feeds don't give them titles can still give themselves titles.
 		assertEquals(null, resourceInFeedStore.getTitle());
 		
 		// Now query the RdfStore for r.getURL()
 		// This will give us the same resource, but when we access its getTitle method we'll see the title it uses to describe itself
+		// The feed above should have pointed to an HTML page. Let's make sure that this HTML page has the URI we expect
 		String resourceURI = resourceInFeedStore.getUrl();
-		assertEquals(testURIPrefix + "i_know_my_title.html", resourceURI);
+		assertEquals(uriOfPageWithRDFa, resourceURI);
+		
+		// Now actually find the title.
 		RdfStore store = RdfStore.uri2RdfStore(resourceURI);
 		Collection<Resource> resources = store.load(org.creativecommons.learn.oercloud.Resource.class);
 		assertEquals(1, resources.size());
 		Resource resourceInItsOwnStore = resources.iterator().next();
-		
-		// Now there should be a title
 		assertEquals("This title is provided by the page itself", resourceInItsOwnStore.getTitle());
 		
 	}
