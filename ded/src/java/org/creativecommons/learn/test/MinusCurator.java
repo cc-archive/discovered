@@ -9,7 +9,6 @@ import java.util.Collection;
 
 import org.creativecommons.learn.DEdConfiguration;
 import org.creativecommons.learn.RdfStore;
-import org.creativecommons.learn.TripleStoreIndexer;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
 import org.creativecommons.learn.oercloud.Resource;
