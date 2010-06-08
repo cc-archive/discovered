@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,6 +20,11 @@ import thewebsemantic.RDF2Bean;
 import com.hp.hpl.jena.db.DBConnection;
 import com.hp.hpl.jena.db.IDBConnection;
 import com.hp.hpl.jena.db.impl.IRDBDriver;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
@@ -277,5 +283,45 @@ public class RdfStore {
 	public static void setDatabaseName(String databaseName) {
 		RdfStore.databaseName = databaseName;
 	}
+	
+	
+	// get all t,p,o for url
+	public static HashMap<ProvenancePredicatePair, String> getPPP2ObjectMapForSubject(String subjectURL) throws SQLException, ClassNotFoundException {
+	
+		String provenanceURI = "http://example.com/#store";
+		Model m;
+		m = RdfStore.uri2RdfStore(provenanceURI).getModel();
 
-} // TripleStore
+		// Create a new query
+		String queryString = "SELECT ?p ?o " + "WHERE {" + "      <"
+				+ subjectURL.toString() + "> ?p ?o ." + "      }";
+		Query query = QueryFactory.create(queryString);
+
+		// Execute the query and obtain results
+		QueryExecution qe = QueryExecutionFactory.create(query, m);
+		
+		com.hp.hpl.jena.query.ResultSet cursor = qe.execSelect();
+		
+		HashMap<ProvenancePredicatePair, String> map = new HashMap<ProvenancePredicatePair, String>();
+		
+		// Index the triples
+		while (cursor.hasNext()) {
+			QuerySolution stmt = cursor.nextSolution();
+			String predicateURI = stmt.get("p").toString();
+			ProvenancePredicatePair p3 = new ProvenancePredicatePair(provenanceURI, predicateURI);
+			String object = stmt.get("o").toString();
+			System.out.println("Found a triple for " + subjectURL + ": " + predicateURI + " courtesy of " + provenanceURI + ", value is " + object);
+			map.put(p3, object);
+		}
+
+		// Important - free up resources used running the query
+		qe.close();
+		
+		return map;
+	}
+	
+	// encode one (t,p) into a Lucene-compatible string column name
+	
+	// decode one Lucene-compatible string column name into (t, p)
+
+} // RdfStore

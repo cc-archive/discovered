@@ -28,7 +28,7 @@ public abstract class DiscoverEdTestCase extends TestCase {
 		Connection connection = DriverManager.getConnection(config.get("rdfstore.db.server_url"), config.get("rdfstore.db.user"), config.get("rdfstore.db.password"));
 
 		Statement statement = connection.createStatement();
-		System.err.println(sql);
+		System.out.println(sql);
 		statement.executeUpdate(sql);
 		
 	}

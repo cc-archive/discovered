@@ -106,19 +106,6 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 	} // public Document filter
 	
-	// get all t,p,o for url
-	public HashMap<ProvenanceSensitivePredicate, String> getPredicatesForSubject(String subjectURL) {
-		//RdfStore.getAllKnownTripleStoreUris();
-		return null;
-	}
-	
-	class ProvenanceSensitivePredicate {
-	}
-	
-	// encode one (t,p) into a Lucene-compatible string column name
-	
-	// decode one Lucene-compatible string column name into (t, p)
-	
 	private void indexTriples(NutchDocument doc, Text url) {
 
 		// NOW:
