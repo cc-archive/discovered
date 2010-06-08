@@ -1,0 +1,5 @@
+# To run tests, you'll need to grant the discovered mysql user access to the test database
+# Note that "discovered_test" doesn't need to exist before you do this
+# In fact, that database will be created and destroyed during the run of the test suite.
+echo "GRANT ALL ON discovered.* TO discovered" | mysql -uroot
+echo "GRANT ALL ON discovered_test.* TO discovered" | mysql -uroot
