@@ -288,35 +288,39 @@ public class RdfStore {
 	// get all t,p,o for url
 	public static HashMap<ProvenancePredicatePair, String> getPPP2ObjectMapForSubject(String subjectURL) throws SQLException, ClassNotFoundException {
 	
-		String provenanceURI = "http://example.com/#store";
-		Model m;
-		m = RdfStore.uri2RdfStore(provenanceURI).getModel();
-
-		// Create a new query
-		String queryString = "SELECT ?p ?o " + "WHERE {" + "      <"
-				+ subjectURL.toString() + "> ?p ?o ." + "      }";
-		Query query = QueryFactory.create(queryString);
-
-		// Execute the query and obtain results
-		QueryExecution qe = QueryExecutionFactory.create(query, m);
-		
-		com.hp.hpl.jena.query.ResultSet cursor = qe.execSelect();
-		
 		HashMap<ProvenancePredicatePair, String> map = new HashMap<ProvenancePredicatePair, String>();
 		
-		// Index the triples
-		while (cursor.hasNext()) {
-			QuerySolution stmt = cursor.nextSolution();
-			String predicateURI = stmt.get("p").toString();
-			ProvenancePredicatePair p3 = new ProvenancePredicatePair(provenanceURI, predicateURI);
-			String object = stmt.get("o").toString();
-			System.out.println("Found a triple for " + subjectURL + ": " + predicateURI + " courtesy of " + provenanceURI + ", value is " + object);
-			map.put(p3, object);
+		for (String provenanceURI : RdfStore.getAllKnownTripleStoreUris()) {
+			Model m;
+			m = RdfStore.uri2RdfStore(provenanceURI).getModel();
+
+			// Create a new query
+			String queryString = "SELECT ?p ?o " + "WHERE {" + "      <"
+					+ subjectURL.toString() + "> ?p ?o ." + "      }";
+			Query query = QueryFactory.create(queryString);
+
+			// Execute the query and obtain results
+			QueryExecution qe = QueryExecutionFactory.create(query, m);
+
+			com.hp.hpl.jena.query.ResultSet cursor = qe.execSelect();
+
+			// Index the triples
+			while (cursor.hasNext()) {
+				QuerySolution stmt = cursor.nextSolution();
+				String predicateURI = stmt.get("p").toString();
+				ProvenancePredicatePair p3 = new ProvenancePredicatePair(
+						provenanceURI, predicateURI);
+				String object = stmt.get("o").toString();
+				System.out.println("Found a triple for " + subjectURL + ": "
+						+ predicateURI + " courtesy of " + provenanceURI
+						+ ", value is " + object);
+				map.put(p3, object);
+			}
+
+			// Important - free up resources used running the query
+			qe.close();
 		}
 
-		// Important - free up resources used running the query
-		qe.close();
-		
 		return map;
 	}
 	
