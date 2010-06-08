@@ -77,7 +77,7 @@ public abstract class DiscoverEdTestCase extends TestCase {
 		dropDatabase(getDatabaseName());
 	}
 	
-	public static String runCmd(String cmd) throws IOException, InterruptedException {
+	public static ArrayList<String> runCmd(String cmd) throws IOException, InterruptedException {
 		/*
 		 * This method runs a String command with PROPERTY_CONTAINING_RDFSTORE_DB_NAME value available in the environment.
 		 * 
@@ -121,14 +121,14 @@ public abstract class DiscoverEdTestCase extends TestCase {
 		BufferedReader buf = new BufferedReader( new InputStreamReader( pr.getInputStream() ) );
 		
 		String line = "";
-		String output = "";
+		ArrayList<String> lines = new ArrayList<String>();
 		
-		while ( line != null) {
-			System.out.println(line) ;
+		while (line != null) {
+			lines.add(line);
+			System.out.println(line);
 			line = buf.readLine();
-			output += line + "\n";
 		}
-		return output;
+		return lines;
 	}
 		
 	    

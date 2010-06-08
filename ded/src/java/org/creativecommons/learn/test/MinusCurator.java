@@ -110,26 +110,41 @@ public class MinusCurator extends DiscoverEdTestCase {
 		// Let's talk to Nutch.
 		// Try asking for tag:chemistry (that's how to find pages with the subject Chemistry)
 		// We should get all three results
-		ArrayList<String> titles = getTitlesOfHitsForAStringyQuery("jellybeans");
+		ArrayList<String> titles = getUrlsOfHitsForAStringyQuery("jellybeans");
 		assertSame(titles.size(), 3);
 		
 		// Now ask for "subject:chemistry -curator:NSDL"
 		// We should get only the second and third pages
-		ArrayList<String> hitsFromSecondQuery = getTitlesOfHitsForAStringyQuery("jellybeans -curator:NSDL");
+		ArrayList<String> hitsFromSecondQuery = getUrlsOfHitsForAStringyQuery("jellybeans -curator:NSDL");
 		String hitOne = hitsFromSecondQuery.get(0);
 		String hitTwo = hitsFromSecondQuery.get(1);
 		assertTrue(false); // FIXME: Check that these are the correct hits.
 	}
 
 
-	private static ArrayList<String> getTitlesOfHitsForAStringyQuery(String q) throws IOException, InterruptedException {
+	private static ArrayList<String> getUrlsOfHitsForAStringyQuery(String q) throws IOException, InterruptedException {
 		// Pardon the weird name, we just didn't want to call it a query string
 		
 		String searchCommand = "bin/nutch org.apache.nutch.searcher.NutchBean " + q;
-		String output = runCmd(searchCommand);
-		System.out.println("searcher.NutchBean has passed control back to our junit test");
-		return null;
+		ArrayList<String> output = runCmd(searchCommand);
+		ArrayList<String> urls = new ArrayList<String>();
+		int lineNumber = 0;
+		for (String line: output) {
+			if (lineNumber % 2 == 0 && lineNumber > 0) {
+				urls.add(line);
+				System.err.println("Adding 'url': " + line);
+			}
+			lineNumber++;
+		}
+		return urls;
 	}
+	
+	/*
+	String[] pieces = line.split("/", 1);
+	if (pieces.length > 1) {
+		urls.add(pieces[1]);
+	}
+	*/
 
 /*	public void testCreateFieldFromPredicateAndObject() {
 		String feedURI = "http://example.com/#feed";
