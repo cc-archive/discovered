@@ -45,6 +45,8 @@ public class TripleStoreIndexer implements IndexingFilter {
 	public TripleStoreIndexer() {
 		
 		LOG.info("Created TripleStoreIndexer.");
+		
+		System.out.println("TripleStoreIndexer has been constructed");
 
 		// initialize the set of default mappings
 		DEFAULT_NAMESPACES = new HashMap<String, String>();
@@ -72,18 +74,23 @@ public class TripleStoreIndexer implements IndexingFilter {
 	@Override
 	public NutchDocument filter(NutchDocument doc, Parse parse, Text url,
 			CrawlDatum datum, Inlinks inlinks) throws IndexingException {
+		
+		LOG.info("RdfStore: indexing! " + url.toString());
+
+		// Index all triples
+		LOG.debug("RdfStore: indexing all triples.");
+		indexTriples(doc, url);
+		
+		// Follow special cases (curator)
+		LOG.debug("RdfStore: indexing special cases.");
+		
+		LOG.warn("TripleStoreIndexer is about to try to index this URL: " + url.toString());
 
 		try {
-			LOG.info("RdfStore: indexing " + url.toString());
-
-			// Index all triples
-			LOG.debug("RdfStore: indexing all triples.");
-			indexTriples(doc, url);
-
-			// Follow special cases (curator)
-			LOG.debug("RdfStore: indexing special cases.");
-			this.indexSources(doc, RdfStore.getSiteConfigurationStore().loadDeep(Resource.class,
-					url.toString()));
+			
+			Resource resource = RdfStore.getSiteConfigurationStore().loadDeep(Resource.class,
+					url.toString());
+			this.indexSources(doc, resource);
 
 		} catch (NotFoundException e) {
 			LOG.warn("Could not find " + url.toString()
@@ -167,6 +174,8 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 	public Field createFieldFromPredicateAndObject(String predicate,
 			String object, Field.Index tokenized) {
+		
+		System.out.println("TripleStoreIndexer is creating a field with predicate: " + predicate + " and object: " + object);
 		
 		// add the field to the document
 		Field statementField = new Field(predicate, object, Field.Store.YES,

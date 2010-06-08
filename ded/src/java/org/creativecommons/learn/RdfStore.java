@@ -62,7 +62,17 @@ public class RdfStore {
 	public static String getDatabaseName() {
 		if (RdfStore.databaseName == null) {
 			Configuration config = DEdConfiguration.create();
-			RdfStore.databaseName = config.get("rdfstore.db.database_name");
+			
+			// Let's find the name of the database to use.
+			// Usually we want to look up the name in the config file under the property "rdfstore.db.database_name"
+			// If we're using RdfStore during testing, however, we might want to
+			// use a different database, so let's check to see if the testing
+			// suite has set an environment variable to indicate this.
+			String propertyContainingRdfStoreDatabaseName = System.getenv("PROPERTY_CONTAINING_RDFSTORE_DB_NAME");
+			if (propertyContainingRdfStoreDatabaseName == null) {
+				propertyContainingRdfStoreDatabaseName = "rdfstore.db.database_name";  
+			}
+			RdfStore.databaseName = config.get(propertyContainingRdfStoreDatabaseName);
 		}
 		return RdfStore.databaseName;
 	}
