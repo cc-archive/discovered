@@ -53,20 +53,29 @@ public class RdfStore {
 		this.init();
 	}
 
-	public static void createUri2TablePrefixRecordIfNeeded(String uri)
-			throws SQLException {
+	public static String getOrCreateTablePrefixFromURI(String uri) throws SQLException {
 		connection = getDatabaseConnection();
 		createRdfStoresTableIfNeeded(connection);
-
+		
+		// Do we already have a table prefix? If so, return it.
+		java.sql.PreparedStatement matchingTablePrefixes = connection.prepareStatement(
+				"SELECT uri, table_prefix FROM rdf_stores WHERE uri = ? ");
+		matchingTablePrefixes.setString(1, uri);
+		ResultSet cursor = matchingTablePrefixes.executeQuery();
+		if (cursor.next()) {
+			return "" + cursor.getInt("table_prefix");
+		}
+		
 		// Prepare a SQL statement that saves a row in a table called
 		// rdf_stores, and fill in the values
 		java.sql.PreparedStatement statement = connection
-				.prepareStatement("INSERT INTO rdf_stores (uri, table_prefix) VALUES (?, ?)");
+				.prepareStatement("INSERT INTO rdf_stores (uri) VALUES (?)");
 		statement.setString(1, uri);
-		statement.setString(2, uri2tableNamePrefix(uri));
 
 		// Run the statement
 		statement.executeUpdate();
+		
+		return getOrCreateTablePrefixFromURI(uri);
 	}
 
 	// Connect to the database
@@ -82,9 +91,11 @@ public class RdfStore {
 
 	public static void createRdfStoresTableIfNeeded(Connection connection) {
 
+		// FIXME: Add an index to the "uri" column.
+		
 		// Try to create table
 		try {
-			executeSQL("CREATE TABLE IF NOT EXISTS rdf_stores (uri VARCHAR(1000) PRIMARY KEY, table_prefix VARCHAR(10))");
+			executeSQL("CREATE TABLE IF NOT EXISTS rdf_stores (table_prefix INTEGER PRIMARY KEY AUTO_INCREMENT, uri VARCHAR(1000))");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -109,12 +120,6 @@ public class RdfStore {
 	}
 
 	public static final String SITE_CONFIG_URI = "http://creativecommons.org/#site-configuration";
-
-	public static String uri2tableNamePrefix(String uri) {
-		/* FIXME: This is likely to give us conflicts */
-		int hash = Math.abs(uri.hashCode());
-		return "" + hash;
-	}
 
 	public static String getDatabaseName() {
 		if (RdfStore.databaseName == null) {
@@ -158,12 +163,12 @@ public class RdfStore {
 
 		IRDBDriver driver = conn.getDriver();
 
-		String tableNamePrefix = uri2tableNamePrefix(uri);
+		String tableNamePrefix = getOrCreateTablePrefixFromURI(uri);
 		driver.setTableNamePrefix(tableNamePrefix);
 
 		ModelMaker maker = ModelFactory.createModelRDBMaker(conn);
 
-		createUri2TablePrefixRecordIfNeeded(uri);
+		getOrCreateTablePrefixFromURI(uri);
 
 		return new RdfStore(maker, conn);
 	}
