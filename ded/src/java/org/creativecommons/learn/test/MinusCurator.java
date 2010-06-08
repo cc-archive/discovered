@@ -1,8 +1,10 @@
 package org.creativecommons.learn.test;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -83,16 +85,16 @@ public class MinusCurator extends DiscoverEdTestCase {
 		// Let's crawl...
 		
 		// First we need a URLs file
-		BufferedWriter writer = new BufferedWriter(new FileWriter("urls"));
+		runCmd("mkdir urls_dir");
+		BufferedWriter writer = new BufferedWriter(new FileWriter("urls_dir/list_of_urls"));
 		writer.write(PAGE_ONE_URL + "\n");
 		writer.write(PAGE_TWO_URL + "\n");
 		writer.write(PAGE_THREE_URL + "\n");
 		writer.close();
 		
 		// Then we crawl.
-		String crawlDirectory = "crawl"; // FIXME: Get this from the configuration
-		String[] args = {"urls", "-dir", crawlDirectory, "-depth", "1"};
-		org.apache.nutch.crawl.Crawl.main(args);
+		String cmd = "bin/nutch crawl urls_dir -dir crawl -depth 1";
+		runCmd(cmd);
 		
 		// Let's talk to Nutch.
 		// Try asking for subject:chemistry
@@ -108,6 +110,22 @@ public class MinusCurator extends DiscoverEdTestCase {
 		assertTrue(false); // FIXME: Check that these are the correct hits.
 	}
 	
+	public void runCmd(String cmd) throws IOException, InterruptedException {
+
+		Runtime run = Runtime.getRuntime() ;
+		Process pr = run.exec(cmd) ;
+		pr.waitFor() ;
+		BufferedReader buf = new BufferedReader( new InputStreamReader( pr.getInputStream() ) );
+		
+		String line = "";
+		
+		while ( line != null) {
+			System.out.println(line) ;
+			line = buf.readLine();
+		}
+	}
+	
+
 	private static Hits getHitsForAStringyQuery(String q) throws IOException {
 		// Pardon the weird name, we just didn't want to call it a query string
 		final Configuration CONFIGURATION = DEdConfiguration.create();
