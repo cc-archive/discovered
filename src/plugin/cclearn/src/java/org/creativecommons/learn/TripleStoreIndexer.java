@@ -105,8 +105,32 @@ public class TripleStoreIndexer implements IndexingFilter {
 		return doc;
 
 	} // public Document filter
-
+	
+	// get all t,p,o for url
+	public HashMap<ProvenanceSensitivePredicate, String> getPredicatesForSubject(String subjectURL) {
+		//RdfStore.getAllKnownTripleStoreUris();
+		return null;
+	}
+	
+	class ProvenanceSensitivePredicate {
+	}
+	
+	// encode one (t,p) into a Lucene-compatible string column name
+	
+	// decode one Lucene-compatible string column name into (t, p)
+	
 	private void indexTriples(NutchDocument doc, Text url) {
+
+		// NOW:
+		// for all <s, p, o> in the triple store where s == url:
+		//    this.indexStatement(s, p, o)
+
+		// FUTURE:
+		// for all triplestore t in triplestores:
+		// 		for all <s, p, o> in the triple store where s == url:
+		//    		this.indexStatement(s, p, o)
+		//      in some way that the Lucene string formatted version of p encodes (t, p) 
+
 		Model m;
 		try {
 			m = RdfStore.getSiteConfigurationStore().getModel();

@@ -102,4 +102,5 @@ public class MappedFieldQueryFilter implements QueryFilter {
 	public Configuration getConf() {
 		return this.conf;
 	}
+	
 }

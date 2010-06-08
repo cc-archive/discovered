@@ -113,6 +113,9 @@ public class MinusCurator extends DiscoverEdTestCase {
 		ArrayList<String> titles = getUrlsOfHitsForAStringyQuery("jellybeans");
 		assertSame(titles.size(), 3);
 		
+		ArrayList<String> titles2 = getUrlsOfHitsForAStringyQuery("tag:chemistry");
+		assertSame(titles2.size(), 3);
+		
 		// Now ask for "subject:chemistry -curator:NSDL"
 		// We should get only the second and third pages
 		ArrayList<String> hitsFromSecondQuery = getUrlsOfHitsForAStringyQuery("jellybeans -curator:NSDL");
