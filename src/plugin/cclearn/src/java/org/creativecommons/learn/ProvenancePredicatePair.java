@@ -1,10 +1,12 @@
 package org.creativecommons.learn;
 
+import com.hp.hpl.jena.rdf.model.RDFNode;
+
 public class ProvenancePredicatePair {
 	public String provenanceURI;
-	public String predicateURI;
-	public ProvenancePredicatePair(String provenanceURI, String predicateURI) {
+	public RDFNode predicateNode;
+	public ProvenancePredicatePair(String provenanceURI, RDFNode predicateNode) {
 		this.provenanceURI = provenanceURI;
-		this.predicateURI = predicateURI;
+		this.predicateNode = predicateNode;
 	}
 }

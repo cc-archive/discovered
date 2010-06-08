@@ -7,6 +7,10 @@ import org.creativecommons.learn.ProvenancePredicatePair;
 import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.oercloud.Resource;
 
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.impl.LiteralImpl;
+
+
 public class GetPredicatesForSubject extends DiscoverEdTestCase {
 
 	final String RESOURCE_URI = "http://example.com/#resource";
@@ -24,13 +28,13 @@ public class GetPredicatesForSubject extends DiscoverEdTestCase {
 		
 		// Invoke the method getPPP2ObjectMapForSubject (this is the method we're testing)
 		// The output of this method should be a HashMap of ProvenancePredicatePairs to Strings.
-		HashMap<ProvenancePredicatePair, String> map = RdfStore.getPPP2ObjectMapForSubject(RESOURCE_URI);
+		HashMap<ProvenancePredicatePair, RDFNode> map = RdfStore.getPPP2ObjectMapForSubject(RESOURCE_URI);
 		
 		boolean foundPair1 = false;
 		boolean foundPair2 = false;
 		
 		for (ProvenancePredicatePair pair: map.keySet()) {
-			if (pair.predicateURI.equals("http://purl.org/dc/elements/1.1/title")) {
+			if (pair.predicateNode.toString().equals("http://purl.org/dc/elements/1.1/title")) {
 				if (pair.provenanceURI.equals(provenanceURI)) {
 					foundPair1 = true;
 				}

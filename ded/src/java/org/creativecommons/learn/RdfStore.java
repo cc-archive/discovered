@@ -28,6 +28,7 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.mysql.jdbc.PreparedStatement;
 
@@ -183,15 +184,21 @@ public class RdfStore {
 		return uri2RdfStore(uri, getDatabaseName());
 	}
 
-	public static ArrayList<String> getAllKnownTripleStoreUris() throws SQLException {
-		Statement statement = getDatabaseConnection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-				ResultSet.CONCUR_READ_ONLY);
-		ResultSet resultSet = statement.executeQuery("SELECT uri, table_prefix FROM rdf_stores");
+	public static ArrayList<String> getAllKnownTripleStoreUris() {
+		Statement statement;
+		
 		ArrayList<String> uris = new ArrayList<String>();
-		while (resultSet.next()) {
-			String uri = resultSet.getString("uri");
-			uris.add(uri);
+		try {
+			statement = getDatabaseConnection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_READ_ONLY);
+			ResultSet resultSet = statement.executeQuery("SELECT uri, table_prefix FROM rdf_stores");
+			while (resultSet.next()) {
+				String uri = resultSet.getString("uri");
+				uris.add(uri);
+			}
 		}
+		catch (SQLException e) { e.printStackTrace(); throw new RuntimeException("sql error"); }
+
 		return uris;
 	}
 
@@ -286,13 +293,17 @@ public class RdfStore {
 	
 	
 	// get all t,p,o for url
-	public static HashMap<ProvenancePredicatePair, String> getPPP2ObjectMapForSubject(String subjectURL) throws SQLException, ClassNotFoundException {
+	public static HashMap<ProvenancePredicatePair, RDFNode> getPPP2ObjectMapForSubject(String subjectURL) {
 	
-		HashMap<ProvenancePredicatePair, String> map = new HashMap<ProvenancePredicatePair, String>();
+		HashMap<ProvenancePredicatePair, RDFNode> map = new HashMap<ProvenancePredicatePair, RDFNode>();
 		
 		for (String provenanceURI : RdfStore.getAllKnownTripleStoreUris()) {
 			Model m;
-			m = RdfStore.uri2RdfStore(provenanceURI).getModel();
+			try {
+				m = RdfStore.uri2RdfStore(provenanceURI).getModel();
+			}
+			catch (ClassNotFoundException e) { e.printStackTrace(); throw new RuntimeException("Encountered a class not found exception."); }
+			catch (SQLException e) { e.printStackTrace(); throw new RuntimeException("sql error"); }
 
 			// Create a new query
 			String queryString = "SELECT ?p ?o " + "WHERE {" + "      <"
@@ -303,18 +314,17 @@ public class RdfStore {
 			QueryExecution qe = QueryExecutionFactory.create(query, m);
 
 			com.hp.hpl.jena.query.ResultSet cursor = qe.execSelect();
-
+			
 			// Index the triples
 			while (cursor.hasNext()) {
 				QuerySolution stmt = cursor.nextSolution();
-				String predicateURI = stmt.get("p").toString();
-				ProvenancePredicatePair p3 = new ProvenancePredicatePair(
-						provenanceURI, predicateURI);
-				String object = stmt.get("o").toString();
+				RDFNode predicateNode = stmt.get("p");
+				ProvenancePredicatePair p3 = new ProvenancePredicatePair(provenanceURI, predicateNode);
+				RDFNode objectNode = stmt.get("o");
 				System.out.println("Found a triple for " + subjectURL + ": "
-						+ predicateURI + " courtesy of " + provenanceURI
-						+ ", value is " + object);
-				map.put(p3, object);
+						+ predicateNode.toString() + " courtesy of " + provenanceURI
+						+ ", value is " + objectNode.toString());
+				map.put(p3, objectNode);
 			}
 
 			// Important - free up resources used running the query

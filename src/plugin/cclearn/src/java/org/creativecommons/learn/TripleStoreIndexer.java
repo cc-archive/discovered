@@ -2,8 +2,10 @@ package org.creativecommons.learn;
 import org.creativecommons.learn.RdfStore;
 
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -108,44 +110,18 @@ public class TripleStoreIndexer implements IndexingFilter {
 	
 	private void indexTriples(NutchDocument doc, Text url) {
 
-		// NOW:
-		// for all <s, p, o> in the triple store where s == url:
-		//    this.indexStatement(s, p, o)
-
-		// FUTURE:
-		// for all triplestore t in triplestores:
-		// 		for all <s, p, o> in the triple store where s == url:
-		//    		this.indexStatement(s, p, o)
-		//      in some way that the Lucene string formatted version of p encodes (t, p) 
-
-		Model m;
-		try {
-			m = RdfStore.getSiteConfigurationStore().getModel();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			LOG.error("Unable to get model; " + e.toString());
-
-			return;
-		}
-
-		// Create a new query
-		String queryString = "SELECT ?p ?o " + "WHERE {" + "      <"
-				+ url.toString() + "> ?p ?o ." + "      }";
-
-		Query query = QueryFactory.create(queryString);
-
-		// Execute the query and obtain results
-		QueryExecution qe = QueryExecutionFactory.create(query, m);
-		ResultSet results = qe.execSelect();
-
+		String subjectURL = url.toString();
+		HashMap<ProvenancePredicatePair, RDFNode> map = RdfStore.getPPP2ObjectMapForSubject(subjectURL);
+		
 		// Index the triples
-		while (results.hasNext()) {
-			QuerySolution stmt = results.nextSolution();
-			this.indexStatement(doc, stmt.get("p"), stmt.get("o"));
+		for (Entry<ProvenancePredicatePair, RDFNode> entry: map.entrySet()) {
+			ProvenancePredicatePair p3 = entry.getKey();
+			RDFNode objectNode = entry.getValue();
+			
+			// FIXME: Instead of simply using the predicate uri below, use a
+			// string that varies according to the predicate AND provenance.
+			this.indexStatement(doc, p3.predicateNode, objectNode);
 		}
-
-		// Important - free up resources used running the query
-		qe.close();
 	}
 
 	private void indexSources(NutchDocument doc, Resource resource) {
