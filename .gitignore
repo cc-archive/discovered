@@ -36,3 +36,6 @@ conf/regex-urlfilter.txt
 conf/slaves
 conf/subcollections.xml
 conf/suffix-urlfilter.txt
+
+# the testing suite creates this directory for testing purpose
+urls_dir
