@@ -29,17 +29,23 @@ public class ProvenancePredicatePair {
 		this.predicateNode = predicateNode;
 	}
 	public String toFieldName() throws SQLException {
-		int tablePrefix = RdfStore.getOrCreateTablePrefixFromURIAsInteger(this.provenanceURI);
+		
 		
 		String predicate = this.predicateNode.toString();
 		
 		// see if we want to collapse the predicate into a shorter convenience
 		// value
 		if (this.predicateNode.isResource()) {
-			predicate = collapseResource(this.predicateNode.toString());
+			predicate = collapseResource(predicate);
 		}
 		
-		return tablePrefix + "_" + this.predicateNode.toString();
+		String fieldName = makeCompleteFieldNameWithProvenance(this.provenanceURI, predicate);
+		return fieldName;
+	}
+	
+	public static String makeCompleteFieldNameWithProvenance(String provenanceURI, String thePredicatePartOfTheFieldName) {
+		int tablePrefix = RdfStore.getOrCreateTablePrefixFromURIAsInteger(provenanceURI);
+		return tablePrefix + "_" + thePredicatePartOfTheFieldName;
 	}
 	
 	protected String collapseResource(String uri) {
