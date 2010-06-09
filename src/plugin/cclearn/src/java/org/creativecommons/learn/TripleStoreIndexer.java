@@ -37,7 +37,6 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 
 public class TripleStoreIndexer implements IndexingFilter {
 
-	protected Map<String, String> DEFAULT_NAMESPACES;
 
 	public static final Log LOG = LogFactory.getLog(TripleStoreIndexer.class
 			.getName());
@@ -50,13 +49,6 @@ public class TripleStoreIndexer implements IndexingFilter {
 		
 		System.out.println("TripleStoreIndexer has been constructed");
 
-		// initialize the set of default mappings
-		DEFAULT_NAMESPACES = new HashMap<String, String>();
-		DEFAULT_NAMESPACES.put(CCLEARN.getURI(), CCLEARN.getDefaultPrefix());
-		DEFAULT_NAMESPACES.put("http://purl.org/dc/elements/1.1/", "dct");
-		DEFAULT_NAMESPACES.put("http://purl.org/dc/terms/", "dct");
-		DEFAULT_NAMESPACES.put("http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-				"rdf");
 
 	}
 
@@ -120,7 +112,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 			
 			// FIXME: Instead of simply using the predicate uri below, use a
 			// string that varies according to the predicate AND provenance.
-			this.indexStatement(doc, p3.predicateNode, objectNode);
+			this.indexStatement(doc, p3, objectNode);
 		}
 	}
 
@@ -142,22 +134,6 @@ public class TripleStoreIndexer implements IndexingFilter {
 		}
 	}
 
-	protected String collapseResource(String uri) {
-		/*
-		 * Given a Resource URI, collapse it using our default namespace
-		 * mappings if possible. This is purely a convenience.
-		 */
-
-		for (String ns_url : DEFAULT_NAMESPACES.keySet()) {
-			if (uri.startsWith(ns_url)) {
-				return uri.replace(ns_url, "_" + DEFAULT_NAMESPACES.get(ns_url)
-						+ "_");
-			}
-		}
-
-		return uri;
-
-	} // collapseResource
 
 	public Field createFieldFromPredicateAndObject(String predicate,
 			String object, Field.Index tokenized) {
@@ -170,21 +146,13 @@ public class TripleStoreIndexer implements IndexingFilter {
 		return statementField;
 	}
 	
-	private void indexStatement(NutchDocument doc, RDFNode pred_node,
+	private void indexStatement(NutchDocument doc, ProvenancePredicatePair p3,
 			RDFNode obj_node) {
 
 		Field.Index tokenized = Field.Index.NOT_ANALYZED;
 
-		
 		// index a single statement
-		String predicate = pred_node.toString();
 		String object = obj_node.toString();
-		
-		// see if we want to collapse the predicate into a shorter convenience
-		// value
-		if (pred_node.isResource()) {
-			predicate = collapseResource(pred_node.toString());
-		}
 
 		// process the object...
 		if (obj_node.isLiteral()) {
@@ -192,9 +160,18 @@ public class TripleStoreIndexer implements IndexingFilter {
 			tokenized = Field.Index.ANALYZED;
 		}
 		
-		Field statementField = this.createFieldFromPredicateAndObject(predicate, object, tokenized);
+		String fieldName = null;
+		try {
+			fieldName = p3.toFieldName();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Couldn't convert " + p3.toString() + " to a fieldname.");
+		}
 		
-		LOG.debug("Adding (" + predicate + ", " + object + ").");
+		Field statementField = this.createFieldFromPredicateAndObject(fieldName, object, tokenized);
+		
+		LOG.debug("Adding (" + fieldName + ", " + object + ").");
 
 		LuceneWriter.add(doc, statementField);
 	}
