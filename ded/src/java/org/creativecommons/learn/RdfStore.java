@@ -36,6 +36,8 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.mysql.jdbc.PreparedStatement;
 
 import org.apache.hadoop.conf.Configuration;
+import org.creativecommons.learn.oercloud.Curator;
+import org.creativecommons.learn.oercloud.Feed;
 
 /**
  * 
@@ -382,6 +384,41 @@ public class RdfStore {
 			}
 		}
 		return mapFiltered;
+	}
+
+	public static ArrayList<String> getProvenanceURIsFromCuratorShortName(String curatorShortName) {
+		/* Find the matching Curator, if any. */
+		Curator relevantCurator = null;
+		ArrayList<String> resultsSoFar = new ArrayList<String>();
+		
+		RdfStore store = RdfStore.getSiteConfigurationStore();
+		Collection <Curator> curators =  store.load(Curator.class);
+		
+		/* FIXME: This is a really lame way to do a query. */
+		for (Curator c: curators) {
+			if (c.getName().equals(curatorShortName)) {
+				relevantCurator = c;
+				break;
+			}
+		}
+		
+		// Okay, if there's no matching Curator, we bail out now.
+		if (relevantCurator == null) {
+			return resultsSoFar;
+		}
+		
+		// Otherwise, the answer is that the matching provenance URIs are the URLs of all
+		// the Feed objects. Let's collect those into resultsSoFar.
+		Collection <Feed> all_feeds = store.load(Feed.class);
+		
+		// Search for Feeds whose curator is our friend, the relevantCurator
+		for (Feed f: all_feeds) {
+			if (f.getCurator().getUrl().equals(relevantCurator.getUrl())) {
+				resultsSoFar.add(f.getUrl());
+			}
+		}
+		
+		return resultsSoFar;
 	}
 	
 	// encode one (t,p) into a Lucene-compatible string column name

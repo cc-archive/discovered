@@ -3,7 +3,6 @@
  */
 package org.creativecommons.learn;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import org.apache.hadoop.conf.Configuration;
@@ -44,9 +43,48 @@ public class MappedFieldQueryFilter implements QueryFilter {
 		this.index_field = index_field;
 		this.boost = boost;
 	}
+	
+	private ArrayList<String> getActiveProvenanceURIs(Query input) {
+		
+		ArrayList<String> provenanceURIs = RdfStore.getAllKnownTripleStoreUris();
+		
+		// Find active provenances
+		ArrayList<String> activeProvenanceURIs = new ArrayList<String>();
+		
+		ArrayList<String> curatorShortNamesToExclude = new ArrayList<String>();
+		for (Clause c: input.getClauses()) {
+			
+			// FIXME: Use "-curator", not "excludecurator". We're just avoiding
+			// the minus sign to make things easier at this stage of
+			// development.
+			if (c.getField().equals("excludecurator")) {
+				
+				// Find the value of this field
+				if (c.isPhrase()) {
+					Phrase nutchPhrase = c.getPhrase();
+					Query.Term[] terms = nutchPhrase.getTerms();
+					PhraseQuery lucenePhrase = new PhraseQuery();
 
-	protected org.apache.lucene.search.Query takeClauseAndCreateAMegaQueryContainingAllProvenances(
-			Clause c) {
+					for (int j = 0; j < terms.length; j++) {
+						curatorShortNamesToExclude.add(terms[j].toString());
+					}
+				} else {
+					curatorShortNamesToExclude.add(c.getTerm().toString());
+				}
+			}
+		}
+		
+		// Now we have a list of short names of curators the user wants to exclude from this query
+		for (String curatorShortName: curatorShortNamesToExclude) {
+			for (String excludeThisProvenanceURI : RdfStore.getProvenanceURIsFromCuratorShortName(curatorShortName)) {
+				activeProvenanceURIs.remove(excludeThisProvenanceURI);
+			}
+		}
+		return activeProvenanceURIs;
+	}
+
+	protected org.apache.lucene.search.Query takeClauseAndCreateAMegaQueryContainingCertainProvenances(
+			ArrayList<String> provenanceURIs, Clause c) {
 		DisjunctionMaxQuery ret = new DisjunctionMaxQuery(0);
 
 		// optimize phrase clause
@@ -65,13 +103,11 @@ public class MappedFieldQueryFilter implements QueryFilter {
 		// Now, once per provenance, create a Query (we call it
 		// "provenanceSpecificQuery"), and add it to the larger query as a
 		// disjunction.
-		ArrayList<String> provenanceURIs = RdfStore
-				.getAllKnownTripleStoreUris();
 
 		// Do this once per provenance:
 		for (String provenanceURI : provenanceURIs) {
 
-			String termName = ProvenancePredicatePair.makeCompleteFieldNameWithProvenance(
+			String fieldName = ProvenancePredicatePair.makeCompleteFieldNameWithProvenance(
 					provenanceURI, index_field);
 			
 			// construct appropriate Lucene clause
@@ -82,13 +118,13 @@ public class MappedFieldQueryFilter implements QueryFilter {
 				PhraseQuery lucenePhrase = new PhraseQuery();
 
 				for (int j = 0; j < terms.length; j++) {
-					Term t = new Term(termName, terms[j].toString());
+					Term t = new Term(fieldName, terms[j].toString());
 					lucenePhrase.add(t);
 				}
 				provenanceSpecificQuery = lucenePhrase;
 			} else {
 				provenanceSpecificQuery = new TermQuery(new Term(
-						termName, c.getTerm().toString()));
+						fieldName, c.getTerm().toString()));
 			}
 
 			// set boost
@@ -103,9 +139,12 @@ public class MappedFieldQueryFilter implements QueryFilter {
 
 	public BooleanQuery filter(Query input, BooleanQuery output)
 			throws QueryException {
-
+		
+		ArrayList<String> activeProvenanceURIs = getActiveProvenanceURIs(input);
+		
 		// examine each clause in the Nutch query
 		Clause[] clauses = input.getClauses();
+				
 		for (int i = 0; i < clauses.length; i++) {
 			Clause c = clauses[i];
 
@@ -113,7 +152,8 @@ public class MappedFieldQueryFilter implements QueryFilter {
 			if (!c.getField().equals(query_field))
 				continue;
 
-			org.apache.lucene.search.Query luceneClause = takeClauseAndCreateAMegaQueryContainingAllProvenances(c);
+			org.apache.lucene.search.Query luceneClause = takeClauseAndCreateAMegaQueryContainingCertainProvenances(
+					activeProvenanceURIs, c);
 			output.add(luceneClause,
 					(c.isProhibited() ? BooleanClause.Occur.MUST_NOT : (c
 							.isRequired() ? BooleanClause.Occur.MUST
