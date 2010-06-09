@@ -22,8 +22,6 @@ public class GetPredicatesForSubject extends DiscoverEdTestCase {
 		String provenanceURI2 = "http://example.com/#prov2";
 		
 		createResourceWithProvenance(RESOURCE_URI, provenanceURI);
-		
-		// We don't actually need to store the second resource
 		createResourceWithProvenance(RESOURCE_URI, provenanceURI2);
 		
 		// Invoke the method getPPP2ObjectMapForSubject (this is the method we're testing)

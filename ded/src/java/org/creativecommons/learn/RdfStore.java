@@ -9,8 +9,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.management.RuntimeErrorException;
 
 import thewebsemantic.Bean2RDF;
 import thewebsemantic.Filler;
@@ -60,17 +63,17 @@ public class RdfStore {
 		this.init();
 	}
 
-	public static String getOrCreateTablePrefixFromURI(String uri) throws SQLException {
+	public static int getOrCreateTablePrefixFromURIAsInteger(String uri) throws SQLException {
 		connection = getDatabaseConnection();
 		createRdfStoresTableIfNeeded(connection);
 		
 		// Do we already have a table prefix? If so, return it.
 		java.sql.PreparedStatement matchingTablePrefixes = connection.prepareStatement(
-				"SELECT uri, table_prefix FROM rdf_stores WHERE uri = ? ");
+				"SELECT table_prefix FROM rdf_stores WHERE uri = ? ");
 		matchingTablePrefixes.setString(1, uri);
 		ResultSet cursor = matchingTablePrefixes.executeQuery();
 		if (cursor.next()) {
-			return "" + cursor.getInt("table_prefix");
+			return cursor.getInt("table_prefix");
 		}
 		
 		// Prepare a SQL statement that saves a row in a table called
@@ -82,7 +85,26 @@ public class RdfStore {
 		// Run the statement
 		statement.executeUpdate();
 		
-		return getOrCreateTablePrefixFromURI(uri);
+		return getOrCreateTablePrefixFromURIAsInteger(uri);
+	}
+	
+	public static String getOrCreateTablePrefixFromURI(String uri) throws SQLException {
+		return "" + getOrCreateTablePrefixFromURIAsInteger(uri);
+	}
+	
+	public static String getProvenanceURIFromTablePrefix(int tablePrefix) throws SQLException {
+		connection = getDatabaseConnection();
+		createRdfStoresTableIfNeeded(connection);
+		
+		// Do we already have a table prefix? If so, return it.
+		java.sql.PreparedStatement matchingURIs = connection.prepareStatement(
+				"SELECT uri FROM rdf_stores WHERE table_prefix = ? ");
+		matchingURIs.setInt(1, tablePrefix);
+		ResultSet cursor = matchingURIs.executeQuery();
+		if (cursor.next()) {
+			return cursor.getString("uri");
+		}
+		throw new RuntimeException("Couldn't find the table prefix " + tablePrefix + " in the rdf_stores table"); 
 	}
 
 	// Connect to the database
@@ -332,6 +354,18 @@ public class RdfStore {
 		}
 
 		return map;
+	}
+
+	public HashMap<ProvenancePredicatePair, RDFNode> getPPP2ObjectMapForSubjectAndPredicate(
+			String subjectURI, String titlePredicate) {
+		HashMap<ProvenancePredicatePair, RDFNode> map = RdfStore.getPPP2ObjectMapForSubject(subjectURI);
+		HashMap<ProvenancePredicatePair, RDFNode> mapFiltered = new HashMap<ProvenancePredicatePair, RDFNode>(); 
+		for (Entry<ProvenancePredicatePair, RDFNode> entry: map.entrySet()) {
+			if (entry.getKey().predicateNode.toString().equals(titlePredicate)) {
+				mapFiltered.put(entry.getKey(), entry.getValue()); 
+			}
+		}
+		return mapFiltered;
 	}
 	
 	// encode one (t,p) into a Lucene-compatible string column name
