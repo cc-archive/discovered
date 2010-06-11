@@ -22,8 +22,8 @@ public class AddCurator {
 			System.exit(1);
 		}
 
-		String name = args[1];
-		String url = args[2];
+		String name = args[0];
+		String url = args[1];
 		addCurator(name, url);
 	}
 		
