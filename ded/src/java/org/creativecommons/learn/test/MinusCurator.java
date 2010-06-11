@@ -3,27 +3,19 @@ package org.creativecommons.learn.test;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.creativecommons.learn.DEdConfiguration;
-import org.creativecommons.learn.RdfStore;
-import org.creativecommons.learn.TripleStoreIndexer;
-import org.creativecommons.learn.oercloud.Curator;
-import org.creativecommons.learn.oercloud.Feed;
-import org.creativecommons.learn.oercloud.Resource;
-
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-
 import org.apache.hadoop.conf.Configuration;
-import org.apache.lucene.document.Field;
 import org.apache.nutch.searcher.Hit;
 import org.apache.nutch.searcher.Hits;
 import org.apache.nutch.searcher.NutchBean;
 import org.apache.nutch.searcher.Query;
+import org.creativecommons.learn.DEdConfiguration;
+import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.oercloud.Curator;
+import org.creativecommons.learn.oercloud.Feed;
+import org.creativecommons.learn.oercloud.Resource;
 
 public class MinusCurator extends DiscoverEdTestCase {
 
