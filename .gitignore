@@ -23,7 +23,6 @@ bin/stop-mapred.sh
 conf/automaton-urlfilter.txt
 conf/capacity-scheduler.xml
 conf/core-site.xml
-conf/crawl-urlfilter.txt
 conf/hadoop-env.sh
 conf/hadoop-policy.xml
 conf/hdfs-site.xml
