@@ -114,7 +114,6 @@
 	<classpathentry kind="lib" path="lib/stax-api-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/wstx-asl-3.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/xalan.jar"/>
-	<classpathentry kind="lib" path="lib/xerces.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
