@@ -111,14 +111,14 @@ public class MinusCurator extends DiscoverEdTestCase {
 		// Try asking for tag:chemistry (that's how to find pages with the subject Chemistry)
 		// We should get all three results
 		ArrayList<String> titles = getUrlsOfHitsForAStringyQuery("jellybeans");
-		assertSame(titles.size(), 3);
+		assertSame(3, titles.size());
 		
 		ArrayList<String> titles2 = getUrlsOfHitsForAStringyQuery("tag:chemistry");
-		assertSame(titles2.size(), 3);
+		assertSame(3, titles2.size());
 		
 		// Now ask for "subject:chemistry -curator:NSDL"
 		// We should get only the second and third pages
-		ArrayList<String> hitsFromSecondQuery = getUrlsOfHitsForAStringyQuery("jellybeans -curator:NSDL");
+		ArrayList<String> hitsFromSecondQuery = getUrlsOfHitsForAStringyQuery("jellybeans excludecurator:NSDL");
 		String hitOne = hitsFromSecondQuery.get(0);
 		String hitTwo = hitsFromSecondQuery.get(1);
 		assertTrue(false); // FIXME: Check that these are the correct hits.
