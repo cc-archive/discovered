@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.hadoop.conf.Configuration;
+import org.creativecommons.learn.oercloud.IExtensibleResource;
+
 import thewebsemantic.Bean2RDF;
 import thewebsemantic.Filler;
 import thewebsemantic.NotFoundException;
@@ -15,9 +18,11 @@ import com.hp.hpl.jena.db.IDBConnection;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
-
-import org.apache.hadoop.conf.Configuration;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 /**
  * 
@@ -57,17 +62,14 @@ public class TripleStore {
 	}
 
 	private void open() throws ClassNotFoundException {
-
-	    Configuration config = DEdConfiguration.create();
+		Configuration config = DEdConfiguration.create();
 
 		// register the JDBC driver
 		Class.forName(config.get("rdfstore.db.driver")); // Load the Driver
 
 		// Create the Jena database connection
-		this.conn = new DBConnection(
-				config.get("rdfstore.db.url"), 
-				config.get("rdfstore.db.user"), 
-				config.get("rdfstore.db.password"),
+		this.conn = new DBConnection(config.get("rdfstore.db.url"), config
+				.get("rdfstore.db.user"), config.get("rdfstore.db.password"),
 				config.get("rdfstore.db.type"));
 		this.maker = ModelFactory.createModelRDBMaker(conn);
 
@@ -119,7 +121,33 @@ public class TripleStore {
 	}
 
 	public <T> T load(Class<T> c, String id) throws NotFoundException {
-		return loader.load(c, id);
+		T result = loader.load(c, id);
+
+		if (result instanceof IExtensibleResource) {
+			IExtensibleResource r = (IExtensibleResource) result;
+
+			Resource subject = this.model.createResource(r.getUrl());
+			StmtIterator statements = this.model.listStatements();
+
+			while (statements.hasNext()) {
+				Statement s = statements.nextStatement();
+
+				if (s.getSubject().equals(subject)) {
+					// ah-ha!
+					r.addField(s.getPredicate(), s.getObject());
+				}
+			}
+		}
+
+		return result;
+	}
+
+	public IExtensibleResource load(Class<IExtensibleResource> c, String id)
+			throws NotFoundException {
+		IExtensibleResource resource = loader.load(c, id);
+
+		return resource;
+
 	}
 
 	public <T> Collection<T> load(Class<T> c) {
@@ -140,6 +168,18 @@ public class TripleStore {
 
 	public Resource save(Object bean) {
 		return saver.save(bean);
+	}
+
+	public Resource save(IExtensibleResource bean) {
+		Resource resource = saver.save(bean);
+
+		for (Property predicate : bean.getFields().keySet()) {
+			for (RDFNode object : bean.getFieldValues(predicate)) {
+				this.model.add(this.model.createResource(bean.getUrl()),
+						predicate, object);
+			}
+		}
+		return resource;
 	}
 
 	public Resource saveDeep(Object bean) {
