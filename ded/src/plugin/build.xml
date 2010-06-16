@@ -28,6 +28,7 @@
   <target name="deploy">
      <ant dir="ded-extensionpoints" target="deploy"/>
      <ant dir="dummy" target="deploy"/>
+     <ant dir="delicious" target="deploy"/> 
   </target>
 
   <!-- ====================================================== -->
@@ -37,6 +38,7 @@
     <parallel threadCount="2">
      <ant dir="ded-extensionpoints" target="test"/>
      <ant dir="dummy" target="test"/>
+     <ant dir="delicious" target="deploy"/> 
     </parallel>
   </target>
 
@@ -46,5 +48,6 @@
   <target name="clean">
     <ant dir="ded-extensionpoints" target="clean"/>
     <ant dir="dummy" target="clean"/>
+    <ant dir="delicious" target="deploy"/> 
   </target>
 </project>

@@ -34,7 +34,7 @@
 
 <property>
   <name>plugin.includes</name>
-  <value>dummy</value>
+  <value>dummy|delicious</value>
   <description>Regular expression naming plugin id names to include.
   Any plugin not matching this expression is excluded.  In any case
   you need at least include the nutch-extensionpoints plugin.
@@ -56,6 +56,21 @@
   the plugin.includes and plugin.excludes properties must be automaticaly
   activated if they are needed by some actived plugins.
   </description>
+</property>
+
+<!-- Delicious Plugin Configuration -->
+
+<property>
+  <name>delicious.username</name>
+  <value></value>
+  <description>Your del.icio.us username.
+  </description>
+</property>
+
+<property>
+  <name>delicious.password</name>
+  <value></value>
+  <description>Your del.icio.us password.</description>
 </property>
 
 </configuration>

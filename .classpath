@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="ded/src/plugin/delicious/src/java"/>
 	<classpathentry kind="src" path="ded/src/plugin/dummy/src/java"/>
 	<classpathentry kind="src" path="ded/src/test"/>
 	<classpathentry kind="src" path="src/plugin/scoring-link/src/java"/>
