@@ -158,14 +158,6 @@ public class TripleStore {
 		return result;
 	}
 
-	public IExtensibleResource load(Class<IExtensibleResource> c, String id)
-			throws NotFoundException {
-		IExtensibleResource resource = loader.load(c, id);
-
-		return resource;
-
-	}
-
 	public <T> Collection<T> load(Class<T> c) {
 		return loader.load(c);
 	}
