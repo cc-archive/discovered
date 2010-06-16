@@ -157,4 +157,21 @@ public abstract class DiscoverEdTestCase extends TestCase {
 		urls.add(url);
 		crawlURLs(urls);
 	}
+	
+	public static ArrayList<String> getUrlsOfHitsForAStringyQuery(String q) throws IOException, InterruptedException {
+		// Pardon the weird name, we just didn't want to call it a query string
+		
+		String searchCommand = "bin/nutch org.apache.nutch.searcher.NutchBean " + q;
+		ArrayList<String> output = runCmd(searchCommand);
+		ArrayList<String> urls = new ArrayList<String>();
+		int lineNumber = 0;
+		for (String line: output) {
+			if (lineNumber % 2 == 0 && lineNumber > 0) {
+				urls.add(line);
+				System.err.println("Adding 'url': " + line);
+			}
+			lineNumber++;
+		}
+		return urls;
+	}
 }
