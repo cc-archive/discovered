@@ -39,10 +39,26 @@ public class TripleStore {
 	private RDF2Bean loader = null;
 	private Bean2RDF saver = null;
 
-	private TripleStore() {
-		// private constructor
-		super();
+	public TripleStore() {
+		try {
+			this.model = this.getModel();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
+		configureLoader();
+
+	}
+
+	public TripleStore(Model model) {
+
+		this.model = model;
+
+		configureLoader();
+	}
+
+	private void configureLoader() {
 		try {
 			this.loader = new RDF2Bean(this.getModel());
 			this.saver = new Bean2RDF(this.getModel());
@@ -88,11 +104,11 @@ public class TripleStore {
 
 	public Model getModel() throws ClassNotFoundException {
 
-		if (maker == null) {
-			this.open();
-		}
-
 		if (model == null) {
+			if (maker == null) {
+				this.open();
+			}
+
 			// create or open the default model
 			this.model = maker.createDefaultModel();
 		}
