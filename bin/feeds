@@ -31,8 +31,7 @@ while [ -h "$THIS" ]; do
   fi
 done
 
-# if no args specified, show usage
-if [ $# = 0 ]; then
+usage () {
   echo "Usage: nutch COMMAND"
   echo "where COMMAND is one of:"
   echo "  listfeeds        list all feeds"
@@ -45,15 +44,25 @@ if [ $# = 0 ]; then
   echo "  aggregate"
   echo "  dump"
   echo "  seed"
+  echo "  help             print this usage message"
+  echo "  --help           print this usage message"
   echo " or"
   echo "  CLASSNAME         run the class named CLASSNAME"
   echo "Most commands print help when invoked w/o parameters."
-  exit 1
+  exit 1    
+}
+# if no args specified, show usage
+if [ $# = 0 ]; then
+    usage
 fi
 
 # get arguments
 COMMAND=$1
 shift
+
+if [ "$COMMAND" = "help" -o "$COMMAND" = "--help" ];then
+  usage
+fi
 
 # some directories
 THIS_DIR=`dirname "$THIS"`
