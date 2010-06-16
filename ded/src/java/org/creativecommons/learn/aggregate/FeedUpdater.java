@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.creativecommons.learn.DEdConfiguration;
 import org.creativecommons.learn.TripleStore;
 import org.creativecommons.learn.aggregate.feed.OaiPmh;
 import org.creativecommons.learn.aggregate.feed.Opml;
 import org.creativecommons.learn.oercloud.Feed;
 import org.creativecommons.learn.oercloud.Resource;
+import org.creativecommons.learn.plugin.MetadataRetrievers;
 
 import com.sun.syndication.feed.module.DCModule;
 import com.sun.syndication.feed.module.DCSubject;
@@ -25,9 +27,12 @@ import com.sun.syndication.io.XmlReader;
 public class FeedUpdater {
 
 	private Feed feed;
+	private MetadataRetrievers metadataRetrievers;
 
 	public FeedUpdater(Feed feed) {
 		this.feed = feed;
+		this.metadataRetrievers = new MetadataRetrievers(DEdConfiguration
+				.create());
 	}
 
 	protected void addEntry(SyndEntry entry) {
@@ -37,8 +42,8 @@ public class FeedUpdater {
 
 		new_entry.getSources().add(feed);
 		new_entry.setTitle(entry.getTitle());
-		
-		if (new_entry.getDescription() != null) 
+
+		if (new_entry.getDescription() != null)
 			new_entry.setDescription(entry.getDescription().getValue());
 		else
 			new_entry.setDescription("");
@@ -68,6 +73,9 @@ public class FeedUpdater {
 		List<String> contributors = dc_metadata.getContributors();
 		new_entry.getContributors().addAll(contributors);
 
+		// Load additional metadata from external sources
+		metadataRetrievers.retrieve(new_entry);
+		
 		TripleStore.get().saveDeep(new_entry);
 	} // addEntry
 
