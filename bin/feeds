@@ -45,6 +45,7 @@ usage () {
   echo "  dump"
   echo "  seed"
   echo "  help             print this usage message"
+  echo "  -help            print this usage message"
   echo "  --help           print this usage message"
   echo " or"
   echo "  CLASSNAME         run the class named CLASSNAME"
@@ -60,7 +61,10 @@ fi
 COMMAND=$1
 shift
 
-if [ "$COMMAND" = "help" -o "$COMMAND" = "--help" ];then
+if [ "$COMMAND" = "help" -o \
+    "$COMMAND" = "-help" -o \
+    "$COMMAND" = "--help" ]
+then
   usage
 fi
 
