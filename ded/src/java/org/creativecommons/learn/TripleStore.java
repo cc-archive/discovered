@@ -174,6 +174,15 @@ public class TripleStore {
 		saver.delete(bean);
 	}
 
+	private void saveFields(IExtensibleResource bean) {
+		for (Property predicate : bean.getFields().keySet()) {
+			for (RDFNode object : bean.getFieldValues(predicate)) {
+				this.model.add(this.model.createResource(bean.getUrl()),
+						predicate, object);
+			}
+		}
+	}
+
 	public Resource save(Object bean) {
 		return saver.save(bean);
 	}
@@ -181,17 +190,19 @@ public class TripleStore {
 	public Resource save(IExtensibleResource bean) {
 		Resource resource = saver.save(bean);
 
-		for (Property predicate : bean.getFields().keySet()) {
-			for (RDFNode object : bean.getFieldValues(predicate)) {
-				this.model.add(this.model.createResource(bean.getUrl()),
-						predicate, object);
-			}
-		}
+		saveFields(bean);
 		return resource;
 	}
 
 	public Resource saveDeep(Object bean) {
 		return saver.saveDeep(bean);
+	}
+
+	public Resource saveDeep(IExtensibleResource bean) {
+		Resource resource = saver.saveDeep(bean);
+		saveFields(bean);
+		
+		return resource;
 	}
 
 } // TripleStore
