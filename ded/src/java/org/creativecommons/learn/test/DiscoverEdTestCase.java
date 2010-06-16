@@ -133,7 +133,7 @@ public abstract class DiscoverEdTestCase extends TestCase {
 		return lines;
 	}
 
-	public void crawlURLs(ArrayList<String> urls) throws IOException, InterruptedException {
+	public void crawlURLs(ArrayList<String> urls) throws IOException, InterruptedException, Exception {
 		// Take a list of URLs and prepare them for indexing.
 		
 		// First we need a URLs file
@@ -148,11 +148,11 @@ public abstract class DiscoverEdTestCase extends TestCase {
 		runCmd("rm -rf crawl/");
 
 		// Then we crawl.
-		String cmd = "bin/nutch crawl urls_dir -dir crawl -depth 1";
-		runCmd(cmd);
+        String[] crawlArguments = new String[]{"crawl urls_dir -depth 1"};
+        org.apache.nutch.crawl.Crawl.main(crawlArguments);
 	}
 	
-	public void crawlURLs(String url) throws IOException, InterruptedException {
+	public void crawlURLs(String url) throws IOException, InterruptedException, Exception {
 		ArrayList<String> urls = new ArrayList<String>();
 		urls.add(url);
 		crawlURLs(urls);
@@ -174,4 +174,5 @@ public abstract class DiscoverEdTestCase extends TestCase {
 		}
 		return urls;
 	}
+
 }
