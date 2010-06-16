@@ -3,6 +3,8 @@
 
 <configuration>
 
+<!-- RDF Store Database Configuration -->
+
 <property>
   <name>rdfstore.db.driver</name>
   <value>com.mysql.jdbc.Driver</value>
@@ -26,6 +28,49 @@
 <property>
   <name>rdfstore.db.type</name>
   <value>MySQL</value>
+</property>
+
+<!-- DiscoverEd Plugin Configuration -->
+
+<property>
+  <name>plugin.includes</name>
+  <value>dummy|delicious</value>
+  <description>Regular expression naming plugin id names to include.
+  Any plugin not matching this expression is excluded.  In any case
+  you need at least include the nutch-extensionpoints plugin.
+  </description>
+</property>
+
+<property>
+  <name>plugin.folders</name>
+  <value>plugins</value>
+  <description>Directories where nutch plugins are located.  Each
+  element may be a relative or absolute path.  If absolute, it is used
+  as is.  If relative, it is searched for on the classpath.</description>
+</property>
+
+<property>
+  <name>plugin.auto-activation</name>
+  <value>true</value>
+  <description>Defines if some plugins that are not activated regarding
+  the plugin.includes and plugin.excludes properties must be automaticaly
+  activated if they are needed by some actived plugins.
+  </description>
+</property>
+
+<!-- Delicious Plugin Configuration -->
+
+<property>
+  <name>delicious.username</name>
+  <value></value>
+  <description>Your del.icio.us username.
+  </description>
+</property>
+
+<property>
+  <name>delicious.password</name>
+  <value></value>
+  <description>Your del.icio.us password.</description>
 </property>
 
 </configuration>

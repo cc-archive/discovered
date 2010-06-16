@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.hadoop.conf.Configuration;
+import org.creativecommons.learn.oercloud.IExtensibleResource;
+
 import thewebsemantic.Bean2RDF;
 import thewebsemantic.Filler;
 import thewebsemantic.NotFoundException;
@@ -15,9 +18,11 @@ import com.hp.hpl.jena.db.IDBConnection;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
-
-import org.apache.hadoop.conf.Configuration;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 /**
  * 
@@ -34,10 +39,26 @@ public class TripleStore {
 	private RDF2Bean loader = null;
 	private Bean2RDF saver = null;
 
-	private TripleStore() {
-		// private constructor
-		super();
+	public TripleStore() {
+		try {
+			this.model = this.getModel();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
+		configureLoader();
+
+	}
+
+	public TripleStore(Model model) {
+
+		this.model = model;
+
+		configureLoader();
+	}
+
+	private void configureLoader() {
 		try {
 			this.loader = new RDF2Bean(this.getModel());
 			this.saver = new Bean2RDF(this.getModel());
@@ -57,17 +78,14 @@ public class TripleStore {
 	}
 
 	private void open() throws ClassNotFoundException {
-
-	    Configuration config = DEdConfiguration.create();
+		Configuration config = DEdConfiguration.create();
 
 		// register the JDBC driver
 		Class.forName(config.get("rdfstore.db.driver")); // Load the Driver
 
 		// Create the Jena database connection
-		this.conn = new DBConnection(
-				config.get("rdfstore.db.url"), 
-				config.get("rdfstore.db.user"), 
-				config.get("rdfstore.db.password"),
+		this.conn = new DBConnection(config.get("rdfstore.db.url"), config
+				.get("rdfstore.db.user"), config.get("rdfstore.db.password"),
 				config.get("rdfstore.db.type"));
 		this.maker = ModelFactory.createModelRDBMaker(conn);
 
@@ -86,11 +104,11 @@ public class TripleStore {
 
 	public Model getModel() throws ClassNotFoundException {
 
-		if (maker == null) {
-			this.open();
-		}
-
 		if (model == null) {
+			if (maker == null) {
+				this.open();
+			}
+
 			// create or open the default model
 			this.model = maker.createDefaultModel();
 		}
@@ -119,7 +137,25 @@ public class TripleStore {
 	}
 
 	public <T> T load(Class<T> c, String id) throws NotFoundException {
-		return loader.load(c, id);
+		T result = loader.load(c, id);
+
+		if (result instanceof IExtensibleResource) {
+			IExtensibleResource r = (IExtensibleResource) result;
+
+			Resource subject = this.model.createResource(r.getUrl());
+			StmtIterator statements = this.model.listStatements();
+
+			while (statements.hasNext()) {
+				Statement s = statements.nextStatement();
+
+				if (s.getSubject().equals(subject)) {
+					// ah-ha!
+					r.addField(s.getPredicate(), s.getObject());
+				}
+			}
+		}
+
+		return result;
 	}
 
 	public <T> Collection<T> load(Class<T> c) {
@@ -138,12 +174,35 @@ public class TripleStore {
 		saver.delete(bean);
 	}
 
+	private void saveFields(IExtensibleResource bean) {
+		for (Property predicate : bean.getFields().keySet()) {
+			for (RDFNode object : bean.getFieldValues(predicate)) {
+				this.model.add(this.model.createResource(bean.getUrl()),
+						predicate, object);
+			}
+		}
+	}
+
 	public Resource save(Object bean) {
 		return saver.save(bean);
 	}
 
+	public Resource save(IExtensibleResource bean) {
+		Resource resource = saver.save(bean);
+
+		saveFields(bean);
+		return resource;
+	}
+
 	public Resource saveDeep(Object bean) {
 		return saver.saveDeep(bean);
+	}
+
+	public Resource saveDeep(IExtensibleResource bean) {
+		Resource resource = saver.saveDeep(bean);
+		saveFields(bean);
+		
+		return resource;
 	}
 
 } // TripleStore
