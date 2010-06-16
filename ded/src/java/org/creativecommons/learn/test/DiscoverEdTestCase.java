@@ -1,6 +1,8 @@
 package org.creativecommons.learn.test;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
@@ -130,6 +132,29 @@ public abstract class DiscoverEdTestCase extends TestCase {
 		}
 		return lines;
 	}
+
+	public void crawlURLs(ArrayList<String> urls) throws IOException, InterruptedException {
+		// Take a list of URLs and prepare them for indexing.
 		
-	    
+		// First we need a URLs file
+		runCmd("mkdir urls_dir");
+		BufferedWriter writer = new BufferedWriter(new FileWriter(
+				"urls_dir/list_of_urls"));
+		for (String url : urls) {
+			writer.write(url + "\n");
+		}
+		writer.close();
+
+		runCmd("rm -rf crawl/");
+
+		// Then we crawl.
+		String cmd = "bin/nutch crawl urls_dir -dir crawl -depth 1";
+		runCmd(cmd);
+	}
+	
+	public void crawlURLs(String url) throws IOException, InterruptedException {
+		ArrayList<String> urls = new ArrayList<String>();
+		urls.add(url);
+		crawlURLs(urls);
+	}
 }
