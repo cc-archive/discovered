@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class AddATag extends DiscoverEdTestCase {
 
 
-	public void testControllerAddsTag() throws IOException, InterruptedException {
+	public void testControllerAddsTag() throws Exception {
 
 		String url = "http://a6.creativecommons.org/~raffi/html_for_discovered_unit_tests/AddATag/resource.html";
 		crawlURLs(url);
@@ -19,7 +19,7 @@ public class AddATag extends DiscoverEdTestCase {
 
 	}
 	
-	public void testAddAResourceAndFindItAgain() throws IOException, InterruptedException {
+	public void testAddAResourceAndFindItAgain() throws Exception {
 		
 		// Add a URL that contains the string "Hi I'm a webpage"
 		String url = "http://a6.creativecommons.org/~raffi/html_for_discovered_unit_tests/AddATag/resource.html";
