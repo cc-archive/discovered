@@ -38,7 +38,7 @@
     <parallel threadCount="2">
      <ant dir="ded-extensionpoints" target="test"/>
      <ant dir="dummy" target="test"/>
-     <ant dir="delicious" target="deploy"/> 
+     <ant dir="delicious" target="test"/> 
     </parallel>
   </target>
 
