@@ -17,13 +17,8 @@
 
 package org.creativecommons.learn;
 
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.sql.SQLException;
-
-import net.rootdev.javardfa.ParserFactory;
-import net.rootdev.javardfa.StatementSink;
-import net.rootdev.javardfa.ParserFactory.Format;
-import net.rootdev.javardfa.jena.JenaStatementSink;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,10 +27,7 @@ import org.apache.nutch.parse.HTMLMetaTags;
 import org.apache.nutch.parse.HtmlParseFilter;
 import org.apache.nutch.parse.ParseResult;
 import org.apache.nutch.protocol.Content;
-import org.creativecommons.learn.RdfStore;
 import org.w3c.dom.DocumentFragment;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 public class RDFaParser implements HtmlParseFilter {
 	public static final Log LOG = LogFactory.getLog(RDFaParser.class);
@@ -49,23 +41,16 @@ public class RDFaParser implements HtmlParseFilter {
 		String uri = content.getUrl();
 
 		RdfStore store = null;
-		// FIXME: When we test this, it turns out using the format "XHTML"
-		// works. If we fail to find triples inside RDFa-bearing files, this is
-		// one line of code that might be the cause of the problem.
-		Format format = Format.XHTML;
-		StatementSink sink = null;
-		XMLReader reader = null;
 
 		try {
 			store = RdfStore.uri2RdfStore(uri);
-			sink = new JenaStatementSink(store.getModel());
-			reader = ParserFactory.createReaderForFormat(sink, format);
-			reader.parse(uri);
+			// This is not a no-op
+			Class.forName("net.rootdev.javardfa.jena.RDFaReader");
+			
+			store.getModel().read(new ByteArrayInputStream(content
+					.getContent()),
+					uri, "HTML");
 		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
