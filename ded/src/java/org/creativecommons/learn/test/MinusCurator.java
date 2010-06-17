@@ -1,21 +1,24 @@
 package org.creativecommons.learn.test;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.oercloud.Curator;
+import org.creativecommons.learn.oercloud.Feed;
+import org.creativecommons.learn.oercloud.Resource;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.searcher.Hit;
 import org.apache.nutch.searcher.Hits;
 import org.apache.nutch.searcher.NutchBean;
 import org.apache.nutch.searcher.Query;
-import org.creativecommons.learn.DEdConfiguration;
-import org.creativecommons.learn.RdfStore;
-import org.creativecommons.learn.oercloud.Curator;
-import org.creativecommons.learn.oercloud.Feed;
-import org.creativecommons.learn.oercloud.Resource;
+import org.apache.nutch.util.NutchConfiguration;
 
 public class MinusCurator extends DiscoverEdTestCase {
 
@@ -25,6 +28,9 @@ public class MinusCurator extends DiscoverEdTestCase {
 		final String PAGE_ONE_URL = URL_PREFIX + "1.html";
 		final String PAGE_TWO_URL = URL_PREFIX + "2.html";
 		final String PAGE_THREE_URL = URL_PREFIX + "3.html";
+		
+		// Let's build the plugins
+		runCmd("ant");
 
 		// Add some pages to the database...
 		
@@ -73,42 +79,60 @@ public class MinusCurator extends DiscoverEdTestCase {
 		pageThreeAccordingToOCW.setSubjects(justChemistry);
 		ocwFeedStore.save(pageThreeAccordingToOCW);
 		
+		// Let's just add a resource to the site configuration store and see if we can find it via the nutch searcherbean.
+		siteConfigStore.save(pageThreeAccordingToNSDL);
+		
+		RdfStore siteConfigStoreStrikesBack = RdfStore.getSiteConfigurationStore();
+		Collection<Resource> resourcez = siteConfigStoreStrikesBack.load(org.creativecommons.learn.oercloud.Resource.class);
+		assertTrue(resourcez.size() > 0);
+		
+		String url3  = pageThreeAccordingToNSDL.getUrl();
+		
+		Resource resource = RdfStore.getSiteConfigurationStore().loadDeep(Resource.class, url3);
+		assertSame(resource.getSubjects().iterator().next(), justChemistry.iterator().next());
+		
 		// Let's crawl...
 		
 		// First we need a URLs file
-		BufferedWriter writer = new BufferedWriter(new FileWriter("urls"));
+		runCmd("mkdir urls_dir");
+		BufferedWriter writer = new BufferedWriter(new FileWriter("urls_dir/list_of_urls"));
 		writer.write(PAGE_ONE_URL + "\n");
 		writer.write(PAGE_TWO_URL + "\n");
 		writer.write(PAGE_THREE_URL + "\n");
 		writer.close();
 		
+		runCmd("rm -rf crawl/");
+		
 		// Then we crawl.
-		String crawlDirectory = "crawl"; // FIXME: Get this from the configuration
-		String[] args = {"urls", "-dir", crawlDirectory, "-depth", "1"};
-		org.apache.nutch.crawl.Crawl.main(args);
+		String cmd = "bin/nutch crawl urls_dir -dir crawl -depth 1";
+		runCmd(cmd);
 		
 		// Let's talk to Nutch.
-		// Try asking for subject:chemistry
+		// Try asking for tag:chemistry (that's how to find pages with the subject Chemistry)
 		// We should get all three results
-		assertSame(getHitsForAStringyQuery("subject:chemistry").getTotal(),
-				3);
+		ArrayList<String> titles = getUrlsOfHitsForAStringyQuery("jellybeans");
+		assertSame(3, titles.size());
+		
+		ArrayList<String> titles2 = getUrlsOfHitsForAStringyQuery("tag:chemistry");
+		assertSame(3, titles2.size());
 		
 		// Now ask for "subject:chemistry -curator:NSDL"
 		// We should get only the second and third pages
-		Hits hitsFromSecondQuery = getHitsForAStringyQuery("subject:chemistry -curator:NSDL");
-		Hit hitOne = hitsFromSecondQuery.getHit(0);
-		Hit hitTwo = hitsFromSecondQuery.getHit(1);
+		ArrayList<String> hitsFromSecondQuery = getUrlsOfHitsForAStringyQuery("jellybeans excludecurator:NSDL");
+		String hitOne = hitsFromSecondQuery.get(0);
+		String hitTwo = hitsFromSecondQuery.get(1);
 		assertTrue(false); // FIXME: Check that these are the correct hits.
 	}
+
+
+
 	
-	private static Hits getHitsForAStringyQuery(String q) throws IOException {
-		// Pardon the weird name, we just didn't want to call it a query string
-		final Configuration CONFIGURATION = DEdConfiguration.create();
-		NutchBean bean = new NutchBean(CONFIGURATION);
-		Query query = Query.parse(q, CONFIGURATION);
-		Hits hits = bean.search(query, 10);
-		return hits;
+	/*
+	String[] pieces = line.split("/", 1);
+	if (pieces.length > 1) {
+		urls.add(pieces[1]);
 	}
+	*/
 
 /*	public void testCreateFieldFromPredicateAndObject() {
 		String feedURI = "http://example.com/#feed";

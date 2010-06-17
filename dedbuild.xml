@@ -42,27 +42,17 @@
 		</exec>
 	</target>
 
-	<target name="cc_test" depends="compile-core">
-	    <junit>
-	        <formatter type="plain" usefile="false"/>
-	        <classpath refid="test.classpath"/>
-            <test name="org.creativecommons.learn.TestCuratorFeed" />
-	        <batchtest>
-	            <formatter type="brief" usefile="false" />
-	        </batchtest>
-	    </junit>
-	</target>
+    <target name="runtest" description="Runs the test you specify on the command 
+        line with -Dtest=" depends="compile-core">
+        <junit printsummary="withOutAndErr" fork="yes"> 
+            <classpath refid="classpath" />
+            <formatter type="plain" usefile="false"/>
+            <batchtest>
+                <fileset dir="${src}">
+                    <include name="**/${test}.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
 
-	<target name="cc_test_current" depends="compile-core">
-        <!-- The idea is that this target will contain the test we're working
-          on right now -->
-	    <junit>
-	        <formatter type="plain" usefile="false"/>
-	        <classpath refid="test.classpath"/>
-            <test name="org.creativecommons.learn.TestRDFaTitle" />
-	        <batchtest>
-	            <formatter type="brief" usefile="false" />
-	        </batchtest>
-	    </junit>
-	</target>
 </project>

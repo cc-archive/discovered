@@ -3,10 +3,13 @@
  */
 package org.creativecommons.learn;
 
+import java.util.ArrayList;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.DisjunctionMaxQuery;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.TermQuery;
 import org.apache.nutch.analysis.CommonGrams;
@@ -34,17 +37,114 @@ public class MappedFieldQueryFilter implements QueryFilter {
 	}
 
 	/** Construct for the named field, boosting as specified. */
-	protected MappedFieldQueryFilter(String query_field, String index_field, float boost) {
+	protected MappedFieldQueryFilter(String query_field, String index_field,
+			float boost) {
 		this.query_field = query_field;
 		this.index_field = index_field;
 		this.boost = boost;
 	}
+	
+	private ArrayList<String> getActiveProvenanceURIs(Query input) {
+		
+		ArrayList<String> provenanceURIs = RdfStore.getAllKnownTripleStoreUris();
+		
+		// Find active provenances
+		ArrayList<String> activeProvenanceURIs = new ArrayList<String>();
+		
+		ArrayList<String> curatorShortNamesToExclude = new ArrayList<String>();
+		for (Clause c: input.getClauses()) {
+			
+			// FIXME: Use "-curator", not "excludecurator". We're just avoiding
+			// the minus sign to make things easier at this stage of
+			// development.
+			if (c.getField().equals("excludecurator")) {
+				
+				// Find the value of this field
+				if (c.isPhrase()) {
+					Phrase nutchPhrase = c.getPhrase();
+					Query.Term[] terms = nutchPhrase.getTerms();
+					PhraseQuery lucenePhrase = new PhraseQuery();
+
+					for (int j = 0; j < terms.length; j++) {
+						curatorShortNamesToExclude.add(terms[j].toString());
+					}
+				} else {
+					curatorShortNamesToExclude.add(c.getTerm().toString());
+				}
+			}
+		}
+		
+		// Now we have a list of short names of curators the user wants to exclude from this query
+		for (String curatorShortName: curatorShortNamesToExclude) {
+			for (String excludeThisProvenanceURI : RdfStore.getProvenanceURIsFromCuratorShortName(curatorShortName)) {
+				activeProvenanceURIs.remove(excludeThisProvenanceURI);
+			}
+		}
+		return activeProvenanceURIs;
+	}
+
+	protected org.apache.lucene.search.Query takeClauseAndCreateAMegaQueryContainingCertainProvenances(
+			ArrayList<String> provenanceURIs, Clause c) {
+		DisjunctionMaxQuery ret = new DisjunctionMaxQuery(0);
+
+		// optimize phrase clause
+		if (c.isPhrase()) {
+			String[] opt = this.commonGrams.optimizePhrase(c.getPhrase(),
+					query_field);
+			if (opt.length == 1) {
+				c = new Clause(new Query.Term(opt[0]), c.isRequired(), c
+						.isProhibited(), getConf());
+			} else {
+				c = new Clause(new Phrase(opt), c.isRequired(), c
+						.isProhibited(), getConf());
+			}
+		}
+
+		// Now, once per provenance, create a Query (we call it
+		// "provenanceSpecificQuery"), and add it to the larger query as a
+		// disjunction.
+
+		// Do this once per provenance:
+		for (String provenanceURI : provenanceURIs) {
+
+			String fieldName = ProvenancePredicatePair.makeCompleteFieldNameWithProvenance(
+					provenanceURI, index_field);
+			
+			// construct appropriate Lucene clause
+			org.apache.lucene.search.Query provenanceSpecificQuery;
+			if (c.isPhrase()) {
+				Phrase nutchPhrase = c.getPhrase();
+				Query.Term[] terms = nutchPhrase.getTerms();
+				PhraseQuery lucenePhrase = new PhraseQuery();
+
+				for (int j = 0; j < terms.length; j++) {
+					Term t = new Term(fieldName, terms[j].toString());
+					lucenePhrase.add(t);
+				}
+				provenanceSpecificQuery = lucenePhrase;
+			} else {
+				provenanceSpecificQuery = new TermQuery(new Term(
+						fieldName, c.getTerm().toString()));
+			}
+
+			// set boost
+			provenanceSpecificQuery.setBoost(boost);
+
+			// add it as specified in query
+			ret.add(provenanceSpecificQuery);
+
+		}
+		return ret;
+	}
 
 	public BooleanQuery filter(Query input, BooleanQuery output)
 			throws QueryException {
-
+		
+		ArrayList<String> activeProvenanceURIs = getActiveProvenanceURIs(input);
+		
 		// examine each clause in the Nutch query
 		Clause[] clauses = input.getClauses();
+				
 		for (int i = 0; i < clauses.length; i++) {
 			Clause c = clauses[i];
 
@@ -52,38 +152,8 @@ public class MappedFieldQueryFilter implements QueryFilter {
 			if (!c.getField().equals(query_field))
 				continue;
 
-			// optimize phrase clause
-			if (c.isPhrase()) {
-				String[] opt = this.commonGrams.optimizePhrase(c.getPhrase(),
-						query_field);
-				if (opt.length == 1) {
-					c = new Clause(new Query.Term(opt[0]), c.isRequired(), c
-							.isProhibited(), getConf());
-				} else {
-					c = new Clause(new Phrase(opt), c.isRequired(), c
-							.isProhibited(), getConf());
-				}
-			}
-
-			// construct appropriate Lucene clause
-			org.apache.lucene.search.Query luceneClause;
-			if (c.isPhrase()) {
-				Phrase nutchPhrase = c.getPhrase();
-				Query.Term[] terms = nutchPhrase.getTerms();
-				PhraseQuery lucenePhrase = new PhraseQuery();
-				for (int j = 0; j < terms.length; j++) {
-					lucenePhrase.add(new Term(index_field, terms[j].toString()));
-				}
-				luceneClause = lucenePhrase;
-			} else {
-				luceneClause = new TermQuery(new Term(index_field, c.getTerm()
-						.toString()));
-			}
-
-			// set boost
-			luceneClause.setBoost(boost);
-			// add it as specified in query
-
+			org.apache.lucene.search.Query luceneClause = takeClauseAndCreateAMegaQueryContainingCertainProvenances(
+					activeProvenanceURIs, c);
 			output.add(luceneClause,
 					(c.isProhibited() ? BooleanClause.Occur.MUST_NOT : (c
 							.isRequired() ? BooleanClause.Occur.MUST
@@ -102,4 +172,5 @@ public class MappedFieldQueryFilter implements QueryFilter {
 	public Configuration getConf() {
 		return this.conf;
 	}
+
 }

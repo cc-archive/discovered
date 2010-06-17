@@ -12,7 +12,6 @@
       </library>
    </runtime>
 
-
    <requires>
       <import plugin="nutch-extensionpoints"/>
    </requires>
