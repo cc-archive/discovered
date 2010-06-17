@@ -20,10 +20,10 @@ package org.creativecommons.learn;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import net.rootdev.javardfa.JenaStatementSink;
 import net.rootdev.javardfa.ParserFactory;
 import net.rootdev.javardfa.StatementSink;
 import net.rootdev.javardfa.ParserFactory.Format;
+import net.rootdev.javardfa.jena.JenaStatementSink;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
