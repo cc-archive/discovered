@@ -44,10 +44,6 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 	public TripleStoreIndexer() {
 		
-		// Throw an exception loudly.
-		int a = 0/0;
-		System.err.println("" + a);
-		
 		LOG.info("Created TripleStoreIndexer.");
 
 		// initialize the set of default mappings
