@@ -1,0 +1,7 @@
+#!/bin/bash
+set -x
+ant clean
+ant war
+sudo rm /var/lib/tomcat6/webapps/ROOT* -rf
+sudo cp build/nutch-1.1.war /var/lib/tomcat6/webapps/ROOT.war 
+sudo service tomcat6 restart
