@@ -29,7 +29,7 @@ public class AddCurator {
 		
 	public static void addCurator(String name, String url) throws SQLException {
 		String graphName = "http://creativecommons.org/#site-configuration";
-		RdfStore store = RdfStore.uri2RdfStore(graphName);
+		RdfStore store = RdfStore.forProvenance(graphName);
 		
 		Curator new_curator = new Curator(url);
 		new_curator.setName(name);

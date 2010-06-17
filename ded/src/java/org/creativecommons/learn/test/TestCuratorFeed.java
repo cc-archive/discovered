@@ -15,7 +15,7 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 	 * @throws ClassNotFoundException */
 	public void addCurator() throws SQLException, ClassNotFoundException {
 		String graphName = "http://creativecommons.org/#site-configuration";
-		RdfStore store = RdfStore.uri2RdfStore(graphName);
+		RdfStore store = RdfStore.forProvenance(graphName);
 		
 		/* We have no Curators at the start */
 		Collection<Curator> available_curators = store.load(org.creativecommons.learn.oercloud.Curator.class);
@@ -33,7 +33,7 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 		assertEquals(curator.getUrl(), "http://ocw.nd.edu/");
 		
 		/* Get a different RdfStore */
-		RdfStore aDifferentStore = RdfStore.uri2RdfStore("http://other.example.com/#site-configuration");
+		RdfStore aDifferentStore = RdfStore.forProvenance("http://other.example.com/#site-configuration");
 		
 		/* We have no Curators in the different RdfStore */
 		Collection<Curator> aDifferentListOfCurators = aDifferentStore.load(org.creativecommons.learn.oercloud.Curator.class);
@@ -50,7 +50,7 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 	 * @throws ClassNotFoundException */
 	public void testAddFeed() throws SQLException, ClassNotFoundException {
 		
-		RdfStore store = RdfStore.uri2RdfStore("http://creativecommons.org/#site-configuration");
+		RdfStore store = RdfStore.forProvenance("http://creativecommons.org/#site-configuration");
 		this.addCurator();
 
 		/* We have no Feeds at the start */
@@ -93,7 +93,7 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 		org.creativecommons.learn.aggregate.Main.main(args);
 		
 		// Query that curator's RdfStore, find the triple URI-title-literal
-		RdfStore store = RdfStore.uri2RdfStore(feedURI);
+		RdfStore store = RdfStore.forProvenance(feedURI);
 		Collection<Resource> resources = store.load(org.creativecommons.learn.oercloud.Resource.class);
 		Resource r = resources.iterator().next();
 		String title = r.getTitle();

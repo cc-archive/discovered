@@ -56,14 +56,14 @@ public class MinusCurator extends DiscoverEdTestCase {
 		justChemistry.add("chemistry");
 		
 		// One page was tagged by the NSDL with subject:Chemistry
-		RdfStore nsdlFeedStore = RdfStore.uri2RdfStore(nsdlFeed.getUrl());
+		RdfStore nsdlFeedStore = RdfStore.forProvenance(nsdlFeed.getUrl());
 		Resource pageOneAccordingToNSDL = new Resource(PAGE_ONE_URL);
 
 		pageOneAccordingToNSDL.setSubjects(justChemistry);
 		nsdlFeedStore.save(pageOneAccordingToNSDL);
 		
 		// A second page was tagged by MIT OCW with subject:Chemistry
-		RdfStore ocwFeedStore = RdfStore.uri2RdfStore(ocwFeed.getUrl());
+		RdfStore ocwFeedStore = RdfStore.forProvenance(ocwFeed.getUrl());
 		Resource pageTwoAccordingToOCW = new Resource(PAGE_TWO_URL);
 		pageTwoAccordingToOCW.setSubjects(justChemistry);
 		ocwFeedStore.save(pageTwoAccordingToOCW);

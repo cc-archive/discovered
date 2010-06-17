@@ -52,7 +52,7 @@ public class GetPredicatesForSubject extends DiscoverEdTestCase {
 		r.setTitle("my title");
 		
 		// Get an RdfStore for a certain URI
-		RdfStore store = RdfStore.uri2RdfStore(provenanceURI);
+		RdfStore store = RdfStore.forProvenance(provenanceURI);
 		// Save the resource into the store
 		store.save(r);
 		

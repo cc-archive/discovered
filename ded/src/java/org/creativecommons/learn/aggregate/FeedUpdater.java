@@ -109,7 +109,7 @@ public class FeedUpdater {
 	public void update(boolean force) throws IOException, SQLException {
 		// get the contents of the feed and emit events for each
 		// FIXME: each what?
-		RdfStore store = RdfStore.uri2RdfStore(feed.getUrl());
+		RdfStore store = RdfStore.forProvenance(feed.getUrl());
 
 		// OPML
 		if (feed.getFeedType().toLowerCase().equals("opml")) {

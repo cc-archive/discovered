@@ -73,6 +73,36 @@ public class RdfStore {
 		return new RdfStore(model, null);
 	}
 
+	public static RdfStore forProvenance(String uri) throws SQLException {
+		/**
+		 * FIXME: One day, cache these mappings (uri to rdfstore) in a HashMap.
+		 */
+		Configuration config = DEdConfiguration.create();
+
+		System.err.println("making triple store for " + uri);
+
+		// XXX register the JDBC driver
+		// Class.forName(config.get("rdfstore.db.driver")); // Load the Driver
+
+		// Create the Jena database connection
+		DBConnection conn = new DBConnection(config
+				.get("rdfstore.db.server_url")
+				+ getDatabaseName() + "?autoReconnect=true", config
+				.get("rdfstore.db.user"), config.get("rdfstore.db.password"),
+				config.get("rdfstore.db.type"));
+
+		IRDBDriver driver = conn.getDriver();
+
+		String tableNamePrefix = getOrCreateTablePrefixFromURI(uri);
+		driver.setTableNamePrefix(tableNamePrefix);
+
+		ModelMaker maker = ModelFactory.createModelRDBMaker(conn);
+
+		getOrCreateTablePrefixFromURI(uri);
+
+		return new RdfStore(maker.createDefaultModel(), conn);
+	}
+
 	public static int getOrCreateTablePrefixFromURIAsInteger(String uri) {
 		try {
 			connection = getDatabaseConnection();
@@ -191,40 +221,6 @@ public class RdfStore {
 		return RdfStore.databaseName;
 	}
 
-	public static RdfStore uri2RdfStore(String uri, String databaseName) {
-		/**
-		 * FIXME: One day, cache these mappings (uri to rdfstore) in a HashMap.
-		 */
-		Configuration config = DEdConfiguration.create();
-
-		System.err.println("making triple store for " + uri);
-
-		// XXX register the JDBC driver
-		// Class.forName(config.get("rdfstore.db.driver")); // Load the Driver
-
-		// Create the Jena database connection
-		DBConnection conn = new DBConnection(config
-				.get("rdfstore.db.server_url")
-				+ databaseName + "?autoReconnect=true", config
-				.get("rdfstore.db.user"), config.get("rdfstore.db.password"),
-				config.get("rdfstore.db.type"));
-
-		IRDBDriver driver = conn.getDriver();
-
-		String tableNamePrefix = getOrCreateTablePrefixFromURI(uri);
-		driver.setTableNamePrefix(tableNamePrefix);
-
-		ModelMaker maker = ModelFactory.createModelRDBMaker(conn);
-
-		getOrCreateTablePrefixFromURI(uri);
-
-		return new RdfStore(maker.createDefaultModel(), conn);
-	}
-
-	public static RdfStore uri2RdfStore(String uri) {
-		return uri2RdfStore(uri, getDatabaseName());
-	}
-
 	public static ArrayList<String> getAllKnownTripleStoreUris() {
 		Statement statement;
 		
@@ -250,7 +246,7 @@ public class RdfStore {
 	 * @throws SQLException
 	 * */
 	public static RdfStore getSiteConfigurationStore() {
-		return RdfStore.uri2RdfStore(RdfStore.SITE_CONFIG_URI);
+		return RdfStore.forProvenance(RdfStore.SITE_CONFIG_URI);
 	}
 
 	public void close() {
@@ -373,7 +369,7 @@ public class RdfStore {
 		
 		for (String provenanceURI : RdfStore.getAllKnownTripleStoreUris()) {
 			Model m;
-			m = RdfStore.uri2RdfStore(provenanceURI).getModel();
+			m = RdfStore.forProvenance(provenanceURI).getModel();
 
 			// Create a new query
 			String queryString = "SELECT ?p ?o " + "WHERE {" + "      <"

@@ -14,7 +14,7 @@ public class TestPPP extends DiscoverEdTestCase {
 		// Create a resource with a provenance
 		String subjectURI = "http://example.com/#subject";
 		String provenanceURI = "http://example.com/#provenance";
-		RdfStore store = RdfStore.uri2RdfStore(provenanceURI);
+		RdfStore store = RdfStore.forProvenance(provenanceURI);
 		Resource r = new Resource(subjectURI);
 		r.setTitle("my title");
 		String titlePredicate = "http://purl.org/dc/elements/1.1/title";

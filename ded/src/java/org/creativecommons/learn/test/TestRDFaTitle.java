@@ -46,7 +46,7 @@ public class TestRDFaTitle extends DiscoverEdTestCase {
 		org.creativecommons.learn.aggregate.Main.main(args);
 		
 		// Query the RdfStore corresponding to the feed.
-		RdfStore feedStore = RdfStore.uri2RdfStore(feedURI);
+		RdfStore feedStore = RdfStore.forProvenance(feedURI);
 		Collection<Resource> resourcesInFeedStore = feedStore.load(org.creativecommons.learn.oercloud.Resource.class);
 		
 		// There should be a resource corresponding to the feed.
@@ -66,7 +66,7 @@ public class TestRDFaTitle extends DiscoverEdTestCase {
 		assertEquals(uriOfPageWithRDFa, resourceURI);
 		
 		// Now actually find the title.
-		RdfStore store = RdfStore.uri2RdfStore(resourceURI);
+		RdfStore store = RdfStore.forProvenance(resourceURI);
 		Collection<Resource> resources = store.load(org.creativecommons.learn.oercloud.Resource.class);
 		assertEquals(1, resources.size());
 		Resource resourceInItsOwnStore = resources.iterator().next();
