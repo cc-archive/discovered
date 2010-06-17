@@ -5,10 +5,10 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Vector;
 
-import net.rootdev.javardfa.JenaStatementSink;
 import net.rootdev.javardfa.ParserFactory;
 import net.rootdev.javardfa.StatementSink;
 import net.rootdev.javardfa.ParserFactory.Format;
+import net.rootdev.javardfa.jena.JenaStatementSink;
 
 import org.creativecommons.learn.RdfStore;
 import org.xml.sax.SAXException;
@@ -149,48 +149,5 @@ public class Resource {
 		this.seeAlso = seeAlso;
 	}
 
-	/*
-	 * GET a URI, e.g., http://example.com/, inspect it for RDFa, convert that
-	 * RDFa into triples, and say that
-	 * "these triples come from http://example.com/".
-	 * 
-	 * FIXME: By doing things this way -- looking up the URI here, as opposed to
-	 * re-using any HTML we already GET'ted, we are hitting the network once per
-	 * call to this function -- more than we need to.
-	 * 
-	 * FIXME: At time of writing, this method is only called by
-	 * FeedUpdater.addEntry, so only entries in RSS feeds will get their RDFa
-	 * parsed. OAI-PMH feeds are left out, for example.
-	 */
-	public static void parseURIForRDFa(String uri) {
-		
-		System.err.println("parseURIForRDFa called");
-		
-		RdfStore store = null;
-		// FIXME: When we test this, it turns out using the format "XHTML"
-		// works. If we fail to find triples inside RDFa-bearing files, this is
-		// one line of code that might be the cause of the problem.
-        Format format = Format.XHTML;
-        StatementSink sink = null;
-        XMLReader reader = null;
-        
-		try {
-			store = RdfStore.uri2RdfStore(uri);
-			sink = new JenaStatementSink(store.getModel());
-			reader = ParserFactory.createReaderForFormat(sink, format);
-			reader.parse(uri);
-			
-			
-			// FIXME: Curiously, when we run this, we always get zero resources!
-			// Dropping this on the floor...
-			Collection<Resource> resources = store.load(org.creativecommons.learn.oercloud.Resource.class);
-			System.err.println("How many resources?: " + resources.size());
-		}
-		catch (SQLException e) { e.printStackTrace(); }
-		catch (IOException e) { e.printStackTrace(); }
-		catch (SAXException e) { e.printStackTrace(); }
-		catch (ClassNotFoundException e) { e.printStackTrace(); }
-		
-	}
 }
 

@@ -1,11 +1,6 @@
 package org.creativecommons.learn.aggregate;
 
-
-import org.creativecommons.learn.RdfStore;
-
-
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.SQLException;
@@ -18,8 +13,6 @@ import org.creativecommons.learn.aggregate.feed.OaiPmh;
 import org.creativecommons.learn.aggregate.feed.Opml;
 import org.creativecommons.learn.oercloud.Feed;
 import org.creativecommons.learn.oercloud.Resource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 import com.sun.syndication.feed.module.DCModule;
 import com.sun.syndication.feed.module.DCSubject;
@@ -29,13 +22,6 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
-
-import net.rootdev.javardfa.JenaStatementSink;
-import net.rootdev.javardfa.NTripleSink;
-import net.rootdev.javardfa.ParserFactory;
-import net.rootdev.javardfa.StatementSink;
-import net.rootdev.javardfa.URIResolver;
-import net.rootdev.javardfa.ParserFactory.Format;
 
 public class FeedUpdater {
 
@@ -104,19 +90,15 @@ public class FeedUpdater {
 		r.getContributors().addAll(contributors);
 
 		store.saveDeep(r);
-		
+
 		System.err.println("URI: " + r.getUrl());
-		Resource.parseURIForRDFa(r.getUrl());
-
 	} // addEntry
-	
-
 
 	public void update(boolean force) throws IOException, SQLException {
 		// get the contents of the feed and emit events for each
 		// FIXME: each what?
 		RdfStore store = RdfStore.uri2RdfStore(feed.getUrl());
-		
+
 		// OPML
 		if (feed.getFeedType().toLowerCase().equals("opml")) {
 
