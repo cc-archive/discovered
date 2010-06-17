@@ -33,14 +33,18 @@ public class FeedUpdater {
 		this.feed = feed;
 	}
 
-	/** Take the SyndEntry "entry", and add or update
-	 * a corresponding Resource in our RdfStore. 
-	 * @throws SQLException */
-	protected void addEntry(RdfStore store, SyndEntry entry) throws SQLException {
+	/**
+	 * Take the SyndEntry "entry", and add or update a corresponding Resource in
+	 * our RdfStore.
+	 * 
+	 * @throws SQLException
+	 */
+	protected void addEntry(RdfStore store, SyndEntry entry)
+			throws SQLException {
 
 		// XXX check if the entry exists first...
 		Resource r = new Resource(entry.getUri());
-		
+
 		// Back when SyndFeed parsed the feed, it read in from the feed
 		// all of the metadata it could find for this URI. Now it has
 		// made that metadata available in the object "entry".
@@ -49,21 +53,21 @@ public class FeedUpdater {
 		// So let's add this feed to the resource's list of sources.
 		r.getSources().add(feed);
 		r.setTitle(entry.getTitle());
-		
-		// If the resource doesn't have a description, set it to the empty string.
+
+		// If the resource doesn't have a description, set it to the empty
+		// string.
 		// FIXME: Write a test checking the right behavior here.
-		// (Is that meant to be entry.getDescription()?) 
+		// (Is that meant to be entry.getDescription()?)
 		if (r.getDescription() == null) {
 			r.setDescription("");
-		}
-		else {
+		} else {
 			r.setDescription(entry.getDescription().getValue());
 		}
 
 		// FIXME: How is this different from dc:category below?
-		
+
 		// Could we learn anything from the feed about the various
-		// "categories" this resource belongs in? 
+		// "categories" this resource belongs in?
 		for (Object category : entry.getCategories()) {
 			r.getSubjects().add(((SyndCategory) category).getName());
 		}
@@ -107,18 +111,19 @@ public class FeedUpdater {
 		} else if (feed.getFeedType().toLowerCase().equals("oai-pmh")) {
 
 			new OaiPmh().poll(feed, force);
-			
+
 		} else {
-			
+
 			try {
-						
+
 				SyndFeedInput input = new SyndFeedInput();
 				URLConnection feed_connection = new URL(feed.getUrl())
 						.openConnection();
 				feed_connection.setConnectTimeout(30000);
 				feed_connection.setReadTimeout(60000);
-			 
-				SyndFeed rome_feed = input.build(new XmlReader(feed_connection));
+
+				SyndFeed rome_feed = input
+						.build(new XmlReader(feed_connection));
 
 				List<SyndEntry> feed_entries = rome_feed.getEntries();
 
@@ -141,8 +146,7 @@ public class FeedUpdater {
 				// XXX still need to log feed errors if it's not OAI-PMH
 				Logger.getLogger(Feed.class.getName()).log(Level.SEVERE, null,
 						ex);
-			}
-			finally {
+			} finally {
 
 				/*
 				 * The following code is used for testing. Not sure how I could
@@ -156,13 +160,13 @@ public class FeedUpdater {
 
 		} // not opml...
 	} // poll
-	
+
 	public static void startCountingGETs() {
-		assert ! pleaseCountGETs;
+		assert !pleaseCountGETs;
 		howManyGETsSoFar = 0;
 		pleaseCountGETs = true;
 	}
-	
+
 	public static int getHowManyGETsSoFar() {
 		return howManyGETsSoFar;
 	}
