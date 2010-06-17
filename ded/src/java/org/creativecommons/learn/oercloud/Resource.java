@@ -1,22 +1,17 @@
 package org.creativecommons.learn.oercloud;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Node_URI;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfProperty;
 import thewebsemantic.Uri;
+
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 
 @Namespace("http://learn.creativecommons.org/ns#")
 public class Resource implements IExtensibleResource {
@@ -177,5 +172,6 @@ public class Resource implements IExtensibleResource {
 		
 		return this.fields;
 	}
+
 }
 
