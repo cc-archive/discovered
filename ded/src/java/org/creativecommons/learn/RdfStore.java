@@ -69,8 +69,8 @@ public class RdfStore {
 	}
 
 	/**
-	 * Returns the RdfStore devoted to feeds that the system administrator
-	 * adds when configuring this DiscoverEd instance.
+	 * Returns the RdfStore devoted to feeds that the system administrator adds
+	 * when configuring this DiscoverEd instance.
 	 * 
 	 * @throws SQLException
 	 * */
@@ -143,16 +143,18 @@ public class RdfStore {
 			statement.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new RuntimeException("Encountered a SQL error while trying to figure out where we keep the data on " + uri);
+			throw new RuntimeException(
+					"Encountered a SQL error while trying to figure out where we keep the data on "
+							+ uri);
 		}
-		
+
 		return getOrCreateTablePrefixFromURIAsInteger(uri);
 	}
-	
+
 	public static String getOrCreateTablePrefixFromURI(String uri) {
 		return "" + getOrCreateTablePrefixFromURIAsInteger(uri);
 	}
-	
+
 	public static String getProvenanceURIFromTablePrefix(int tablePrefix) {
 		try {
 			connection = getDatabaseConnection();
@@ -169,7 +171,7 @@ public class RdfStore {
 			// If we get down here, something went wrong.
 			throw new RuntimeException("Couldn't find the table prefix "
 					+ tablePrefix + " in the rdf_stores table");
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException(
@@ -193,7 +195,7 @@ public class RdfStore {
 	public static void createRdfStoresTableIfNeeded(Connection connection) {
 
 		// FIXME: Add an index to the "uri" column.
-		
+
 		// Try to create table
 		try {
 			executeSQL("CREATE TABLE IF NOT EXISTS rdf_stores (table_prefix INTEGER PRIMARY KEY AUTO_INCREMENT, uri VARCHAR(1000))");
@@ -239,18 +241,22 @@ public class RdfStore {
 
 	public static ArrayList<String> getAllKnownTripleStoreUris() {
 		Statement statement;
-		
+
 		ArrayList<String> uris = new ArrayList<String>();
 		try {
-			statement = getDatabaseConnection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
-			ResultSet resultSet = statement.executeQuery("SELECT uri, table_prefix FROM rdf_stores");
+			statement = getDatabaseConnection()
+					.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+							ResultSet.CONCUR_READ_ONLY);
+			ResultSet resultSet = statement
+					.executeQuery("SELECT uri, table_prefix FROM rdf_stores");
 			while (resultSet.next()) {
 				String uri = resultSet.getString("uri");
 				uris.add(uri);
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("sql error");
 		}
-		catch (SQLException e) { e.printStackTrace(); throw new RuntimeException("sql error"); }
 
 		return uris;
 	}
@@ -304,7 +310,8 @@ public class RdfStore {
 			StmtIterator statements = this.model.listStatements();
 
 			while (statements.hasNext()) {
-				com.hp.hpl.jena.rdf.model.Statement s = statements.nextStatement();
+				com.hp.hpl.jena.rdf.model.Statement s = statements
+						.nextStatement();
 
 				if (s.getSubject().equals(subject)) {
 					// ah-ha!
@@ -359,20 +366,20 @@ public class RdfStore {
 	public Resource saveDeep(IExtensibleResource bean) {
 		Resource resource = saver.saveDeep(bean);
 		saveFields(bean);
-		
+
 		return resource;
 	}
 
 	public static void setDatabaseName(String databaseName) {
 		RdfStore.databaseName = databaseName;
 	}
-	
-	
+
 	// get all t,p,o for url
-	public static HashMap<ProvenancePredicatePair, RDFNode> getPPP2ObjectMapForSubject(String subjectURL) {
-	
+	public static HashMap<ProvenancePredicatePair, RDFNode> getPPP2ObjectMapForSubject(
+			String subjectURL) {
+
 		HashMap<ProvenancePredicatePair, RDFNode> map = new HashMap<ProvenancePredicatePair, RDFNode>();
-		
+
 		for (String provenanceURI : RdfStore.getAllKnownTripleStoreUris()) {
 			Model m;
 			m = RdfStore.forProvenance(provenanceURI).getModel();
@@ -386,16 +393,19 @@ public class RdfStore {
 			QueryExecution qe = QueryExecutionFactory.create(query, m);
 
 			com.hp.hpl.jena.query.ResultSet cursor = qe.execSelect();
-			
+
 			// Index the triples
 			while (cursor.hasNext()) {
 				QuerySolution stmt = cursor.nextSolution();
 				RDFNode predicateNode = stmt.get("p");
-				ProvenancePredicatePair p3 = new ProvenancePredicatePair(provenanceURI, predicateNode);
+				ProvenancePredicatePair p3 = new ProvenancePredicatePair(
+						provenanceURI, predicateNode);
 				RDFNode objectNode = stmt.get("o");
-				System.out.println("Found a triple for " + subjectURL + ": "
-						+ predicateNode.toString() + " courtesy of " + provenanceURI
-						+ ", value is " + objectNode.toString());
+				System.out
+						.println("Found a triple for " + subjectURL + ": "
+								+ predicateNode.toString() + " courtesy of "
+								+ provenanceURI + ", value is "
+								+ objectNode.toString());
 				map.put(p3, objectNode);
 			}
 
@@ -408,53 +418,56 @@ public class RdfStore {
 
 	public HashMap<ProvenancePredicatePair, RDFNode> getPPP2ObjectMapForSubjectAndPredicate(
 			String subjectURI, String titlePredicate) {
-		HashMap<ProvenancePredicatePair, RDFNode> map = RdfStore.getPPP2ObjectMapForSubject(subjectURI);
-		HashMap<ProvenancePredicatePair, RDFNode> mapFiltered = new HashMap<ProvenancePredicatePair, RDFNode>(); 
-		for (Entry<ProvenancePredicatePair, RDFNode> entry: map.entrySet()) {
+		HashMap<ProvenancePredicatePair, RDFNode> map = RdfStore
+				.getPPP2ObjectMapForSubject(subjectURI);
+		HashMap<ProvenancePredicatePair, RDFNode> mapFiltered = new HashMap<ProvenancePredicatePair, RDFNode>();
+		for (Entry<ProvenancePredicatePair, RDFNode> entry : map.entrySet()) {
 			if (entry.getKey().predicateNode.toString().equals(titlePredicate)) {
-				mapFiltered.put(entry.getKey(), entry.getValue()); 
+				mapFiltered.put(entry.getKey(), entry.getValue());
 			}
 		}
 		return mapFiltered;
 	}
 
-	public static ArrayList<String> getProvenanceURIsFromCuratorShortName(String curatorShortName) {
+	public static ArrayList<String> getProvenanceURIsFromCuratorShortName(
+			String curatorShortName) {
 		/* Find the matching Curator, if any. */
 		Curator relevantCurator = null;
 		ArrayList<String> resultsSoFar = new ArrayList<String>();
-		
+
 		RdfStore store = RdfStore.forDEd();
-		Collection <Curator> curators =  store.load(Curator.class);
-		
+		Collection<Curator> curators = store.load(Curator.class);
+
 		/* FIXME: This is a really lame way to do a query. */
-		for (Curator c: curators) {
+		for (Curator c : curators) {
 			if (c.getName().equals(curatorShortName)) {
 				relevantCurator = c;
 				break;
 			}
 		}
-		
+
 		// Okay, if there's no matching Curator, we bail out now.
 		if (relevantCurator == null) {
 			return resultsSoFar;
 		}
-		
-		// Otherwise, the answer is that the matching provenance URIs are the URLs of all
+
+		// Otherwise, the answer is that the matching provenance URIs are the
+		// URLs of all
 		// the Feed objects. Let's collect those into resultsSoFar.
-		Collection <Feed> all_feeds = store.load(Feed.class);
-		
+		Collection<Feed> all_feeds = store.load(Feed.class);
+
 		// Search for Feeds whose curator is our friend, the relevantCurator
-		for (Feed f: all_feeds) {
+		for (Feed f : all_feeds) {
 			if (f.getCurator().getUrl().equals(relevantCurator.getUrl())) {
 				resultsSoFar.add(f.getUrl());
 			}
 		}
-		
+
 		return resultsSoFar;
 	}
-	
+
 	// encode one (t,p) into a Lucene-compatible string column name
-	
+
 	// decode one Lucene-compatible string column name into (t, p)
 
 } // RdfStore
