@@ -34,7 +34,7 @@
 
 <property>
   <name>plugin.includes</name>
-  <value>dummy|delicious</value>
+  <value>dummy</value>
   <description>Regular expression naming plugin id names to include.
   Any plugin not matching this expression is excluded.  In any case
   you need at least include the nutch-extensionpoints plugin.
