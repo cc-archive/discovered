@@ -9,10 +9,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.DEdConfiguration;
 import org.creativecommons.learn.aggregate.feed.OaiPmh;
 import org.creativecommons.learn.aggregate.feed.Opml;
 import org.creativecommons.learn.oercloud.Feed;
 import org.creativecommons.learn.oercloud.Resource;
+import org.creativecommons.learn.plugin.MetadataRetrievers;
 
 import com.sun.syndication.feed.module.DCModule;
 import com.sun.syndication.feed.module.DCSubject;
@@ -28,9 +30,12 @@ public class FeedUpdater {
 	private Feed feed;
 	public static int howManyGETsSoFar;
 	private static boolean pleaseCountGETs = false;
+	private MetadataRetrievers metadataRetrievers;
 
 	public FeedUpdater(Feed feed) {
 		this.feed = feed;
+		this.metadataRetrievers = new MetadataRetrievers(DEdConfiguration
+				.create());
 	}
 
 	/**
@@ -65,7 +70,6 @@ public class FeedUpdater {
 		}
 
 		// FIXME: How is this different from dc:category below?
-
 		// Could we learn anything from the feed about the various
 		// "categories" this resource belongs in?
 		for (Object category : entry.getCategories()) {
@@ -96,6 +100,10 @@ public class FeedUpdater {
 		store.saveDeep(r);
 
 		System.err.println("URI: " + r.getUrl());
+		// Load additional metadata from external sources
+		metadataRetrievers.retrieve(r);
+		
+		store.saveDeep(r);
 	} // addEntry
 
 	public void update(boolean force) throws IOException, SQLException {

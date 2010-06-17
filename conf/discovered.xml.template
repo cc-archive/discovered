@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+
+<!-- RDF Store Database Configuration -->
+
+<property>
+  <name>rdfstore.db.driver</name>
+  <value>com.mysql.jdbc.Driver</value>
+</property>
+
+<property>
+  <name>rdfstore.db.url</name>
+  <value>jdbc:mysql://localhost/discovered?autoReconnect=true</value>
+</property>
+
+<property>
+  <name>rdfstore.db.server_url</name>
+  <value>jdbc:mysql://localhost/</value>
+</property>
+
+<property>
+  <name>rdfstore.db.root_user</name>
+  <value>root</value>
+</property>
+
+<property>
+  <name>rdfstore.db.root_password</name>
+  <value></value>
+</property>
+
+<property>
+  <name>rdfstore.db.user</name>
+  <value>discovered</value>
+</property>
+
+<property>
+  <name>rdfstore.db.password</name>
+  <value></value>
+</property>
+
+<property>
+  <name>rdfstore.db.type</name>
+  <value>MySQL</value>
+</property>
+
+<property>
+  <name>rdfstore.db.database_name</name>
+  <value>discovered</value>
+</property>
+
+<property>
+  <name>rdfstore.db.database_name_for_test_suite</name>
+  <value>discovered_test</value>
+</property>
+
+<!-- DiscoverEd Plugin Configuration -->
+
+<property>
+  <name>plugin.includes</name>
+  <value>dummy</value>
+  <description>Regular expression naming plugin id names to include.
+  Any plugin not matching this expression is excluded.  In any case
+  you need at least include the nutch-extensionpoints plugin.
+  </description>
+</property>
+
+<property>
+  <name>plugin.folders</name>
+  <value>plugins</value>
+  <description>Directories where nutch plugins are located.  Each
+  element may be a relative or absolute path.  If absolute, it is used
+  as is.  If relative, it is searched for on the classpath.</description>
+</property>
+
+<property>
+  <name>plugin.auto-activation</name>
+  <value>true</value>
+  <description>Defines if some plugins that are not activated regarding
+  the plugin.includes and plugin.excludes properties must be automaticaly
+  activated if they are needed by some actived plugins.
+  </description>
+</property>
+
+<!-- Delicious Plugin Configuration -->
+
+<property>
+  <name>delicious.username</name>
+  <value></value>
+  <description>Your del.icio.us username.
+  </description>
+</property>
+
+<property>
+  <name>delicious.password</name>
+  <value></value>
+  <description>Your del.icio.us password.</description>
+</property>
+
+</configuration>

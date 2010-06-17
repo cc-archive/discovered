@@ -31,13 +31,16 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
+import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.mysql.jdbc.PreparedStatement;
 
 import org.apache.hadoop.conf.Configuration;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
+import org.creativecommons.learn.oercloud.IExtensibleResource;
 
 /**
  * 
@@ -300,7 +303,25 @@ public class RdfStore {
 	}
 
 	public <T> T load(Class<T> c, String id) throws NotFoundException {
-		return loader.load(c, id);
+		T result = loader.load(c, id);
+
+		if (result instanceof IExtensibleResource) {
+			IExtensibleResource r = (IExtensibleResource) result;
+
+			Resource subject = this.model.createResource(r.getUrl());
+			StmtIterator statements = this.model.listStatements();
+
+			while (statements.hasNext()) {
+				com.hp.hpl.jena.rdf.model.Statement s = statements.nextStatement();
+
+				if (s.getSubject().equals(subject)) {
+					// ah-ha!
+					r.addField(s.getPredicate(), s.getObject());
+				}
+			}
+		}
+
+		return result;
 	}
 
 	public <T> Collection<T> load(Class<T> c) {
@@ -319,12 +340,35 @@ public class RdfStore {
 		saver.delete(bean);
 	}
 
+	private void saveFields(IExtensibleResource bean) {
+		for (Property predicate : bean.getFields().keySet()) {
+			for (RDFNode object : bean.getFieldValues(predicate)) {
+				this.model.add(this.model.createResource(bean.getUrl()),
+						predicate, object);
+			}
+		}
+	}
+
 	public Resource save(Object bean) {
 		return saver.save(bean);
 	}
 
+	public Resource save(IExtensibleResource bean) {
+		Resource resource = saver.save(bean);
+
+		saveFields(bean);
+		return resource;
+	}
+
 	public Resource saveDeep(Object bean) {
 		return saver.saveDeep(bean);
+	}
+
+	public Resource saveDeep(IExtensibleResource bean) {
+		Resource resource = saver.saveDeep(bean);
+		saveFields(bean);
+		
+		return resource;
 	}
 
 	public static void setDatabaseName(String databaseName) {
