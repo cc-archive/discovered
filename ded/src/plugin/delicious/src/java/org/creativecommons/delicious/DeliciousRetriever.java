@@ -99,7 +99,7 @@ public class DeliciousRetriever implements MetadataRetriever {
 		return resource;
 	}
 
-	public ArrayList<String> getTags(String targetURI) throws HttpException,
+	private ArrayList<String> getTags(String targetURI) throws HttpException,
 			IOException, ParserConfigurationException, SAXException,
 			XPathExpressionException {
 		String queryUrl = "https://api.del.icio.us/v1/posts/suggest?url="
