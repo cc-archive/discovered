@@ -68,6 +68,22 @@ public class RdfStore {
 		this.saver = new Bean2RDF(this.model);
 	}
 
+	/**
+	 * Returns the RdfStore devoted to feeds that the system administrator
+	 * adds when configuring this DiscoverEd instance.
+	 * 
+	 * @throws SQLException
+	 * */
+	public static RdfStore forDEd() {
+		try {
+			return RdfStore.forProvenance(RdfStore.SITE_CONFIG_URI);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Merde, there was an SQL error "
+					+ "while trying access the site configuration database.");
+		}
+	}
+
 	public static RdfStore forModel(Model model) {
 
 		return new RdfStore(model, null);
@@ -239,16 +255,6 @@ public class RdfStore {
 		return uris;
 	}
 
-	/**
-	 * Returns the TripleStore devoted to feeds that the system administrator
-	 * adds when configuring this DiscoverEd instance.
-	 * 
-	 * @throws SQLException
-	 * */
-	public static RdfStore getSiteConfigurationStore() {
-		return RdfStore.forProvenance(RdfStore.SITE_CONFIG_URI);
-	}
-
 	public void close() {
 
 		// if no connection was supplied, nothing to do here
@@ -417,7 +423,7 @@ public class RdfStore {
 		Curator relevantCurator = null;
 		ArrayList<String> resultsSoFar = new ArrayList<String>();
 		
-		RdfStore store = RdfStore.getSiteConfigurationStore();
+		RdfStore store = RdfStore.forDEd();
 		Collection <Curator> curators =  store.load(Curator.class);
 		
 		/* FIXME: This is a really lame way to do a query. */

@@ -88,14 +88,14 @@ public class NsdlDc extends OaiMetadataFormat implements IResourceExtractor {
 				
 		// see also
 		try {
-			item.getSeeAlso().add(RdfStore.getSiteConfigurationStore().load(OaiResource.class, identifier));
+			item.getSeeAlso().add(RdfStore.forDEd().load(OaiResource.class, identifier));
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		// persist the Resource
-		RdfStore.getSiteConfigurationStore().save(item);
+		RdfStore.forDEd().save(item);
 	}
 
 }

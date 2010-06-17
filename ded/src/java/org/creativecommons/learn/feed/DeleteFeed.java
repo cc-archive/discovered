@@ -26,14 +26,14 @@ public class DeleteFeed {
 		String url = args[0];
 		
 		//  make sure the feed exists
-		if (!(RdfStore.getSiteConfigurationStore().exists(Feed.class, url))) {			
+		if (!(RdfStore.forDEd().exists(Feed.class, url))) {			
 			System.out.println("Feed does not exist");
 			System.exit(1);
 		}
 		
 		try {
-			RdfStore.getSiteConfigurationStore().delete(
-					RdfStore.getSiteConfigurationStore().load(Feed.class, url)
+			RdfStore.forDEd().delete(
+					RdfStore.forDEd().load(Feed.class, url)
 					);
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block

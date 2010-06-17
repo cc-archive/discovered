@@ -52,13 +52,13 @@ public class OerRecommender extends OaiMetadataFormat implements IResourceExtrac
 		
 		// see also
 		try {
-			resource.getSeeAlso().add(RdfStore.getSiteConfigurationStore().load(OaiResource.class, identifier));
+			resource.getSeeAlso().add(RdfStore.forDEd().load(OaiResource.class, identifier));
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		RdfStore.getSiteConfigurationStore().save(resource);
+		RdfStore.forDEd().save(resource);
 
 	}
 

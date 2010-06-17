@@ -60,7 +60,7 @@ public class Curator {
 			+ "?s cclearn:hasCurator <" + this.getUrl() + ">. \n"
 			+ "   }\n";
 		
-		return Sparql.exec(RdfStore.getSiteConfigurationStore().getModel(), Feed.class, query);
+		return Sparql.exec(RdfStore.forDEd().getModel(), Feed.class, query);
 	
 	}
 	

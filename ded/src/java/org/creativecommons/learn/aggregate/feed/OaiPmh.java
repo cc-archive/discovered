@@ -177,10 +177,10 @@ public class OaiPmh {
 
 					// create the OaiResource if needed
 					OaiResource resource = null;
-					if (RdfStore.getSiteConfigurationStore().exists(OaiResource.class,
+					if (RdfStore.forDEd().exists(OaiResource.class,
 							header.getIdentifier())) {
 						try {
-							resource = RdfStore.getSiteConfigurationStore().load(
+							resource = RdfStore.forDEd().load(
 									OaiResource.class, header.getIdentifier());
 						} catch (NotFoundException e) {
 						}
@@ -196,7 +196,7 @@ public class OaiPmh {
 					}
 					
 					try {
-						RdfStore.getSiteConfigurationStore().save(resource);
+						RdfStore.forDEd().save(resource);
 					} catch (NullPointerException e) {
 						System.out.println(resource);
 						System.out.println(resource.getId());

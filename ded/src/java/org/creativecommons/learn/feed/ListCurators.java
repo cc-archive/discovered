@@ -15,7 +15,7 @@ public class ListCurators {
 	public static void main(String[] args) {
 		
 		// list feeds we're tracking
-		Collection<Curator> curators = RdfStore.getSiteConfigurationStore().load(Curator.class); 
+		Collection<Curator> curators = RdfStore.forDEd().load(Curator.class); 
 			
 		for (Curator c : curators) {
 			System.out.println(c.getName() + " (" + c.getUrl() + ")");

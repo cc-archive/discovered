@@ -140,7 +140,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 		try {
 			
-			Resource resource = RdfStore.getSiteConfigurationStore().loadDeep(Resource.class,
+			Resource resource = RdfStore.forDEd().loadDeep(Resource.class,
 					url.toString());
 			this.indexSources(doc, resource);
 		} catch (NotFoundException e) {

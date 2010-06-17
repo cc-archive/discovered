@@ -28,12 +28,12 @@ public class SetCurator {
 
 		Feed feed;
 		try {
-			feed = RdfStore.getSiteConfigurationStore().load(Feed.class, feed_url);
+			feed = RdfStore.forDEd().load(Feed.class, feed_url);
 			Curator curator = new Curator(curator_url);
 
 			feed.setCurator(curator);
 			
-			RdfStore.getSiteConfigurationStore().save(feed);
+			RdfStore.forDEd().save(feed);
 		} catch (NotFoundException e) {
 
 			System.out.println("Feed (" + feed_url + ") not found.");

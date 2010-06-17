@@ -30,7 +30,7 @@ public class DumpStore {
 		String format = (args.length > 0) ? args[0] : "RDF/XML";
 		
 		// get an iterator for all subjects
-		Model store = RdfStore.getSiteConfigurationStore().getModel();
+		Model store = RdfStore.forDEd().getModel();
 		ResIterator subjects = store.listSubjects();
 		
 		// write out one subject at a time

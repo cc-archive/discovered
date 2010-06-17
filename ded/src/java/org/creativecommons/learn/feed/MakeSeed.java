@@ -106,7 +106,7 @@ public class MakeSeed {
 			// all resources
             
             for (String uri: RdfStore.getAllKnownTripleStoreUris()) {
-		        Model store_model = RdfStore.uri2RdfStore(uri).getModel();
+		        Model store_model = RdfStore.forProvenance(uri).getModel();
                 writeURIsFromModel(store_model, output);
             }
 
@@ -116,7 +116,7 @@ public class MakeSeed {
 
 			for (String curator_url : curators) {
                 for (String uri: RdfStore.getAllKnownTripleStoreUris()) {
-                    Model store_model = RdfStore.uri2RdfStore(uri).getModel();
+                    Model store_model = RdfStore.forProvenance(uri).getModel();
                     writeURIsForCuratorFromAModel(curator_url, store_model, output);
                 }
 			}

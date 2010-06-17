@@ -70,7 +70,7 @@ public class Feed {
 			+ "?s cclearn:source <" + this.getUrl() + ">. \n"
 			+ "   }\n";
 		
-		return Sparql.exec(RdfStore.getSiteConfigurationStore().getModel(), Resource.class, query);
+		return Sparql.exec(RdfStore.forDEd().getModel(), Resource.class, query);
 		
 	}
 	

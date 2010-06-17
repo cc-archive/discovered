@@ -32,9 +32,9 @@ public abstract class OaiMetadataFormat implements IResourceExtractor{
 		
 		Resource result = null;
 		
-		if (RdfStore.getSiteConfigurationStore().exists(Resource.class, url)) {
+		if (RdfStore.forDEd().exists(Resource.class, url)) {
 			try {
-				result = RdfStore.getSiteConfigurationStore().load(Resource.class, url);
+				result = RdfStore.forDEd().load(Resource.class, url);
 			} catch (NotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

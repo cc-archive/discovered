@@ -115,7 +115,7 @@ public class ResultHelper {
 			System.out.println(curators[i]);
 			Curator c;
 			try {
-				c = (Curator)RdfStore.getSiteConfigurationStore().load(Curator.class, curators[i]);
+				c = (Curator)RdfStore.forDEd().load(Curator.class, curators[i]);
 			} catch (NotFoundException e) {
 				c = null;
 			}

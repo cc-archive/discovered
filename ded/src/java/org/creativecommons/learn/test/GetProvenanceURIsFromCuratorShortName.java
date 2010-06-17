@@ -27,7 +27,7 @@ public class GetProvenanceURIsFromCuratorShortName extends DiscoverEdTestCase {
 		Feed distractorFeed = new Feed("http://example.com/#distractor_feed");
 		distractorFeed.setCurator(distractor);
 		
-		RdfStore store = RdfStore.getSiteConfigurationStore();
+		RdfStore store = RdfStore.forDEd();
 		store.save(c);
 		store.save(f);
 		store.save(distractor);

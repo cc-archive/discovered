@@ -117,7 +117,7 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 
     public void testAddFeedMustPointToCuratorWithinTheStore() throws SQLException {
     	try {
-			RdfStore store = RdfStore.getSiteConfigurationStore();
+			RdfStore store = RdfStore.forDEd();
 			
 			/* Try adding a feed where we have no data stored about
 			 * the curator. */

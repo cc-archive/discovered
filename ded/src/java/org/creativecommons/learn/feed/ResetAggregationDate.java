@@ -28,7 +28,7 @@ public class ResetAggregationDate {
 		
 		Feed feed = null;
 		try {
-			feed = RdfStore.getSiteConfigurationStore().load(Feed.class, feed_url);
+			feed = RdfStore.forDEd().load(Feed.class, feed_url);
 		} catch (NotFoundException e) {
 			
 			System.out.println("Feed " + feed_url + " not found.");
@@ -37,7 +37,7 @@ public class ResetAggregationDate {
 
 		feed.setLastImport(new Date(0));
 				
-		RdfStore.getSiteConfigurationStore().save(feed);
+		RdfStore.forDEd().save(feed);
 						
 	}
 

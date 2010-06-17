@@ -34,7 +34,7 @@ public class MinusCurator extends DiscoverEdTestCase {
 
 		// Add some pages to the database...
 		
-		RdfStore siteConfigStore = RdfStore.getSiteConfigurationStore();
+		RdfStore siteConfigStore = RdfStore.forDEd();
 
 		Curator nsdl = new Curator("http://example.com/#nsdl");
 		nsdl.setName("nsdl");
@@ -82,13 +82,13 @@ public class MinusCurator extends DiscoverEdTestCase {
 		// Let's just add a resource to the site configuration store and see if we can find it via the nutch searcherbean.
 		siteConfigStore.save(pageThreeAccordingToNSDL);
 		
-		RdfStore siteConfigStoreStrikesBack = RdfStore.getSiteConfigurationStore();
+		RdfStore siteConfigStoreStrikesBack = RdfStore.forDEd();
 		Collection<Resource> resourcez = siteConfigStoreStrikesBack.load(org.creativecommons.learn.oercloud.Resource.class);
 		assertTrue(resourcez.size() > 0);
 		
 		String url3  = pageThreeAccordingToNSDL.getUrl();
 		
-		Resource resource = RdfStore.getSiteConfigurationStore().loadDeep(Resource.class, url3);
+		Resource resource = RdfStore.forDEd().loadDeep(Resource.class, url3);
 		assertSame(resource.getSubjects().iterator().next(), justChemistry.iterator().next());
 		
 		// Let's crawl...
