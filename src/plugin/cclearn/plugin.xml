@@ -12,9 +12,14 @@
       </library>
    </runtime>
 
+
+   <requires>
+      <import plugin="nutch-extensionpoints"/>
+   </requires>
+
    <extension id="org.creativecommons.learn.RDFaParser"
               name="RDFa Parser"
-              point="org.apache.nutch.parse.Parser">
+              point="org.apache.nutch.parse.HtmlParseFilter">
       <implementation id="RDFaParser"
                       class="org.creativecommons.learn.RDFaParser" />
    </extension>
