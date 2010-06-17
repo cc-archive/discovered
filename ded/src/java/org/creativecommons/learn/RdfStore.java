@@ -49,7 +49,6 @@ import org.creativecommons.learn.oercloud.IExtensibleResource;
 public class RdfStore {
 
 	private IDBConnection conn = null;
-	private ModelMaker maker = null;
 	private Model model = null;
 
 	private RDF2Bean loader = null;
@@ -59,13 +58,19 @@ public class RdfStore {
 
 	private static Connection connection = null;
 
-	public RdfStore(ModelMaker maker, IDBConnection connection) {
+	public RdfStore(Model model, IDBConnection connection) {
 		super();
 
-		this.maker = maker;
+		this.model = model;
 		this.conn = connection;
 
-		this.init();
+		this.loader = new RDF2Bean(this.model);
+		this.saver = new Bean2RDF(this.model);
+	}
+
+	public static RdfStore forModel(Model model) {
+
+		return new RdfStore(model, null);
 	}
 
 	public static int getOrCreateTablePrefixFromURIAsInteger(String uri) {
@@ -163,12 +168,6 @@ public class RdfStore {
 		return url;
 	}
 
-	private void init() {
-		this.model = maker.createDefaultModel();
-		this.loader = new RDF2Bean(this.model);
-		this.saver = new Bean2RDF(this.model);
-	}
-
 	public static final String SITE_CONFIG_URI = "http://creativecommons.org/#site-configuration";
 
 	public static String getDatabaseName() {
@@ -219,7 +218,7 @@ public class RdfStore {
 
 		getOrCreateTablePrefixFromURI(uri);
 
-		return new RdfStore(maker, conn);
+		return new RdfStore(maker.createDefaultModel(), conn);
 	}
 
 	public static RdfStore uri2RdfStore(String uri) {
@@ -254,14 +253,12 @@ public class RdfStore {
 		return RdfStore.uri2RdfStore(RdfStore.SITE_CONFIG_URI);
 	}
 
-	@SuppressWarnings("unused")
-	private RdfStore() {
-		// private constructor
-		super();
-		init();
-	}
-
 	public void close() {
+
+		// if no connection was supplied, nothing to do here
+		if (this.conn == null)
+			return;
+
 		try {
 			// Close the database connection
 			conn.close();
