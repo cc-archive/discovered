@@ -1,5 +1,7 @@
 package org.creativecommons.learn;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +36,11 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 public class TripleStoreIndexer implements IndexingFilter {
 
 	protected Map<String, String> DEFAULT_NAMESPACES;
+
+	public Collection<String> getAllPossibleColumnNames() {
+		ArrayList<String> ret = new ArrayList<String>();
+		return ret;
+	}
 
 	public static final Log LOG = LogFactory.getLog(TripleStoreIndexer.class
 			.getName());
@@ -150,7 +157,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 		 * Given a Resource URI, collapse it using our default namespace
 		 * mappings if possible. This is purely a convenience.
 		 */
-
+		
 		for (String ns_url : DEFAULT_NAMESPACES.keySet()) {
 			if (uri.startsWith(ns_url)) {
 				return uri.replace(ns_url, "_" + DEFAULT_NAMESPACES.get(ns_url)
