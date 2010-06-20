@@ -1,6 +1,5 @@
 package org.creativecommons.learn;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.creativecommons.learn.oercloud.Resource;
@@ -16,15 +15,10 @@ public class TripleStoreIndexerTest extends TestCase {
 		TripleStore store = TripleStore.get();
 		store.save(r);
 		
-		// Now, ask the TripleStoreIndexer what column names it has.
-		
-		// prepare list of known...
-		Collection<String> expected = new ArrayList<String>();
-		expected.add("_dct_title_");
-		
+		// Now, ask the TripleStoreIndexer what column names it has.		
 		TripleStoreIndexer indexer = new TripleStoreIndexer();
 		
 		Collection<String> got = indexer.getAllPossibleColumnNames();
-		assertEquals(expected, got);
+		assertTrue(got.contains("_dct_title"));
 	}
 }

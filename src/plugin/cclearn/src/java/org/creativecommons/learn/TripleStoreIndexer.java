@@ -3,6 +3,7 @@ package org.creativecommons.learn;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -38,7 +39,42 @@ public class TripleStoreIndexer implements IndexingFilter {
 	protected Map<String, String> DEFAULT_NAMESPACES;
 
 	public Collection<String> getAllPossibleColumnNames() {
-		ArrayList<String> ret = new ArrayList<String>();
+		HashSet<String> ret = new HashSet<String>();
+
+		// FIXME: This needs to be run once per RdfStore in the future
+		// Create a new query
+		String queryString = "SELECT ?s ?p ?o " +
+				"WHERE { ?s ?p ?o .}";
+
+		Query query = QueryFactory.create(queryString);
+
+
+		// Execute the query and obtain results
+		Model m;
+		try {
+			m = TripleStore.get().getModel();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			// FIXME: Handle this in the getModel() method
+			throw new RuntimeException("uhhhh");
+		}
+		QueryExecution qe = QueryExecutionFactory.create(query, m);
+		ResultSet results = qe.execSelect();
+		
+
+		// Index the triples
+		while (results.hasNext()) {
+			QuerySolution stmt = results.nextSolution();
+			String predicate_uri = stmt.get("p").toString();
+			ret.add(collapseResource(predicate_uri));
+		}
+		
+		// Important - free up resources used running the query
+		qe.close();
+		ret.add(Search.FEED_FIELD);
+		ret.add(Search.CURATOR_INDEX_FIELD);
+
 		return ret;
 	}
 
@@ -63,13 +99,10 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 	@Override
 	public void addIndexBackendOptions(Configuration conf) {
-
-		// Define the curator and feed fields
-		LuceneWriter.addFieldOptions(Search.CURATOR_INDEX_FIELD, LuceneWriter.STORE.YES,
-				LuceneWriter.INDEX.UNTOKENIZED, conf);
-
-		LuceneWriter.addFieldOptions(Search.FEED_FIELD, LuceneWriter.STORE.YES,
-				LuceneWriter.INDEX.UNTOKENIZED, conf);
+		for (String lucene_column_name : getAllPossibleColumnNames()) {
+			LuceneWriter.addFieldOptions(lucene_column_name,
+					LuceneWriter.STORE.YES, LuceneWriter.INDEX.UNTOKENIZED, conf);
+		}
 
 	} // addIndexBackendOptions
 
