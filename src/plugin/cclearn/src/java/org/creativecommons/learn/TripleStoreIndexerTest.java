@@ -20,6 +20,7 @@ public class TripleStoreIndexerTest extends TestCase {
 		
 		// prepare list of known...
 		Collection<String> expected = new ArrayList<String>();
+		expected.add("_dct_title_");
 		
 		TripleStoreIndexer indexer = new TripleStoreIndexer();
 		
