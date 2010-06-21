@@ -68,8 +68,8 @@ public class DeliciousRetriever implements MetadataRetriever {
             popularXPathExpr = xpath.compile("//popular/text()");
             recommendedXPathExpr = xpath.compile("//recommended/text()");
         } catch (XPathExpressionException e) {
-            LOG.info("OMG! How did we attempt to compile an invalid expression: "
-                            + e.getMessage());
+            LOG.info("OMG! We attempted to compile an invalid expression: "
+                    + e.getMessage());
         }
     }
 
