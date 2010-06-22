@@ -148,7 +148,7 @@ public abstract class DiscoverEdTestCase extends TestCase {
 		runCmd("rm -rf crawl/");
 
 		// Then we crawl.
-        String[] crawlArguments = new String[]{"crawl urls_dir -depth 1"};
+        String[] crawlArguments = "crawl urls_dir -depth 1".split(" ");
         org.apache.nutch.crawl.Crawl.main(crawlArguments);
 	}
 	

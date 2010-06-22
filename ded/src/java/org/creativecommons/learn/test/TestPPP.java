@@ -8,7 +8,6 @@ import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.oercloud.Resource;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
-
 public class TestPPP extends DiscoverEdTestCase {
 	public void test() throws SQLException {
 		
