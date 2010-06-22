@@ -1,0 +1,41 @@
+#!/bin/bash
+set -e
+set -x
+
+ant || exit 125 # skip broken builds
+
+echo 'DROP DATABASE discovered; CREATE DATABASE discovered' | mysql -udiscovered
+
+rm -rf crawl/
+
+DISCOVER_ED_ROOT="."
+
+# Add a curator
+./bin/feeds addcurator "Sample resources" http://a6.creativecommons.org/~raffi/sample_resources
+
+# Add a feed
+./bin/feeds addfeed rss http://a6.creativecommons.org/~raffi/sample_resources/sample_rss.xml http://a6.creativecommons.org/~raffi/sample_resources
+
+# Check that all is well.
+./bin/feeds listfeeds
+
+# Do an aggregation
+./bin/feeds aggregate
+
+rm -rf seed/
+
+mkdir seed
+
+# Create a seed file that Nutch can use when it crawls the web
+./bin/feeds seed > seed/urls.txt
+
+URL_COUNT=`wc -l seed/urls.txt | cut -d" " -f1`
+
+(( $URL_COUNT ))
+
+# ./bin/nutch inject $DISCOVER_ED_ROOT/crawl/crawldb seed
+# ./bin/nutch generate $DISCOVER_ED_ROOT/crawl/crawldb $DISCOVER_ED_ROOT/crawl/segments
+# ./bin/nutch fetch $DISCOVER_ED_ROOT/crawl/segments/*
+# ./bin/nutch updatedb $DISCOVER_ED_ROOT/crawl/crawldb $DISCOVER_ED_ROOT/crawl/segments/*
+# ./bin/nutch invertlinks $DISCOVER_ED_ROOT/crawl/linkdb $DISCOVER_ED_ROOT/crawl/segments/*
+# ./bin/nutch index $DISCOVER_ED_ROOT/crawl/indexes $DISCOVER_ED_ROOT/crawl/crawldb $DISCOVER_ED_ROOT/crawl/linkdb $DISCOVER_ED_ROOT/crawl/segments/*
