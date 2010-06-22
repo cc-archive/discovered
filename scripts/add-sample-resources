@@ -4,6 +4,8 @@ set -x
 ant clean
 ant
 
+rm -rf crawl/
+
 DISCOVER_ED_ROOT="."
 
 # Add a curator
@@ -18,7 +20,7 @@ DISCOVER_ED_ROOT="."
 # Do an aggregation
 ./bin/feeds aggregate
 
-rm -rf seed
+rm -rf seed/
 
 mkdir seed
 
