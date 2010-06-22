@@ -1,9 +1,11 @@
 package org.creativecommons.learn;
 import org.creativecommons.learn.RdfStore;
 
-
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -36,7 +38,47 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
 public class TripleStoreIndexer implements IndexingFilter {
+        HashMap <String,String> DEFAULT_NAMESPACES = null;
 
+	public Collection<String> getAllPossibleColumnNames() {
+		HashSet<String> ret = new HashSet<String>();
+
+		// FIXME: This needs to be run once per RdfStore in the future
+		// Create a new query
+		String queryString = "SELECT ?s ?p ?o " +
+				"WHERE { ?s ?p ?o .}";
+
+		Query query = QueryFactory.create(queryString);
+
+
+		// Execute the query and obtain results
+		Model m;
+		try {
+			m = RdfStore.getSiteConfigurationStore().getModel();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			// FIXME: Handle this in the getModel() method
+			throw new RuntimeException("uhhhh");
+		}
+		QueryExecution qe = QueryExecutionFactory.create(query, m);
+		ResultSet results = qe.execSelect();
+		
+
+		// Index the triples
+		while (results.hasNext()) {
+			QuerySolution stmt = results.nextSolution();
+			String predicate_uri = stmt.get("p").toString();
+			ret.add(collapseResource(predicate_uri));
+		}
+		
+		// Important - free up resources used running the query
+		qe.close();
+		ret.add(Search.FEED_FIELD);
+		ret.add(Search.CURATOR_INDEX_FIELD);
+
+		return ret;
+	}
 
 	public static final Log LOG = LogFactory.getLog(TripleStoreIndexer.class
 			.getName());
@@ -47,6 +89,14 @@ public class TripleStoreIndexer implements IndexingFilter {
 		
 		LOG.info("Created TripleStoreIndexer.");
 		
+               // initialize the set of default mappings
+               DEFAULT_NAMESPACES = new HashMap<String, String>();
+               DEFAULT_NAMESPACES.put(CCLEARN.getURI(), CCLEARN.getDefaultPrefix());
+               DEFAULT_NAMESPACES.put("http://purl.org/dc/elements/1.1/", "dct");
+               DEFAULT_NAMESPACES.put("http://purl.org/dc/terms/", "dct");
+               DEFAULT_NAMESPACES.put("http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                               "rdf");
+
 		System.out.println("TripleStoreIndexer has been constructed");
 
 
@@ -55,21 +105,20 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 	@Override
 	public void addIndexBackendOptions(Configuration conf) {
-
-		// Define the curator and feed fields
-		LuceneWriter.addFieldOptions(Search.CURATOR_INDEX_FIELD, LuceneWriter.STORE.YES,
-				LuceneWriter.INDEX.UNTOKENIZED, conf);
-
-		LuceneWriter.addFieldOptions(Search.FEED_FIELD, LuceneWriter.STORE.YES,
-				LuceneWriter.INDEX.UNTOKENIZED, conf);
+		for (String lucene_column_name : getAllPossibleColumnNames()) {
+			LuceneWriter.addFieldOptions(lucene_column_name,
+					LuceneWriter.STORE.YES, LuceneWriter.INDEX.UNTOKENIZED, conf);
+		}
 
 	} // addIndexBackendOptions
 
 	@Override
 	public NutchDocument filter(NutchDocument doc, Parse parse, Text url,
 			CrawlDatum datum, Inlinks inlinks) throws IndexingException {
+         // This method is called once per URL that Nutch is crawling, during
+         // the "Indexing" phase
 		
-		LOG.info("RdfStore: indexing! " + url.toString());
+		LOG.info("RdfStore: Begin indexing " + url.toString());
 
 		// Index all triples
 		LOG.debug("RdfStore: indexing all triples.");
@@ -85,7 +134,6 @@ public class TripleStoreIndexer implements IndexingFilter {
 			Resource resource = RdfStore.getSiteConfigurationStore().loadDeep(Resource.class,
 					url.toString());
 			this.indexSources(doc, resource);
-
 		} catch (NotFoundException e) {
 			LOG.warn("Could not find " + url.toString()
 					+ " in the Triple Store.");
@@ -110,7 +158,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 			ProvenancePredicatePair p3 = entry.getKey();
 			RDFNode objectNode = entry.getValue();
 			
-			// FIXME: Instead of simply using the predicate uri below, use a
+			// FIXME: Instead of simply using the predicate URI below, use a
 			// string that varies according to the predicate AND provenance.
 			this.indexStatement(doc, p3, objectNode);
 		}
@@ -134,18 +182,22 @@ public class TripleStoreIndexer implements IndexingFilter {
 		}
 	}
 
+	protected String collapseResource(String uri) {
+		/*
+		 * Given a Resource URI, collapse it using our default namespace
+		 * mappings if possible. This is purely a convenience.
+		 */
+		
+		for (String ns_url : DEFAULT_NAMESPACES.keySet()) {
+			if (uri.startsWith(ns_url)) {
+				return uri.replace(ns_url, "_" + DEFAULT_NAMESPACES.get(ns_url)
+						+ "_");
+			}
+		}
 
-	public Field createFieldFromPredicateAndObject(String predicate,
-			String object, Field.Index tokenized) {
-		
-		System.out.println("TripleStoreIndexer is creating a field with predicate: " + predicate + " and object: " + object);
-		
-		// add the field to the document
-		Field statementField = new Field(predicate, object, Field.Store.YES,
-				tokenized);
-		return statementField;
-	}
-	
+		return uri;
+    }
+
 	private void indexStatement(NutchDocument doc, ProvenancePredicatePair p3,
 			RDFNode obj_node) {
 
@@ -160,20 +212,20 @@ public class TripleStoreIndexer implements IndexingFilter {
 			tokenized = Field.Index.ANALYZED;
 		}
 		
-		String fieldName = null;
+		String fieldName = null; 
 		try {
 			fieldName = p3.toFieldName();
+            // ^ This is the same as a predicate with the provenance encoded into it
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Couldn't convert " + p3.toString() + " to a fieldname.");
 		}
 		
-		Field statementField = this.createFieldFromPredicateAndObject(fieldName, object, tokenized);
-		
-		LOG.debug("Adding (" + fieldName + ", " + object + ").");
+		LOG.debug("Adding to document (" + fieldName + ", " + object + ").");
 
-		LuceneWriter.add(doc, statementField);
+		doc.add(fieldName, object);
+
 	}
 
 	public void setConf(Configuration conf) {
@@ -184,4 +236,4 @@ public class TripleStoreIndexer implements IndexingFilter {
 		return this.conf;
 	}
 
-} // CuratorIndexer
+} // TripleStoreIndexer

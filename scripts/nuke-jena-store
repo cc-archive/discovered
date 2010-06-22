@@ -1,0 +1,2 @@
+#!/bin/bash
+echo 'DROP DATABASE discovered; CREATE DATABASE discovered' | mysql -udiscovered
