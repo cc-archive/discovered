@@ -101,54 +101,72 @@ public class MakeSeed {
 			}
 		}
 
-		Model store_model = RdfStore.getSiteConfigurationStore().getModel();
-
 		// see if we're dealing with all resources or for a specific curator
 		if (!line.hasOption("curator")) {
 			// all resources
-
-			// write out all resources to the seed list
-			ResIterator subjects = store_model.listSubjectsWithProperty(
-					RDF.type, CCLEARN.Resource);
-			while (subjects.hasNext()) {
-				Resource subject = subjects.nextResource();
-				output.write(subject.getURI() + "\n");
-			}
+            
+            for (String uri: RdfStore.getAllKnownTripleStoreUris()) {
+		        Model store_model = RdfStore.uri2RdfStore(uri).getModel();
+                writeURIsFromModel(store_model, output);
+            }
 
 		} else {
 			// one or more curators -- build a list of feeds
 			String[] curators = line.getOptionValues("curator");
 
 			for (String curator_url : curators) {
-
-				// write out all resources to the seed list
-				String queryString = ""
-						+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n"
-						+ "PREFIX cclearn: <http://learn.creativecommons.org/ns#> \n"
-						+ "\n" + "SELECT ?r \n" + "WHERE { \n"
-						+ "   ?r rdf:type cclearn:Resource . \n"
-						+ "   ?r cclearn:source ?f . \n"
-						+ "   ?f cclearn:hasCurator <" + curator_url + ">. \n"
-						+ "   }\n";
-
-				QueryExecution qexec = QueryExecutionFactory.create(
-						queryString, store_model);
-				try {
-					ResultSet results = qexec.execSelect();
-					for (; results.hasNext();) {
-						QuerySolution soln = results.nextSolution();
-						Resource r = soln.getResource("r");
-
-						output.write(r.getURI() + "\n");
-					}
-				} finally {
-					qexec.close();
-				}
-
+                for (String uri: RdfStore.getAllKnownTripleStoreUris()) {
+                    Model store_model = RdfStore.uri2RdfStore(uri).getModel();
+                    writeURIsForCuratorFromAModel(curator_url, store_model, output);
+                }
 			}
 		}
 
 		output.close();
 
 	} // main
+
+    /*
+     * Grabs all the URIs of resources from a given model, prints them using
+     * the given printwriter.
+     */
+    private static void writeURIsFromModel(Model store_model, PrintWriter output) {
+        // write out all resources to the seed list
+        ResIterator subjects = store_model.listSubjectsWithProperty(
+                RDF.type, CCLEARN.Resource);
+        while (subjects.hasNext()) {
+            Resource subject = subjects.nextResource();
+            output.write(subject.getURI() + "\n");
+        }
+    }
+
+    private static void writeURIsForCuratorFromAModel(
+            String curatorURI, Model storeModel, PrintWriter output) {
+
+        // write out all resources to the seed list
+        String queryString = ""
+            + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n"
+            + "PREFIX cclearn: <http://learn.creativecommons.org/ns#> \n"
+            + "\n" + "SELECT ?r \n" + "WHERE { \n"
+            + "   ?r rdf:type cclearn:Resource . \n"
+            + "   ?r cclearn:source ?f . \n"
+            + "   ?f cclearn:hasCurator <" + curatorURI + ">. \n"
+            + "   }\n";
+
+        QueryExecution qexec = QueryExecutionFactory.create(
+                queryString, storeModel);
+        try {
+            ResultSet results = qexec.execSelect();
+            for (; results.hasNext();) {
+                QuerySolution soln = results.nextSolution();
+                Resource r = soln.getResource("r");
+
+                output.write(r.getURI() + "\n");
+            }
+        } finally {
+            qexec.close();
+        }
+
+    }
+
 } // MakeSeed
