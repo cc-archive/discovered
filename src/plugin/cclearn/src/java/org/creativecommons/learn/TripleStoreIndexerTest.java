@@ -18,7 +18,7 @@ public class TripleStoreIndexerTest extends TestCase {
 		// Now, ask the TripleStoreIndexer what column names it has.		
 		TripleStoreIndexer indexer = new TripleStoreIndexer();
 		
-		Collection<String> got = indexer.getAllPossibleColumnNames();
-		assertTrue(got.contains("_dct_title"));
+		Collection<String> got = indexer.getAllPossibleFieldNames();
+		assertTrue(got.contains("1__dct_title"));
 	}
 }

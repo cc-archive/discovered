@@ -40,44 +40,45 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 public class TripleStoreIndexer implements IndexingFilter {
         HashMap <String,String> DEFAULT_NAMESPACES = null;
 
-	public Collection<String> getAllPossibleColumnNames() {
-		HashSet<String> ret = new HashSet<String>();
+	public Collection<String> getAllPossibleFieldNames() {
+		HashSet<String> fieldNames = new HashSet<String>();
 
-		// FIXME: This needs to be run once per RdfStore in the future
-		// Create a new query
-		String queryString = "SELECT ?s ?p ?o " +
-				"WHERE { ?s ?p ?o .}";
-
-		Query query = QueryFactory.create(queryString);
-
-
-		// Execute the query and obtain results
-		Model m;
-		try {
-			m = RdfStore.getSiteConfigurationStore().getModel();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			// FIXME: Handle this in the getModel() method
-			throw new RuntimeException("uhhhh");
-		}
-		QueryExecution qe = QueryExecutionFactory.create(query, m);
-		ResultSet results = qe.execSelect();
+		// Get all the Rdfstores. Explode all the possible column names.
+		// For each RdfStore, get all the predicates. For each predicate, create a
+		// ProvenancePredicatePair, and add its .toFieldName() to a list. Return
+		// the list.
 		
+		ArrayList<String> provenanceURIs = RdfStore.getAllKnownTripleStoreUris();
+		
+		for (String provenanceURI: provenanceURIs) {
+			
+			// Create a query
+			String queryString = "SELECT ?s ?p ?o WHERE { ?s ?p ?o .}";
+			Query query = QueryFactory.create(queryString);
 
-		// Index the triples
-		while (results.hasNext()) {
-			QuerySolution stmt = results.nextSolution();
-			String predicate_uri = stmt.get("p").toString();
-			ret.add(collapseResource(predicate_uri));
+			// Execute the query and obtain results
+			Model m;
+			m = RdfStore.uri2RdfStore(provenanceURI).getModel();
+
+			QueryExecution qe = QueryExecutionFactory.create(query, m);
+			ResultSet results = qe.execSelect();
+
+			while (results.hasNext()) {
+				QuerySolution stmt = results.nextSolution();
+				RDFNode predicate = stmt.get("p");
+				ProvenancePredicatePair pair = new ProvenancePredicatePair(provenanceURI, predicate);
+				String fieldName = pair.toFieldName(); //column name, field name, same thing
+				fieldNames.add(fieldName);
+			}
+			
+			// Important - free up resources used running the query
+			qe.close();
 		}
 		
-		// Important - free up resources used running the query
-		qe.close();
-		ret.add(Search.FEED_FIELD);
-		ret.add(Search.CURATOR_INDEX_FIELD);
+		fieldNames.add(Search.FEED_FIELD);
+		fieldNames.add(Search.CURATOR_INDEX_FIELD);
 
-		return ret;
+		return fieldNames;
 	}
 
 	public static final Log LOG = LogFactory.getLog(TripleStoreIndexer.class
@@ -105,7 +106,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 	@Override
 	public void addIndexBackendOptions(Configuration conf) {
-		for (String lucene_column_name : getAllPossibleColumnNames()) {
+		for (String lucene_column_name : getAllPossibleFieldNames()) {
 			LuceneWriter.addFieldOptions(lucene_column_name,
 					LuceneWriter.STORE.YES, LuceneWriter.INDEX.UNTOKENIZED, conf);
 		}
