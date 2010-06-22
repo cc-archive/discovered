@@ -19,11 +19,13 @@ public class TestPPP extends DiscoverEdTestCase {
 		Resource r = new Resource(subjectURI);
 		r.setTitle("my title");
 		String titlePredicate = "http://purl.org/dc/elements/1.1/title";
+		String titlePredicateAbbrev = "_dct_title";
 		store.save(r);
 		
-		HashMap<ProvenancePredicatePair, RDFNode> map = store.getPPP2ObjectMapForSubjectAndPredicate(subjectURI, titlePredicate);
+		HashMap<ProvenancePredicatePair, RDFNode> map =
+			store.getPPP2ObjectMapForSubjectAndPredicate(subjectURI, titlePredicate);
 		ProvenancePredicatePair p3 = map.keySet().iterator().next();
-		assertEquals(p3.toFieldName(), "1_" + titlePredicate);
+		assertEquals(p3.toFieldName(), "1_" + titlePredicateAbbrev);
 		
 	}
 }
