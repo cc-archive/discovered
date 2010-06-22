@@ -113,6 +113,14 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 	} // addIndexBackendOptions
 
+    /*
+     * If there are no values for that field name we return null
+     */
+    public Collection<String> getValuesForCustomLuceneFieldName(String resourceURI, String fieldName) {
+        // FIXME: Implement
+    	return new ArrayList<String>();
+    }
+
 	@Override
 	public NutchDocument filter(NutchDocument doc, Parse parse, Text url,
 			CrawlDatum datum, Inlinks inlinks) throws IndexingException {
