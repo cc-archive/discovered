@@ -229,13 +229,10 @@ public class TripleStoreIndexer implements IndexingFilter {
 			tokenized = Field.Index.ANALYZED;
 		}
 
-		// add the field to the document
-		Field statementField = new Field(predicate, object, Field.Store.YES,
-				tokenized);
+		LOG.debug("Adding to document (" + predicate + ", " + object + ").");
 
-		LOG.debug("Adding (" + predicate + ", " + object + ").");
+		doc.add(predicate, object);
 
-		LuceneWriter.add(doc, statementField);
 	}
 
 	public void setConf(Configuration conf) {
