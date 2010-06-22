@@ -69,16 +69,19 @@ public class TripleStoreIndexer implements IndexingFilter {
 	@Override
 	public NutchDocument filter(NutchDocument doc, Parse parse, Text url,
 			CrawlDatum datum, Inlinks inlinks) throws IndexingException {
+        // This method is called once per URL that Nutch is crawling, during
+        // the "Indexing" phase
 
 		try {
-			LOG.info("TripleStore: indexing " + url.toString());
+			LOG.info("TripleStore: Begin indexing " + url.toString());
 
 			// Index all triples
-			LOG.debug("TripleStore: indexing all triples.");
+            // FIXME: Does this mean all triples, or just the triples related to the url?
+			LOG.debug("TripleStore: Indexing all triples related to that URL");
 			indexTriples(doc, url);
 
 			// Follow special cases (curator)
-			LOG.debug("TripleStore: indexing special cases.");
+			LOG.debug("TripleStore: Indexing special cases.");
 			this.indexSources(doc, TripleStore.get().loadDeep(Resource.class,
 					url.toString()));
 
@@ -97,27 +100,30 @@ public class TripleStoreIndexer implements IndexingFilter {
 	} // public Document filter
 
 	private void indexTriples(NutchDocument doc, Text url) {
+
+        // We'll be retrieving triples from the Jena store. We access them
+        // through a model.
 		Model m;
 		try {
 			m = TripleStore.get().getModel();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-			LOG.error("Unable to get model; " + e.toString());
+			LOG.error("Unable to get model: " + e.toString());
 
 			return;
 		}
 
-		// Create a new query
+        // Create a new query that selects all the triples from the Jena store
+        // whose subject is the url in question
 		String queryString = "SELECT ?p ?o " + "WHERE {" + "      <"
 				+ url.toString() + "> ?p ?o ." + "      }";
-
 		Query query = QueryFactory.create(queryString);
 
 		// Execute the query and obtain results
 		QueryExecution qe = QueryExecutionFactory.create(query, m);
 		ResultSet results = qe.execSelect();
 
-		// Index the triples
+		// Index the triples!
 		while (results.hasNext()) {
 			QuerySolution stmt = results.nextSolution();
 			this.indexStatement(doc, stmt.get("p"), stmt.get("o"));
