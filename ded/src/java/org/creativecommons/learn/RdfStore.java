@@ -222,7 +222,7 @@ public class RdfStore {
 		return new RdfStore(maker, conn);
 	}
 
-	public static RdfStore uri2RdfStore(String uri) throws SQLException {
+	public static RdfStore uri2RdfStore(String uri) {
 		return uri2RdfStore(uri, getDatabaseName());
 	}
 

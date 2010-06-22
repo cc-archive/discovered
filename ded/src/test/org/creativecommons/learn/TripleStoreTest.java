@@ -14,12 +14,24 @@ public class TripleStoreTest extends TestCase {
 
 	public void testSaveIExtensibleResource() {
 
+		/*
+		 * 
+		 * The code below (commented-out) uses a constructor for RdfStore that
+		 * takes only a model as a parameter. Let's use this code in the future.
+		 * At the moment it doesn't compile, and so in the name of haste let's
+		 * use the old way of creating RdfStores.
+		 */
+		/*
 		// create a Jena model
 		Model model = ModelFactory.createDefaultModel();
 
 		// create a Triple Store with that model
-		TripleStore store = new TripleStore(model);
-
+		RdfStore store = new RdfStore(model);
+		 */
+		
+		RdfStore store = RdfStore.getSiteConfigurationStore();
+		Model model = store.getModel();
+		
 		// create a Resource
 		Resource r = new Resource("http://example.org/resource");
 
@@ -46,11 +58,23 @@ public class TripleStoreTest extends TestCase {
 
 	public void testLoadClassOfIExtensibleResourceString() {
 
+		/*
+		 * 
+		 * The code below (commented-out) uses a constructor for RdfStore that
+		 * takes only a model as a parameter. Let's use this code in the future.
+		 * At the moment it doesn't compile, and so in the name of haste let's
+		 * use the old way of creating RdfStores.
+		 */
+		/*
 		// create a Jena model
 		Model model = ModelFactory.createDefaultModel();
 
-		// create a Triple Store for our model
-		TripleStore store = new TripleStore(model);
+		// create a Triple Store with that model
+		RdfStore store = new RdfStore(model);
+		 */
+		
+		RdfStore store = RdfStore.getSiteConfigurationStore();
+		Model model = store.getModel();
 
 		// create a Resource and save it -- "stub" declaration
 		Resource without_metadata = new Resource("http://example.org/resource");
