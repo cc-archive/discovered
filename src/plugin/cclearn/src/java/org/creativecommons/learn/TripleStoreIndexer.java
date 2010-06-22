@@ -213,14 +213,8 @@ public class TripleStoreIndexer implements IndexingFilter {
 		}
 		
 		String fieldName = null; 
-		try {
-			fieldName = p3.toFieldName();
-            // ^ This is the same as a predicate with the provenance encoded into it
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Couldn't convert " + p3.toString() + " to a fieldname.");
-		}
+		fieldName = p3.toFieldName();
+		// ^ This is the same as a predicate with the provenance encoded into it
 		
 		LOG.debug("Adding to document (" + fieldName + ", " + object + ").");
 

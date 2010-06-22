@@ -60,14 +60,8 @@ public class Curator {
 			+ "?s cclearn:hasCurator <" + this.getUrl() + ">. \n"
 			+ "   }\n";
 		
-		try {
-			return Sparql.exec(RdfStore.getSiteConfigurationStore().getModel(), Feed.class, query);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		return Sparql.exec(RdfStore.getSiteConfigurationStore().getModel(), Feed.class, query);
 	
-		return null;
 	}
 	
 }

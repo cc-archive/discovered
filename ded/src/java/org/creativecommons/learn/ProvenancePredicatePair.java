@@ -28,7 +28,7 @@ public class ProvenancePredicatePair {
 		this.provenanceURI = provenanceURI;
 		this.predicateNode = predicateNode;
 	}
-	public String toFieldName() throws SQLException {
+	public String toFieldName() {
 		
 		
 		String predicate = this.predicateNode.toString();

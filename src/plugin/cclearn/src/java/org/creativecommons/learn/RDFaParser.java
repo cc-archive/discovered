@@ -50,8 +50,6 @@ public class RDFaParser implements HtmlParseFilter {
 			store.getModel().read(new ByteArrayInputStream(content
 					.getContent()),
 					uri, "HTML");
-		} catch (SQLException e) {
-			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}

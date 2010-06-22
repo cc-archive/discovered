@@ -70,14 +70,8 @@ public class Feed {
 			+ "?s cclearn:source <" + this.getUrl() + ">. \n"
 			+ "   }\n";
 		
-		try {
-			return Sparql.exec(RdfStore.getSiteConfigurationStore().getModel(), Resource.class, query);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		return Sparql.exec(RdfStore.getSiteConfigurationStore().getModel(), Resource.class, query);
 		
-		return null;
 	}
 	
 	public String getSource() {

@@ -192,8 +192,7 @@ public class RdfStore {
 		return RdfStore.databaseName;
 	}
 
-	public static RdfStore uri2RdfStore(String uri, String databaseName)
-			throws SQLException {
+	public static RdfStore uri2RdfStore(String uri, String databaseName) {
 		/**
 		 * FIXME: One day, cache these mappings (uri to rdfstore) in a HashMap.
 		 */
@@ -252,13 +251,7 @@ public class RdfStore {
 	 * @throws SQLException
 	 * */
 	public static RdfStore getSiteConfigurationStore() {
-		try {
-			return RdfStore.uri2RdfStore(RdfStore.SITE_CONFIG_URI);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Merde, there was an SQL error "
-					+ "while trying access the site configuration database.");
-		}
+		return RdfStore.uri2RdfStore(RdfStore.SITE_CONFIG_URI);
 	}
 
 	@SuppressWarnings("unused")
@@ -279,7 +272,7 @@ public class RdfStore {
 
 	} // close
 
-	public Model getModel() throws ClassNotFoundException {
+	public Model getModel() {
 		return this.model;
 	} // getModel
 
@@ -383,11 +376,7 @@ public class RdfStore {
 		
 		for (String provenanceURI : RdfStore.getAllKnownTripleStoreUris()) {
 			Model m;
-			try {
-				m = RdfStore.uri2RdfStore(provenanceURI).getModel();
-			}
-			catch (ClassNotFoundException e) { e.printStackTrace(); throw new RuntimeException("Encountered a class not found exception."); }
-			catch (SQLException e) { e.printStackTrace(); throw new RuntimeException("sql error"); }
+			m = RdfStore.uri2RdfStore(provenanceURI).getModel();
 
 			// Create a new query
 			String queryString = "SELECT ?p ?o " + "WHERE {" + "      <"
