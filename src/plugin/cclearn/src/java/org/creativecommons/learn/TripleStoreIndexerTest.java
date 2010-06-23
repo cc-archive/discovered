@@ -17,7 +17,7 @@ public class TripleStoreIndexerTest extends TestCase {
 		// has a predicate that's attached to a Resource.
 		Resource r = new Resource("http://example.com/#resource");
 		r.setTitle("A title");
-		RdfStore store = RdfStore.getSiteConfigurationStore();
+		RdfStore store = RdfStore.forDEd();
 		store.save(r);
 		
 		// Now, ask the TripleStoreIndexer what column names it has.		
@@ -33,7 +33,7 @@ public class TripleStoreIndexerTest extends TestCase {
          * http://example.com/#educationLevel set to "xyz"
          * ---------------------------------------------- */
     	
-    	RdfStore site_store = RdfStore.getSiteConfigurationStore();
+    	RdfStore site_store = RdfStore.forDEd();
          
         final String customLuceneFieldName = "educationlevel";
         final String customPredicateURI = "http://example.com/#educationLevel";

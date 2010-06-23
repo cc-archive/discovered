@@ -58,7 +58,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 			// Execute the query and obtain results
 			Model m;
-			m = RdfStore.uri2RdfStore(provenanceURI).getModel();
+			m = RdfStore.forProvenance(provenanceURI).getModel();
 
 			QueryExecution qe = QueryExecutionFactory.create(query, m);
 			ResultSet results = qe.execSelect();
