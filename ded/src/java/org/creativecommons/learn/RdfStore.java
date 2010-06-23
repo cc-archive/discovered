@@ -75,13 +75,7 @@ public class RdfStore {
 	 * @throws SQLException
 	 * */
 	public static RdfStore forDEd() {
-		try {
-			return RdfStore.forProvenance(RdfStore.SITE_CONFIG_URI);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Merde, there was an SQL error "
-					+ "while trying access the site configuration database.");
-		}
+		return RdfStore.forProvenance(RdfStore.SITE_CONFIG_URI);
 	}
 
 	public static RdfStore forModel(Model model) {
@@ -89,7 +83,7 @@ public class RdfStore {
 		return new RdfStore(model, null);
 	}
 
-	public static RdfStore forProvenance(String uri) throws SQLException {
+	public static RdfStore forProvenance(String uri) {
 		/**
 		 * FIXME: One day, cache these mappings (uri to rdfstore) in a HashMap.
 		 */
