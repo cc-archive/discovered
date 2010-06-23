@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -80,6 +81,13 @@ public class TripleStoreIndexer implements IndexingFilter {
 			// Important - free up resources used running the query
 			qe.close();
 		}
+		
+		// Add field names that come from the site-specific field_names.xml configuration file.
+		for (Entry<String, String> entry : customFieldConfiguration) {
+			String key = entry.getKey();
+			fieldNames.add(key);
+		}
+		
 		
 		fieldNames.add(Search.FEED_FIELD);
 		fieldNames.add(Search.CURATOR_INDEX_FIELD);

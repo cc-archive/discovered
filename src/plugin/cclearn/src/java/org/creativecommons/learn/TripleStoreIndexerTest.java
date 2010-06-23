@@ -65,6 +65,9 @@ public class TripleStoreIndexerTest extends TestCase {
                 r.getUrl(), customLuceneFieldName);
         System.out.println(indexer.getValuesForCustomLuceneFieldName(r.getUrl(), customLuceneFieldName));
         assertTrue(values.contains(customPredicateValue));
+        
+        /* will it properly declare the custom field name to Lucene? */
+        assertTrue(indexer.getAllPossibleFieldNames().contains(customLuceneFieldName));
     }
 
     /* fourth, verify there is a Lucene column called "educationLevel" in a
