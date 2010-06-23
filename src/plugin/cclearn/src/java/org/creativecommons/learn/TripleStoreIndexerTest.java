@@ -2,6 +2,7 @@ package org.creativecommons.learn;
 
 import java.util.Collection;
 
+import org.apache.hadoop.conf.Configuration;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
 import org.creativecommons.learn.oercloud.Resource;
@@ -28,17 +29,20 @@ public class TripleStoreIndexerTest extends TestCase {
 	}
 
     public static void testAddSearchableColumnViaConfigurationFile() {
+        final String customLuceneFieldName = "educationlevel";
+        final String customPredicateURI = "http://example.com/#educationLevel";
+        final String customPredicateValue = "xyz";
+
         /* first, create a configuration file saying that educationlevel:xyz is
          * supposed to search for Resources with a triple of
          * http://example.com/#educationLevel set to "xyz"
          * ---------------------------------------------- */
     	
-    	RdfStore site_store = RdfStore.forDEd();
+        TripleStoreIndexer indexer = new TripleStoreIndexer();
+        Configuration customFieldsConfiguration = indexer.getCustomFieldConfiguration();
+        customFieldsConfiguration.set(customLuceneFieldName, customPredicateURI);
+        RdfStore site_store = RdfStore.forDEd();
          
-        final String customLuceneFieldName = "educationlevel";
-        final String customPredicateURI = "http://example.com/#educationLevel";
-        final String customPredicateValue = "xyz";
-
         /* second, create such a Resource
          * ------------------------------ */
         Curator c = new Curator("http://example.com/#i_am_a_curator");
@@ -52,15 +56,15 @@ public class TripleStoreIndexerTest extends TestCase {
         r.addField(site_store.getModel().createProperty(customPredicateURI),
         		site_store.getModel().createLiteral("xyz"));
         r.getSources().add(f);
+        RdfStore.uri2RdfStore(f.getUrl()).save(r);
 
         /* third, can the triple store indexer find this custom field and its
          * values?
          * ----------------------- */
-        TripleStoreIndexer indexer = new TripleStoreIndexer();
         Collection<String> values = indexer.getValuesForCustomLuceneFieldName(
                 r.getUrl(), customLuceneFieldName);
+        System.out.println(indexer.getValuesForCustomLuceneFieldName(r.getUrl(), customLuceneFieldName));
         assertTrue(values.contains(customPredicateValue));
-
     }
 
     /* fourth, verify there is a Lucene column called "educationLevel" in a

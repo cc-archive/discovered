@@ -27,6 +27,7 @@ import org.creativecommons.learn.oercloud.Resource;
 
 import thewebsemantic.NotFoundException;
 
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -35,7 +36,12 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
+import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.SimpleSelector;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class TripleStoreIndexer implements IndexingFilter {
         HashMap <String,String> DEFAULT_NAMESPACES = null;
@@ -86,23 +92,29 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 	private Configuration conf;
 
+	private Configuration customFieldConfiguration;
+
 	public TripleStoreIndexer() {
 		
 		LOG.info("Created TripleStoreIndexer.");
 		
-               // initialize the set of default mappings
-               DEFAULT_NAMESPACES = new HashMap<String, String>();
-               DEFAULT_NAMESPACES.put(CCLEARN.getURI(), CCLEARN.getDefaultPrefix());
-               DEFAULT_NAMESPACES.put("http://purl.org/dc/elements/1.1/", "dct");
-               DEFAULT_NAMESPACES.put("http://purl.org/dc/terms/", "dct");
-               DEFAULT_NAMESPACES.put("http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                               "rdf");
+       // initialize the set of default mappings
+       DEFAULT_NAMESPACES = new HashMap<String, String>();
+       DEFAULT_NAMESPACES.put(CCLEARN.getURI(), CCLEARN.getDefaultPrefix());
+       DEFAULT_NAMESPACES.put("http://purl.org/dc/elements/1.1/", "dct");
+       DEFAULT_NAMESPACES.put("http://purl.org/dc/terms/", "dct");
+       DEFAULT_NAMESPACES.put("http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                       "rdf");
+       
+	    this.customFieldConfiguration = new Configuration();
+	    this.customFieldConfiguration.addResource("custom_fields.xml");
 
 		System.out.println("TripleStoreIndexer has been constructed");
-
-
 	}
 
+	public Configuration getCustomFieldConfiguration() {
+	    return this.customFieldConfiguration;
+	}
 
 	@Override
 	public void addIndexBackendOptions(Configuration conf) {
@@ -117,8 +129,44 @@ public class TripleStoreIndexer implements IndexingFilter {
      * If there are no values for that field name we return null
      */
     public Collection<String> getValuesForCustomLuceneFieldName(String resourceURI, String fieldName) {
-        // FIXME: Implement
-    	return new ArrayList<String>();
+    	HashSet<String> values = new HashSet<String>();
+    	/* First, figure out which RDF predicate URI this fieldName refers to. */
+    	String predicateURI = this.customFieldConfiguration.get(fieldName);
+    	if (predicateURI == null) {
+    		LOG.warn("Yikes, you queried the IndexFilter for a custom field name that is not configured: " + fieldName);
+    		return values;
+    	}
+    	
+    	/* Now, each triple store, do a query looking for triples matching <resourceURI> <predicateURI> object.
+    	 * Aggregate those objects into the HashSet.
+    	 */
+    	for (String provenanceURI: RdfStore.getAllKnownTripleStoreUris()) {
+    		RdfStore store = RdfStore.uri2RdfStore(provenanceURI);
+    		Model model = store.getModel();
+    		SimpleSelector selector = new SimpleSelector(
+    				model.createResource(resourceURI), 
+    				model.createProperty(predicateURI),
+    				(RDFNode) null);
+   												      
+    		StmtIterator objects = model.listStatements(selector);
+    		while (objects.hasNext()) {
+    			Statement statement = objects.next();
+    			RDFNode node = statement.getObject();
+    			if (node.isLiteral()) {
+    				Literal literal = (Literal) node;
+    				values.add(literal.getString());
+    			} else if (node.isResource()) {
+    				Resource r = (Resource) node;
+    				values.add(r.getUrl());
+    			} else {
+    				String asString = node.toString();
+    				LOG.warn("Weird, a node of an unusual type: " + asString);
+    				values.add(asString);
+    			}
+    		}
+    	}
+
+    	return values;
     }
 
 	@Override
