@@ -189,6 +189,17 @@ public class TripleStoreIndexer implements IndexingFilter {
 		LOG.debug("RdfStore: indexing all triples.");
 		indexTriples(doc, url);
 		
+		// The field_names.xml file configures, in a site-specific way, what Lucene column names to use
+		// for certain predicates. Here, we index those. FIXME: This is done in a provenance-naive way.
+		for (Entry<String, String> entry : customFieldConfiguration) {
+			String fieldName = entry.getKey();
+	        Collection<String> values = this.getValuesForCustomLuceneFieldName(
+	                url.toString(), fieldName);
+	        for (String value : values) {
+	        	doc.add(fieldName, value);
+	        }
+		}
+
 		// Follow special cases (curator)
 		LOG.debug("RdfStore: indexing special cases.");
 		
