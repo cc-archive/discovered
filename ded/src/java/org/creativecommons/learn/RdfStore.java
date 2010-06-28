@@ -89,8 +89,6 @@ public class RdfStore {
 		 */
 		Configuration config = DEdConfiguration.create();
 
-		System.err.println("making triple store for " + uri);
-
 		// XXX register the JDBC driver
 		// Class.forName(config.get("rdfstore.db.driver")); // Load the Driver
 

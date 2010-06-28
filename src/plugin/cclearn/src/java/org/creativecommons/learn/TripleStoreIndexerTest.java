@@ -53,6 +53,7 @@ public class TripleStoreIndexerTest extends TestCase {
         site_store.save(f);
 
         Resource r = new Resource("http://example.com/#i_am_a_resource");
+        // Make the resource's education level = xyz
         r.addField(site_store.getModel().createProperty(customPredicateURI),
         		site_store.getModel().createLiteral("xyz"));
         r.getSources().add(f);

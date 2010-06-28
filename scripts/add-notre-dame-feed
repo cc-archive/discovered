@@ -1,33 +1,4 @@
 #!/bin/bash
 set -x
 
-DISCOVER_ED_ROOT="."
-
-# Add a curator
-./bin/feeds addcurator "Notre Dame OpenCourseWare" http://ocw.nd.edu/
-
-# Add a feed
-./bin/feeds addfeed rss http://ocw.nd.edu/courselist/rss http://ocw.nd.edu/
-
-# Check that all is well.
-./bin/feeds listfeeds
-
-# Do an aggregation
-./bin/feeds aggregate
-
-rm -rf seed
-
-mkdir seed
-
-# Create a seed file that Nutch can use when it crawls the web
-./bin/feeds seed > seed/urls.txt
-
-echo "The seed file has this many lines:"
-wc -l seed/urls.txt
-
-./bin/nutch inject $DISCOVER_ED_ROOT/crawl/crawldb seed
-./bin/nutch generate $DISCOVER_ED_ROOT/crawl/crawldb $DISCOVER_ED_ROOT/crawl/segments
-./bin/nutch fetch $DISCOVER_ED_ROOT/crawl/segments/*
-./bin/nutch updatedb $DISCOVER_ED_ROOT/crawl/crawldb $DISCOVER_ED_ROOT/crawl/segments/*
-./bin/nutch invertlinks $DISCOVER_ED_ROOT/crawl/linkdb $DISCOVER_ED_ROOT/crawl/segments/*
-./bin/nutch index $DISCOVER_ED_ROOT/crawl/indexes $DISCOVER_ED_ROOT/crawl/crawldb $DISCOVER_ED_ROOT/crawl/linkdb $DISCOVER_ED_ROOT/crawl/segments/*
+scripts/add-sample-resources http://ocw.nd.edu/ http://ocw.nd.edu/courselist/rss 

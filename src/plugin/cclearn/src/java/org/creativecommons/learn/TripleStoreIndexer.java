@@ -103,19 +103,19 @@ public class TripleStoreIndexer implements IndexingFilter {
 	private Configuration customFieldConfiguration;
 
 	public TripleStoreIndexer() {
-		
+
 		LOG.info("Created TripleStoreIndexer.");
-		
-       // initialize the set of default mappings
-       DEFAULT_NAMESPACES = new HashMap<String, String>();
-       DEFAULT_NAMESPACES.put(CCLEARN.getURI(), CCLEARN.getDefaultPrefix());
-       DEFAULT_NAMESPACES.put("http://purl.org/dc/elements/1.1/", "dct");
-       DEFAULT_NAMESPACES.put("http://purl.org/dc/terms/", "dct");
-       DEFAULT_NAMESPACES.put("http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                       "rdf");
-       
-	    this.customFieldConfiguration = new Configuration();
-	    this.customFieldConfiguration.addResource("custom_fields.xml");
+
+		// initialize the set of default mappings
+		DEFAULT_NAMESPACES = new HashMap<String, String>();
+		DEFAULT_NAMESPACES.put(CCLEARN.getURI(), CCLEARN.getDefaultPrefix());
+		DEFAULT_NAMESPACES.put("http://purl.org/dc/elements/1.1/", "dct");
+		DEFAULT_NAMESPACES.put("http://purl.org/dc/terms/", "dct");
+		DEFAULT_NAMESPACES.put("http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+				"rdf");
+
+		this.customFieldConfiguration = new Configuration();
+		this.customFieldConfiguration.addResource("discovered-search-prefixes.xml");
 
 		System.out.println("TripleStoreIndexer has been constructed");
 	}

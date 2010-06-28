@@ -8,11 +8,24 @@ rm -rf crawl/
 
 DISCOVER_ED_ROOT="."
 
+# Get some command-line arguments.
+if [ -n "$1" ]; then
+    CURATOR_URI=http://a6.creativecommons.org/~raffi/sample_resources
+else
+    CURATOR_URI="$1"
+fi
+
+if [ -n "$2" ]; then
+    FEED_URL=http://a6.creativecommons.org/~raffi/sample_resources/sample_rss.xml 
+else
+    FEED_URL="$2"
+fi
+
 # Add a curator
-./bin/feeds addcurator "Sample resources" http://a6.creativecommons.org/~raffi/sample_resources
+./bin/feeds addcurator "Sample resources" "$CURATOR_URI"
 
 # Add a feed
-./bin/feeds addfeed rss http://a6.creativecommons.org/~raffi/sample_resources/sample_rss.xml http://a6.creativecommons.org/~raffi/sample_resources
+./bin/feeds addfeed rss "$FEED_URL" "$CURATOR_URI"
 
 # Check that all is well.
 ./bin/feeds listfeeds
