@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+
+<!--
+     A list of predicate, prefix pairs, like
+
+     <property>
+         <name>http://purl.org/dc/terms/educationLevel</name>
+         <value>edlevel</value>
+     </property>
+
+     That will allow users to type this into the search query box:
+     edlevel:highschool
+     -->
+
+</configuration>
