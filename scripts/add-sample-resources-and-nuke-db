@@ -10,15 +10,15 @@ DISCOVER_ED_ROOT="."
 
 # Get some command-line arguments.
 if [ -n "$1" ]; then
-    CURATOR_URI=http://a6.creativecommons.org/~raffi/sample_resources
-else
     CURATOR_URI="$1"
+else
+    CURATOR_URI=http://a6.creativecommons.org/~raffi/sample_resources
 fi
 
 if [ -n "$2" ]; then
-    FEED_URL=http://a6.creativecommons.org/~raffi/sample_resources/sample_rss.xml 
-else
     FEED_URL="$2"
+else
+    FEED_URL=http://a6.creativecommons.org/~raffi/sample_resources/sample_rss.xml 
 fi
 
 # Add a curator
