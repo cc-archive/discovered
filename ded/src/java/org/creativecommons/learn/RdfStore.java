@@ -62,21 +62,20 @@ public class RdfStore {
 	protected static HashMap<String, RdfStore> cacheOfStores = null;
 	private String uri = null;
 	
-	public final static Log LOG = LogFactory.getLog(RdfStore.class);
+	private final static Log LOG = LogFactory.getLog(RdfStore.class);
 
 	public RdfStore(Model model, IDBConnection connection) {
 		super();
 
 		this.model = model;
 		this.conn = connection;
+		this.bindToDB();
 
-		this.loader = new RDF2Bean(this.model);
-		this.saver = new Bean2RDF(this.model);
 	}
 	
 	private RdfStore(String provenanceURI) {
 		this.uri = provenanceURI;
-		this.refreshIfNecessary();
+		this.bindToDB();
 	}
 
 	/**
@@ -130,7 +129,7 @@ public class RdfStore {
         return store;
 	}
 	
-	public void refreshIfNecessary() {
+	public void bindToDB() {
 		Configuration config = DEdConfiguration.create();
 
 		// XXX register the JDBC driver
@@ -152,6 +151,9 @@ public class RdfStore {
 		
 		this.model = maker.createDefaultModel();
 		this.conn = conn;
+		
+		this.loader = new RDF2Bean(this.model);
+		this.saver = new Bean2RDF(this.model);
 	}
 
 	private static void makeSpaceInCache() {
@@ -239,7 +241,7 @@ public class RdfStore {
 	}
 
 	// Connect to the database
-	public static Connection getDatabaseConnection() throws SQLException {
+	private static Connection getDatabaseConnection() throws SQLException {
 		if (connection == null) {
 			Configuration config = DEdConfiguration.create();
 			connection = DriverManager.getConnection(
@@ -249,7 +251,7 @@ public class RdfStore {
 		return connection;
 	}
 
-	public static void createRdfStoresTableIfNeeded(Connection connection) {
+	private static void createRdfStoresTableIfNeeded(Connection connection) {
 
 		// FIXME: Add an index to the "uri" column.
 
@@ -261,19 +263,19 @@ public class RdfStore {
 		}
 	}
 
-	public static void executeSQL(String sql) throws SQLException {
+	private static void executeSQL(String sql) throws SQLException {
 		Statement statement = getDatabaseConnection().createStatement();
 		statement.executeUpdate(sql);
 	}
 
-	public static String getDatabaseConnectionURL() {
+	private static String getDatabaseConnectionURL() {
 		Configuration config = DEdConfiguration.create();
 		String url = config.get("rdfstore.db.server_url") + getDatabaseName()
 				+ "?autoReconnect=true";
 		return url;
 	}
 
-	public static final String SITE_CONFIG_URI = "http://creativecommons.org/#site-configuration";
+	private static final String SITE_CONFIG_URI = "http://creativecommons.org/#site-configuration";
 
 	public static String getDatabaseName() {
 		if (RdfStore.databaseName == null) {
@@ -319,10 +321,11 @@ public class RdfStore {
 	}
 
 	public void close() {
-
+		
 		// if no connection was supplied, nothing to do here
-		if (this.conn == null)
+		if (this.conn == null) {
 			return;
+		}
 
 		try {
 			// Close the database connection
@@ -359,7 +362,7 @@ public class RdfStore {
 
 	public <T> T load(Class<T> c, String id) throws NotFoundException {
 		
-		this.refreshIfNecessary();
+		this.bindToDB();
 		
 		T result = loader.load(c, id);
 
