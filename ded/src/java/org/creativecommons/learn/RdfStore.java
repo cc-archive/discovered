@@ -152,7 +152,7 @@ public class RdfStore {
          */
         if (RdfStore.getCache().size() >= 10) {
             // Get one at random
-            int randomInt = 0;
+            int randomInt = 0; //FIXME actually pick a random number
             int counter = 0;
             String randomURI = null;
             for (String key: RdfStore.getCache().keySet()) {
