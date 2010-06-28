@@ -8,12 +8,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.management.RuntimeErrorException;
 
 import thewebsemantic.Bean2RDF;
 import thewebsemantic.Filler;
@@ -58,10 +55,10 @@ public class RdfStore {
 	private static String databaseName = null;
 
 	private static Connection connection = null;
-	
+
 	protected static HashMap<String, RdfStore> cacheOfStores = null;
 	private String uri = null;
-	
+
 	private final static Log LOG = LogFactory.getLog(RdfStore.class);
 
 	public RdfStore(Model model, IDBConnection connection) {
@@ -69,13 +66,13 @@ public class RdfStore {
 
 		this.model = model;
 		this.conn = connection;
-		this.bindToDB();
+		this.bindToDBIfNecessary();
 
 	}
-	
+
 	private RdfStore(String provenanceURI) {
 		this.uri = provenanceURI;
-		this.bindToDB();
+		this.bindToDBIfNecessary();
 	}
 
 	/**
@@ -89,47 +86,66 @@ public class RdfStore {
 	}
 
 	public static RdfStore forModel(Model model) {
-        /* Since we don't have a cache HashMap<Model, RdfStore>, this may
-         * eventually cause use to exceed MySQL's connection limit. So it's
-         * super important that callers to this method use store.close() */
+		/*
+		 * Since we don't have a cache HashMap<Model, RdfStore>, this may
+		 * eventually cause use to exceed MySQL's connection limit. So it's
+		 * super important that callers to this method use store.close()
+		 */
 		return new RdfStore(model, null);
 	}
-	
+
 	private static HashMap<String, RdfStore> getCache() {
 		if (cacheOfStores == null) {
 			cacheOfStores = new HashMap<String, RdfStore>();
 		}
 		return cacheOfStores;
 	}
-	
-	public static RdfStore forProvenance(String provURI) {
-        /**
-         * While doing a crawl, we discovered that if you call the RdfStore constructor
-         * too many times, MySQL stops working entirely. This is bad! 
-         * 
-         * Let's make a cache of RdfStores, at most ten.
-         */
 
-         /*
-         * When we "create" an RdfStore, actually look in the cache first to
-         * see if it's there.
-         */
-        if (RdfStore.getCache().containsKey(provURI)) {
-            return RdfStore.getCache().get(provURI);
-        }
-        
+	public static RdfStore forProvenance(String provURI) {
+		/**
+		 * While doing a crawl, we discovered that if you call the RdfStore
+		 * constructor too many times, MySQL stops working entirely. This is
+		 * bad!
+		 * 
+		 * Let's make a cache of RdfStores, at most ten.
+		 */
+
+		/*
+		 * When we "create" an RdfStore, actually look in the cache first to see
+		 * if it's there.
+		 */
+		if (RdfStore.getCache().containsKey(provURI)) {
+			return RdfStore.getCache().get(provURI);
+		}
+
 		LOG.debug("Actually creating RdfStore for URI " + provURI);
-		
+
 		// If we get this far, then the RdfStore wasn't cached.
-        makeSpaceInCache();
-        RdfStore store = new RdfStore(provURI);
-        
-        RdfStore.getCache().put(provURI, store);
-        
-        return store;
+		makeSpaceInCache();
+		RdfStore store = new RdfStore(provURI);
+
+		RdfStore.getCache().put(provURI, store);
+
+		return store;
 	}
-	
-	public void bindToDB() {
+
+	/*
+	 * To keep the number of MySQL connections low, we occasionally close them.
+	 * RdfStores depend on these connections for any operation that interacts
+	 * with the database, such as loading resources. Those operations should
+	 * call this method, which establishes / re-establishes a closed or
+	 * non-existent connection, and hooks that connection up with this RdfStore
+	 * in the relevant ways.
+	 */
+	public void bindToDBIfNecessary() {
+		
+		// If the connection has been closed, or hasn't been established yet, we
+		// should establish it. No need to do this if this.conn is already
+		// populated...
+		if (this.conn != null) {
+			return;
+		}
+
 		Configuration config = DEdConfiguration.create();
 
 		// XXX register the JDBC driver
@@ -145,37 +161,40 @@ public class RdfStore {
 		IRDBDriver driver = conn.getDriver();
 
 		ModelMaker maker = ModelFactory.createModelRDBMaker(conn);
-		
+
 		String tableNamePrefix = getOrCreateTablePrefixFromURI(uri);
 		driver.setTableNamePrefix(tableNamePrefix);
-		
+
 		this.model = maker.createDefaultModel();
 		this.conn = conn;
-		
+
 		this.loader = new RDF2Bean(this.model);
 		this.saver = new Bean2RDF(this.model);
 	}
 
 	private static void makeSpaceInCache() {
-        /*
-         * If the RdfStore has more than 10 entries, throw an entry away at
-         * random.
-         */
-        if (RdfStore.getCache().size() >= 10) {
-            // Get one at random
-            int randomInt = 0; //FIXME actually pick a random number
-            int counter = 0;
-            String randomURI = null;
-            for (String key: RdfStore.getCache().keySet()) {
-            	counter++;
-            	if (counter == randomInt) {
-            		randomURI = key;
-            	}
-            }
-            RdfStore store = RdfStore.getCache().get(randomURI);
-            store.close();
-            RdfStore.getCache().remove(randomURI);
-        }
+		/*
+		 * If the RdfStore has more than 10 entries, throw an entry away at
+		 * random.
+		 */
+		if (RdfStore.getCache().size() >= 10) {
+			// Get one at random
+			int randomInt = 0; // FIXME actually pick a random number
+			int counter = 0;
+			String randomURI = null;
+			for (String key : RdfStore.getCache().keySet()) {
+				counter++;
+				if (counter == randomInt) {
+					randomURI = key;
+				}
+			}
+			RdfStore store = RdfStore.getCache().get(randomURI);
+			
+			// Close the connection
+			store.close();
+			
+			RdfStore.getCache().remove(randomURI);
+		}
 	}
 
 	public static int getOrCreateTablePrefixFromURIAsInteger(String uri) {
@@ -275,7 +294,7 @@ public class RdfStore {
 		return url;
 	}
 
-	private static final String SITE_CONFIG_URI = "http://creativecommons.org/#site-configuration";
+	public static final String SITE_CONFIG_URI = "http://creativecommons.org/#site-configuration";
 
 	public static String getDatabaseName() {
 		if (RdfStore.databaseName == null) {
@@ -321,7 +340,7 @@ public class RdfStore {
 	}
 
 	public void close() {
-		
+
 		// if no connection was supplied, nothing to do here
 		if (this.conn == null) {
 			return;
@@ -338,6 +357,7 @@ public class RdfStore {
 	} // close
 
 	public Model getModel() {
+		this.bindToDBIfNecessary();
 		return this.model;
 	} // getModel
 
@@ -345,32 +365,32 @@ public class RdfStore {
 	/* **************** */
 
 	public boolean exists(Class<?> c, String id) {
-		return loader.exists(c, id);
+		return this.getLoader().exists(c, id);
 	}
 
 	public boolean exists(String uri) {
-		return loader.exists(uri);
+		return this.getLoader().exists(uri);
 	}
 
 	public void fill(Object o, String propertyName) {
-		loader.fill(o, propertyName);
+		this.getLoader().fill(o, propertyName);
 	}
 
 	public Filler fill(Object o) {
-		return loader.fill(o);
+		return this.getLoader().fill(o);
 	}
 
 	public <T> T load(Class<T> c, String id) throws NotFoundException {
-		
-		this.bindToDB();
-		
-		T result = loader.load(c, id);
+
+		T result = this.getLoader().load(c, id);
+
+		Model model = this.getModel();
 
 		if (result instanceof IExtensibleResource) {
 			IExtensibleResource r = (IExtensibleResource) result;
 
-			Resource subject = this.model.createResource(r.getUrl());
-			StmtIterator statements = this.model.listStatements();
+			Resource subject = model.createResource(r.getUrl());
+			StmtIterator statements = model.listStatements();
 
 			while (statements.hasNext()) {
 				com.hp.hpl.jena.rdf.model.Statement s = statements
@@ -387,47 +407,53 @@ public class RdfStore {
 	}
 
 	public <T> Collection<T> load(Class<T> c) {
-		return loader.load(c);
+
+		return this.getLoader().load(c);
 	}
 
 	public <T> T loadDeep(Class<T> c, String id) throws NotFoundException {
-		return loader.loadDeep(c, id);
+
+		return this.getLoader().loadDeep(c, id);
 	}
 
 	public <T> Collection<T> loadDeep(Class<T> c) {
-		return loader.loadDeep(c);
+
+		return this.getLoader().loadDeep(c);
 	}
 
 	public void delete(Object bean) {
-		saver.delete(bean);
+		this.getSaver().delete(bean);
 	}
 
 	private void saveFields(IExtensibleResource bean) {
+
+		Model model = this.getModel();
+
 		for (Property predicate : bean.getFields().keySet()) {
 			for (RDFNode object : bean.getFieldValues(predicate)) {
-				this.model.add(this.model.createResource(bean.getUrl()),
-						predicate, object);
+				model.add(model.createResource(bean.getUrl()), predicate,
+						object);
 			}
 		}
 	}
 
 	public Resource save(Object bean) {
-		return saver.save(bean);
+		return this.getSaver().save(bean);
 	}
 
 	public Resource save(IExtensibleResource bean) {
-		Resource resource = saver.save(bean);
+		Resource resource = this.getSaver().save(bean);
 
 		saveFields(bean);
 		return resource;
 	}
 
 	public Resource saveDeep(Object bean) {
-		return saver.saveDeep(bean);
+		return this.getSaver().saveDeep(bean);
 	}
 
 	public Resource saveDeep(IExtensibleResource bean) {
-		Resource resource = saver.saveDeep(bean);
+		Resource resource = this.getSaver().saveDeep(bean);
 		saveFields(bean);
 
 		return resource;
@@ -437,7 +463,14 @@ public class RdfStore {
 		RdfStore.databaseName = databaseName;
 	}
 
-	// get all t,p,o for url
+	/*
+	 * Get a mapping of (Provenance, Predicate) -> RDFNode
+	 * 
+	 * E.g., ("http://curators.org", "dc:educationLevel") -> "high school"
+	 * 
+	 * That means that Curators.org has labeled this resource as appropriate for
+	 * high schoolers.
+	 */
 	public static HashMap<ProvenancePredicatePair, RDFNode> getPPP2ObjectMapForSubject(
 			String subjectURL) {
 
@@ -527,6 +560,16 @@ public class RdfStore {
 		}
 
 		return resultsSoFar;
+	}
+
+	private RDF2Bean getLoader() {
+		this.bindToDBIfNecessary();
+		return this.loader;
+	}
+
+	private Bean2RDF getSaver() {
+		this.bindToDBIfNecessary();
+		return this.saver;
 	}
 
 	// encode one (t,p) into a Lucene-compatible string column name
