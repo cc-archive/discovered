@@ -43,6 +43,15 @@ import org.creativecommons.learn.oercloud.Feed;
 import org.creativecommons.learn.oercloud.IExtensibleResource;
 
 /**
+ * While doing a crawl, we discovered that if you call the RdfStore constructor
+ * too many times, MySQL stops working entirely. This is bad! Let's do the following!
+ * Let's make a cache of RdfStores, at most ten. When we "create" an RdfStore,
+ * actually look in the cache first to see if it's there. If so, use that
+ * cached RdfStore. If not, then pursue the following. If the RdfStore has more
+ * than 10 entries, throw an entry away at random. Either way, add the new guy. 
+ */
+
+/**
  * 
  * @author nathan
  */
