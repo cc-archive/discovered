@@ -20,7 +20,7 @@ public class RdfStoreTest extends TestCase {
 		Model model = ModelFactory.createDefaultModel();
 
 		// create a Triple Store with that model
-		RdfStore store = RdfStore.forModel(model);
+		RdfStore store = RdfStore.forProvenance(provenanceURI, model);
 
 		// create a Resource
 		Resource r = new Resource("http://example.org/resource");
@@ -54,7 +54,7 @@ public class RdfStoreTest extends TestCase {
 		Model model = ModelFactory.createDefaultModel();
 
 		// create a Triple Store for our model
-		RdfStore store = RdfStore.forModel(model);
+		RdfStore store = RdfStore.forProvenance(provenanceURI, model);
 
 		// create a Resource and save it -- "stub" declaration
 		Resource without_metadata = new Resource("http://example.org/resource");

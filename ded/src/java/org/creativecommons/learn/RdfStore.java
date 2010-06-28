@@ -60,6 +60,7 @@ public class RdfStore {
 	private static Connection connection = null;
 	
 	protected static HashMap<String, RdfStore> cacheOfStores = null;
+	private String uri = null;
 	
 	public final static Log LOG = LogFactory.getLog(RdfStore.class);
 
@@ -71,6 +72,11 @@ public class RdfStore {
 
 		this.loader = new RDF2Bean(this.model);
 		this.saver = new Bean2RDF(this.model);
+	}
+	
+	private RdfStore(String provenanceURI) {
+		this.uri = provenanceURI;
+		this.refreshIfNecessary();
 	}
 
 	/**
@@ -90,14 +96,14 @@ public class RdfStore {
 		return new RdfStore(model, null);
 	}
 	
-	public static HashMap<String, RdfStore> getCache() {
+	private static HashMap<String, RdfStore> getCache() {
 		if (cacheOfStores == null) {
 			cacheOfStores = new HashMap<String, RdfStore>();
 		}
 		return cacheOfStores;
 	}
 	
-	public static RdfStore forProvenance(String uri) {
+	public static RdfStore forProvenance(String provURI) {
         /**
          * While doing a crawl, we discovered that if you call the RdfStore constructor
          * too many times, MySQL stops working entirely. This is bad! 
@@ -109,15 +115,22 @@ public class RdfStore {
          * When we "create" an RdfStore, actually look in the cache first to
          * see if it's there.
          */
-        if (RdfStore.getCache().containsKey(uri)) {
-            return RdfStore.getCache().get(uri);
+        if (RdfStore.getCache().containsKey(provURI)) {
+            return RdfStore.getCache().get(provURI);
         }
         
-		LOG.debug("Actually creating RdfStore for URI " + uri);
+		LOG.debug("Actually creating RdfStore for URI " + provURI);
 		
 		// If we get this far, then the RdfStore wasn't cached.
         makeSpaceInCache();
-     
+        RdfStore store = new RdfStore(provURI);
+        
+        RdfStore.getCache().put(provURI, store);
+        
+        return store;
+	}
+	
+	public void refreshIfNecessary() {
 		Configuration config = DEdConfiguration.create();
 
 		// XXX register the JDBC driver
@@ -132,17 +145,13 @@ public class RdfStore {
 
 		IRDBDriver driver = conn.getDriver();
 
+		ModelMaker maker = ModelFactory.createModelRDBMaker(conn);
+		
 		String tableNamePrefix = getOrCreateTablePrefixFromURI(uri);
 		driver.setTableNamePrefix(tableNamePrefix);
-
-		ModelMaker maker = ModelFactory.createModelRDBMaker(conn);
-
-		getOrCreateTablePrefixFromURI(uri);
-
-		RdfStore store = new RdfStore(maker.createDefaultModel(), conn);
-        RdfStore.getCache().put(uri, store);
-        
-        return store;
+		
+		this.model = maker.createDefaultModel();
+		this.conn = conn;
 	}
 
 	private static void makeSpaceInCache() {
@@ -349,6 +358,9 @@ public class RdfStore {
 	}
 
 	public <T> T load(Class<T> c, String id) throws NotFoundException {
+		
+		this.refreshIfNecessary();
+		
 		T result = loader.load(c, id);
 
 		if (result instanceof IExtensibleResource) {
