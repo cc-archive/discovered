@@ -149,7 +149,7 @@ public class TripleStoreIndexer implements IndexingFilter {
     	 * Aggregate those objects into the HashSet.
     	 */
     	for (String provenanceURI: RdfStore.getAllKnownTripleStoreUris()) {
-    		RdfStore store = RdfStore.uri2RdfStore(provenanceURI);
+    		RdfStore store = RdfStore.forProvenance(provenanceURI);
     		Model model = store.getModel();
     		SimpleSelector selector = new SimpleSelector(
     				model.createResource(resourceURI), 

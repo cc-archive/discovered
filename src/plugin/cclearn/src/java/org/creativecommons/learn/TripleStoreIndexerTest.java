@@ -57,7 +57,7 @@ public class TripleStoreIndexerTest extends TestCase {
         r.addField(site_store.getModel().createProperty(customPredicateURI),
         		site_store.getModel().createLiteral("xyz"));
         r.getSources().add(f);
-        RdfStore.uri2RdfStore(f.getUrl()).save(r);
+        RdfStore.forProvenance(f.getUrl()).save(r);
 
         /* third, can the triple store indexer find this custom field and its
          * values?

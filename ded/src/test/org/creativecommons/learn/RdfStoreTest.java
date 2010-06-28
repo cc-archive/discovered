@@ -14,6 +14,8 @@ public class RdfStoreTest extends TestCase {
 
 	public void testSaveIExtensibleResource() {
 
+        String provenanceURI = "http://example.com/#provenance";
+
 		// create a Jena model
 		Model model = ModelFactory.createDefaultModel();
 
@@ -45,6 +47,8 @@ public class RdfStoreTest extends TestCase {
 	}
 
 	public void testLoadClassOfIExtensibleResourceString() {
+
+        String provenanceURI = "http://example.com/#provenance";
 
 		// create a Jena model
 		Model model = ModelFactory.createDefaultModel();

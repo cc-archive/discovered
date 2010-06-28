@@ -35,21 +35,13 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.mysql.jdbc.PreparedStatement;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
 import org.creativecommons.learn.oercloud.IExtensibleResource;
-
-/**
- * While doing a crawl, we discovered that if you call the RdfStore constructor
- * too many times, MySQL stops working entirely. This is bad! Let's do the following!
- * Let's make a cache of RdfStores, at most ten. When we "create" an RdfStore,
- * actually look in the cache first to see if it's there. If so, use that
- * cached RdfStore. If not, then pursue the following. If the RdfStore has more
- * than 10 entries, throw an entry away at random. Either way, add the new guy. 
- */
 
 /**
  * 
@@ -66,6 +58,10 @@ public class RdfStore {
 	private static String databaseName = null;
 
 	private static Connection connection = null;
+	
+	protected static HashMap<String, RdfStore> cacheOfStores = null;
+	
+	public final static Log LOG = LogFactory.getLog(RdfStore.class);
 
 	public RdfStore(Model model, IDBConnection connection) {
 		super();
@@ -88,14 +84,40 @@ public class RdfStore {
 	}
 
 	public static RdfStore forModel(Model model) {
-
+        /* Since we don't have a cache HashMap<Model, RdfStore>, this may
+         * eventually cause use to exceed MySQL's connection limit. So it's
+         * super important that callers to this method use store.close() */
 		return new RdfStore(model, null);
 	}
-
+	
+	public static HashMap<String, RdfStore> getCache() {
+		if (cacheOfStores == null) {
+			cacheOfStores = new HashMap<String, RdfStore>();
+		}
+		return cacheOfStores;
+	}
+	
 	public static RdfStore forProvenance(String uri) {
-		/**
-		 * FIXME: One day, cache these mappings (uri to rdfstore) in a HashMap.
-		 */
+        /**
+         * While doing a crawl, we discovered that if you call the RdfStore constructor
+         * too many times, MySQL stops working entirely. This is bad! 
+         * 
+         * Let's make a cache of RdfStores, at most ten.
+         */
+
+         /*
+         * When we "create" an RdfStore, actually look in the cache first to
+         * see if it's there.
+         */
+        if (RdfStore.getCache().containsKey(uri)) {
+            return RdfStore.getCache().get(uri);
+        }
+        
+		LOG.debug("Actually creating RdfStore for URI " + uri);
+		
+		// If we get this far, then the RdfStore wasn't cached.
+        makeSpaceInCache();
+     
 		Configuration config = DEdConfiguration.create();
 
 		// XXX register the JDBC driver
@@ -117,7 +139,32 @@ public class RdfStore {
 
 		getOrCreateTablePrefixFromURI(uri);
 
-		return new RdfStore(maker.createDefaultModel(), conn);
+		RdfStore store = new RdfStore(maker.createDefaultModel(), conn);
+        RdfStore.getCache().put(uri, store);
+        
+        return store;
+	}
+
+	private static void makeSpaceInCache() {
+        /*
+         * If the RdfStore has more than 10 entries, throw an entry away at
+         * random.
+         */
+        if (RdfStore.getCache().size() >= 10) {
+            // Get one at random
+            int randomInt = 0;
+            int counter = 0;
+            String randomURI = null;
+            for (String key: RdfStore.getCache().keySet()) {
+            	counter++;
+            	if (counter == randomInt) {
+            		randomURI = key;
+            	}
+            }
+            RdfStore store = RdfStore.getCache().get(randomURI);
+            store.close();
+            RdfStore.getCache().remove(randomURI);
+        }
 	}
 
 	public static int getOrCreateTablePrefixFromURIAsInteger(String uri) {
