@@ -3,7 +3,6 @@ set -x
 
 ./scripts/nuke-jena-store
 
-ant clean
 ant
 
 rm -rf crawl/

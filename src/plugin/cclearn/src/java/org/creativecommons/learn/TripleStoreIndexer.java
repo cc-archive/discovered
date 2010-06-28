@@ -202,22 +202,17 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 		// Follow special cases (curator)
 		LOG.debug("RdfStore: indexing special cases.");
-		
 		LOG.warn("TripleStoreIndexer is about to try to index this URL: " + url.toString());
-
-		try {
-			
-			Resource resource = RdfStore.forDEd().loadDeep(Resource.class,
-					url.toString());
-			this.indexSources(doc, resource);
-		} catch (NotFoundException e) {
-			LOG.warn("Could not find " + url.toString()
-					+ " in the Triple Store.");
-			e.printStackTrace();
-		} catch (Exception e) {
-			LOG.error("An error occured while indexing " + url.toString());
-			e.printStackTrace();
-		}
+        for (String provURI: RdfStore.getAllKnownTripleStoreUris()) {
+            RdfStore store = RdfStore.forProvenance(provURI);
+            try {
+                Resource resource = store.loadDeep(Resource.class, url.toString());
+                this.indexSources(doc, resource);
+            }
+            catch (NotFoundException e) {
+                // Silence this error.
+            } 
+        }
 
 		// Return the document
 		return doc;
