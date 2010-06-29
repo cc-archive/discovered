@@ -119,9 +119,6 @@ public class RdfStore {
          * this may eventually cause use to exceed MySQL's connection limit. So
          * it's super important that callers to this method use store.close()
 		 */
-		LOG.debug("Actually creating RdfStore for URI " + provURI);
-		System.err.println("Actually creating RdfStore for URI " + provURI);
-
 		RdfStore store = new RdfStore(provURI);
 
 		return store;
