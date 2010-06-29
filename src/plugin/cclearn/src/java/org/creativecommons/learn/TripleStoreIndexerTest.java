@@ -7,6 +7,10 @@ import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
 import org.creativecommons.learn.oercloud.Resource;
 
+import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Property;
+
 import com.hp.hpl.jena.rdf.model.impl.LiteralImpl;
 import com.hp.hpl.jena.rdf.model.impl.ModelCom;
 
@@ -54,8 +58,10 @@ public class TripleStoreIndexerTest extends TestCase {
 
         Resource r = new Resource("http://example.com/#i_am_a_resource");
         // Make the resource's education level = xyz
-        r.addField(site_store.getModel().createProperty(customPredicateURI),
-        		site_store.getModel().createLiteral("xyz"));
+        Model m = site_store.getModel();
+        Property edLevel = m.createProperty(customPredicateURI);
+        Literal xyz = m.createLiteral("xyz");
+        r.addField(edLevel, xyz);
         r.getSources().add(f);
         RdfStore.forProvenance(f.getUrl()).save(r);
 
@@ -64,7 +70,7 @@ public class TripleStoreIndexerTest extends TestCase {
          * ----------------------- */
         Collection<String> values = indexer.getValuesForCustomLuceneFieldName(
                 r.getUrl(), customLuceneFieldName);
-        System.out.println(indexer.getValuesForCustomLuceneFieldName(r.getUrl(), customLuceneFieldName));
+        System.out.println(values);
         assertTrue(values.contains(customPredicateValue));
         
         /* will it properly declare the custom field name to Lucene? */
