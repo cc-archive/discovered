@@ -74,6 +74,10 @@ public class RdfStore {
 		this.uri = provenanceURI;
 		this.bindToDBIfNecessary();
 	}
+	
+	public static void emptyCache() {
+		RdfStore.cacheOfStores = null;
+	}
 
 	/**
 	 * Returns the RdfStore devoted to feeds that the system administrator adds

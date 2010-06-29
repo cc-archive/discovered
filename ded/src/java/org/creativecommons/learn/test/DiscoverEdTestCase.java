@@ -61,6 +61,7 @@ public abstract class DiscoverEdTestCase extends TestCase {
 		String dbname = getDatabaseName();
 		dropDatabase(dbname);
 		createDatabase(dbname);
+		RdfStore.emptyCache();
 		System.err.println("Created a MySQL database named " + dbname);
 	}
 	
