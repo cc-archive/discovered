@@ -31,6 +31,12 @@ public class DumpStore {
 		
 		// get an iterator for all subjects
         for (String provURI: RdfStore.getAllKnownTripleStoreUris()) {
+            // <for testing>
+            if (provURI == RdfStore.SITE_CONFIG_URI) {
+                System.out.println("skipping site config store");
+                continue;
+            }
+            // </for testing>
             RdfStore store = RdfStore.forProvenance(provURI);
             Model model = store.getModel();
             ResIterator subjects = model.listSubjects();
