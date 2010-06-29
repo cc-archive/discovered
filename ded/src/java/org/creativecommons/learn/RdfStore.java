@@ -119,6 +119,7 @@ public class RdfStore {
 		}
 
 		LOG.debug("Actually creating RdfStore for URI " + provURI);
+		System.err.println("Actually creating RdfStore for URI " + provURI);
 
 		// If we get this far, then the RdfStore wasn't cached.
 		makeSpaceInCache();
@@ -143,6 +144,8 @@ public class RdfStore {
 		// should establish it. No need to do this if this.conn is already
 		// populated...
 		if (this.conn != null) {
+            System.err.println("We found a connection for RdfStore with URI " +
+                    uri + "and so are not creating one");
 			return;
 		}
 
@@ -335,6 +338,8 @@ public class RdfStore {
 			e.printStackTrace();
 			throw new RuntimeException("sql error");
 		}
+
+        LOG.info("RdfStore.getAllKnownTripleStoreUris detected these 3-stores: " + uris);
 
 		return uris;
 	}

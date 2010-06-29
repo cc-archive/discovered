@@ -88,7 +88,6 @@ public class TripleStoreIndexer implements IndexingFilter {
 			fieldNames.add(key);
 		}
 		
-		
 		fieldNames.add(Search.FEED_FIELD);
 		fieldNames.add(Search.CURATOR_INDEX_FIELD);
 
@@ -127,6 +126,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 	@Override
 	public void addIndexBackendOptions(Configuration conf) {
 		for (String lucene_column_name : getAllPossibleFieldNames()) {
+            LOG.info("Adding field " + lucene_column_name);
 			LuceneWriter.addFieldOptions(lucene_column_name,
 					LuceneWriter.STORE.YES, LuceneWriter.INDEX.UNTOKENIZED, conf);
 		}
@@ -144,11 +144,17 @@ public class TripleStoreIndexer implements IndexingFilter {
     		LOG.warn("Yikes, you queried the IndexFilter for a custom field name that is not configured: " + fieldName);
     		return values;
     	}
-    	
-    	/* Now, each triple store, do a query looking for triples matching <resourceURI> <predicateURI> object.
+
+        LOG.info("predicate URI: " + predicateURI);
+
+        /* Now, each triple store, do a query looking for triples matching
+         * <resourceURI> <predicateURI> object.
     	 * Aggregate those objects into the HashSet.
     	 */
     	for (String provenanceURI: RdfStore.getAllKnownTripleStoreUris()) {
+            LOG.info("Looping over triple store uri " + provenanceURI +
+                    " looking for triples matching " + resourceURI +
+                    predicateURI + " _____");
     		RdfStore store = RdfStore.forProvenance(provenanceURI);
     		Model model = store.getModel();
     		SimpleSelector selector = new SimpleSelector(
@@ -156,9 +162,11 @@ public class TripleStoreIndexer implements IndexingFilter {
     				model.createProperty(predicateURI),
     				(RDFNode) null);
    												      
-    		StmtIterator objects = model.listStatements(selector);
-    		while (objects.hasNext()) {
-    			Statement statement = objects.next();
+    		StmtIterator statements = model.listStatements(selector);
+    		while (statements.hasNext()) {
+                LOG.info("Looping over statement for subj: " + resourceURI +
+                        ", pred: " + fieldName);
+    			Statement statement = statements.next();
     			RDFNode node = statement.getObject();
     			if (node.isLiteral()) {
     				Literal literal = (Literal) node;
@@ -186,16 +194,24 @@ public class TripleStoreIndexer implements IndexingFilter {
 		LOG.info("RdfStore: Begin indexing " + url.toString());
 
 		// Index all triples
-		LOG.debug("RdfStore: indexing all triples.");
+		LOG.info("RdfStore: indexing all triples.");
 		indexTriples(doc, url);
 		
-		// The field_names.xml file configures, in a site-specific way, what Lucene column names to use
-		// for certain predicates. Here, we index those. FIXME: This is done in a provenance-naive way.
+        // The discovered-search-prefixes.xml file configures, in a
+        // site-specific way, what Lucene column names to use for certain
+        // predicates. Here, we index those. FIXME: This is done in a
+        // provenance-naive way.
+        //
+        // FIXME: customFieldConfiguration appears to be
+        // containing much more than it should. We really only want to add the
+        // DiscoverEd custom fields, not the Hadoop built-in "custom fields"
 		for (Entry<String, String> entry : customFieldConfiguration) {
+            LOG.info("I might add this to Lucene: " + entry.getKey() + ": " + entry.getValue());
 			String fieldName = entry.getKey();
 	        Collection<String> values = this.getValuesForCustomLuceneFieldName(
 	                url.toString(), fieldName);
 	        for (String value : values) {
+                LOG.info("Adding to Lucene... " + fieldName + ", " + value);
 	        	doc.add(fieldName, value);
 	        }
 		}
