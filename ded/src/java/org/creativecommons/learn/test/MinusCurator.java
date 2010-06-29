@@ -22,7 +22,7 @@ import org.apache.nutch.util.NutchConfiguration;
 
 public class MinusCurator extends DiscoverEdTestCase {
 
-	public void test() throws Exception {
+	public void dontRunThisReallyLongTestForNow() throws Exception {
 
 		final String URL_PREFIX = "http://a6.creativecommons.org/~raffi/html_for_discovered_unit_tests/MinusCurator/";
 		final String PAGE_ONE_URL = URL_PREFIX + "1.html";
