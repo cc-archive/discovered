@@ -93,7 +93,7 @@
      field named "edlevel".
 
      The number in <value> is the "boost", i.e., the weight this term carries
-     when Nutch ranks search results.
+     when Nutch ranks search results. Choose 1.0 to mean "no adjustment".
      
      For more about what Nutch is doing, see
      <http://wiki.apache.org/nutch/HowToMakeCustomSearch>. Notice that
