@@ -408,8 +408,10 @@ public class RdfStore {
 		HashMap<ProvenancePredicatePair, RDFNode> map = new HashMap<ProvenancePredicatePair, RDFNode>();
 
 		for (String provenanceURI : RdfStore.getAllKnownTripleStoreUris()) {
+            RdfStore store = RdfStore.forProvenance(provenanceURI);
+
 			Model m;
-			m = RdfStore.forProvenance(provenanceURI).getModel();
+			m = store.getModel();
 
 			// Create a new query
 			String queryString = "SELECT ?p ?o " + "WHERE {" + "      <"
@@ -438,6 +440,7 @@ public class RdfStore {
 
 			// Important - free up resources used running the query
 			qe.close();
+            store.close();
 		}
 
 		return map;

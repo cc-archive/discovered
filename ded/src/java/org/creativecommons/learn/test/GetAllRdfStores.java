@@ -11,6 +11,7 @@ public class GetAllRdfStores extends DiscoverEdTestCase {
 		RdfStore store = RdfStore.forDEd();
 		List<String> uris = RdfStore.getAllKnownTripleStoreUris();
 		assertEquals(RdfStore.SITE_CONFIG_URI, uris.get(0));
+        store.close();
 	}
 
 	public static void testWorksTheSecondTime() throws SQLException {
@@ -19,6 +20,8 @@ public class GetAllRdfStores extends DiscoverEdTestCase {
 		List<String> uris = RdfStore.getAllKnownTripleStoreUris();
 		assertEquals(RdfStore.SITE_CONFIG_URI, uris.get(0));
 		assertEquals(uris.size(), 1);
+        store.close();
+        the_same_store.close();
 	}
 
 }

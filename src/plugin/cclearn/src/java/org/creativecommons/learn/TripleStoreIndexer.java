@@ -64,10 +64,11 @@ public class TripleStoreIndexer implements IndexingFilter {
 			Query query = QueryFactory.create(queryString);
 
 			// Execute the query and obtain results
-			Model m;
-			m = RdfStore.forProvenance(provenanceURI).getModel();
+            RdfStore store = RdfStore.forProvenance(provenanceURI);
+			Model model;
+			model = store.getModel();
 
-			QueryExecution qe = QueryExecutionFactory.create(query, m);
+			QueryExecution qe = QueryExecutionFactory.create(query, model);
 			ResultSet results = qe.execSelect();
 
 			while (results.hasNext()) {
@@ -80,6 +81,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 			
 			// Important - free up resources used running the query
 			qe.close();
+            store.close();
 		}
 		
 		// Add field names that come from the site-specific field_names.xml configuration file.
@@ -180,6 +182,7 @@ public class TripleStoreIndexer implements IndexingFilter {
     				values.add(asString);
     			}
     		}
+            store.close();
     	}
 
     	return values;
@@ -228,6 +231,9 @@ public class TripleStoreIndexer implements IndexingFilter {
             catch (NotFoundException e) {
                 // Silence this error.
             } 
+            finally {
+                store.close();
+            }
         }
 
 		// Return the document
