@@ -66,93 +66,11 @@ public class RdfStore {
 
 		this.model = model;
 		this.conn = connection;
-		this.bindToDBIfNecessary();
 
 	}
 
 	private RdfStore(String provenanceURI) {
 		this.uri = provenanceURI;
-		this.bindToDBIfNecessary();
-	}
-	
-	public static void emptyCache() {
-		RdfStore.cacheOfStores = null;
-	}
-
-	/**
-	 * Returns the RdfStore devoted to feeds that the system administrator adds
-	 * when configuring this DiscoverEd instance.
-	 * 
-	 * @throws SQLException
-	 * */
-	public static RdfStore forDEd() {
-		return RdfStore.forProvenance(RdfStore.SITE_CONFIG_URI);
-	}
-
-	public static RdfStore forModel(Model model) {
-		/*
-		 * Since we don't have a cache HashMap<Model, RdfStore>, this may
-		 * eventually cause use to exceed MySQL's connection limit. So it's
-		 * super important that callers to this method use store.close()
-		 */
-		return new RdfStore(model, null);
-	}
-
-	private static HashMap<String, RdfStore> getCache() {
-		if (cacheOfStores == null) {
-			cacheOfStores = new HashMap<String, RdfStore>();
-		}
-		return cacheOfStores;
-	}
-
-	public static RdfStore forProvenance(String provURI) {
-		/**
-		 * While doing a crawl, we discovered that if you call the RdfStore
-		 * constructor too many times, MySQL stops working entirely. This is
-		 * bad!
-		 * 
-		 * Let's make a cache of RdfStores, at most ten.
-		 */
-
-		/*
-		 * When we "create" an RdfStore, actually look in the cache first to see
-		 * if it's there.
-		 */
-		if (RdfStore.getCache().containsKey(provURI)) {
-			return RdfStore.getCache().get(provURI);
-		}
-
-		LOG.debug("Actually creating RdfStore for URI " + provURI);
-		System.err.println("Actually creating RdfStore for URI " + provURI);
-
-		// If we get this far, then the RdfStore wasn't cached.
-		makeSpaceInCache();
-		RdfStore store = new RdfStore(provURI);
-
-		RdfStore.getCache().put(provURI, store);
-
-		return store;
-	}
-
-	/*
-	 * To keep the number of MySQL connections low, we occasionally close them.
-	 * RdfStores depend on these connections for any operation that interacts
-	 * with the database, such as loading resources. Those operations should
-	 * call this method, which establishes / re-establishes a closed or
-	 * non-existent connection, and hooks that connection up with this RdfStore
-	 * in the relevant ways.
-	 */
-	public void bindToDBIfNecessary() {
-		
-		// If the connection has been closed, or hasn't been established yet, we
-		// should establish it. No need to do this if this.conn is already
-		// populated...
-		if (this.conn != null) {
-            System.err.println("We found a connection for RdfStore with URI " +
-                    uri + "and so are not creating one");
-			return;
-		}
-
 		Configuration config = DEdConfiguration.create();
 
 		// XXX register the JDBC driver
@@ -178,29 +96,75 @@ public class RdfStore {
 		this.loader = new RDF2Bean(this.model);
 		this.saver = new Bean2RDF(this.model);
 	}
+	
+	public static void emptyCache() {
+		RdfStore.cacheOfStores = null;
+	}
 
-	private static void makeSpaceInCache() {
+	/**
+	 * Returns the RdfStore devoted to feeds that the system administrator adds
+	 * when configuring this DiscoverEd instance.
+	 * 
+	 * @throws SQLException
+	 * */
+	public static RdfStore forDEd() {
+		return RdfStore.forProvenance(RdfStore.SITE_CONFIG_URI);
+	}
+
+	public static RdfStore forModel(Model model) {
+		return new RdfStore(model, null);
+	}
+
+	private static HashMap<String, RdfStore> getCache() {
+		if (cacheOfStores == null) {
+			cacheOfStores = new HashMap<String, RdfStore>();
+		}
+		return cacheOfStores;
+	}
+
+    /*
+     * Create a database-backed RdfStore corresponding to data with a
+     * particular provenance.
+     */
+	public static RdfStore forProvenance(String provURI) {
+		/**
+		 * For speed, let's make a cache of RdfStores, at most ten.
+         *
+		 * Since we don't have a cache HashMap<Model, RdfStore>, this may
+		 * eventually cause use to exceed MySQL's connection limit. So it's
+		 * super important that callers to this method use store.close()
+		 */
+
+		/*
+		 * When we "create" an RdfStore, actually look in the cache first to see
+		 * if it's there.
+		 */
+		if (RdfStore.getCache().containsKey(provURI)) {
+			return RdfStore.getCache().get(provURI);
+		}
+
+		LOG.debug("Actually creating RdfStore for URI " + provURI);
+		System.err.println("Actually creating RdfStore for URI " + provURI);
+
+		// If we get this far, then the RdfStore wasn't cached.
+		failIfCacheIsFull();
+
+		RdfStore store = new RdfStore(provURI);
+
+		RdfStore.getCache().put(provURI, store);
+
+		return store;
+	}
+
+	private static void failIfCacheIsFull() {
 		/*
 		 * If the RdfStore has more than 10 entries, throw an entry away at
 		 * random.
 		 */
 		if (RdfStore.getCache().size() >= 10) {
-			// Get one at random
-			int randomInt = 0; // FIXME actually pick a random number
-			int counter = 0;
-			String randomURI = null;
-			for (String key : RdfStore.getCache().keySet()) {
-				counter++;
-				if (counter == randomInt) {
-					randomURI = key;
-				}
-			}
-			RdfStore store = RdfStore.getCache().get(randomURI);
-			
-			// Close the connection
-			store.close();
-			
-			RdfStore.getCache().remove(randomURI);
+            throw new RuntimeException("The cache is full. Be sure to .close() your RdfStores when you're finished with them.");
+            // If we don't throw an RTE here, we eventually open too many MySQL
+            // connections, and MySQL itself will utter its terrible complaint.
 		}
 	}
 
@@ -366,7 +330,6 @@ public class RdfStore {
 	} // close
 
 	public Model getModel() {
-		this.bindToDBIfNecessary();
 		return this.model;
 	} // getModel
 
@@ -572,12 +535,10 @@ public class RdfStore {
 	}
 
 	private RDF2Bean getLoader() {
-		this.bindToDBIfNecessary();
 		return this.loader;
 	}
 
 	private Bean2RDF getSaver() {
-		this.bindToDBIfNecessary();
 		return this.saver;
 	}
 
