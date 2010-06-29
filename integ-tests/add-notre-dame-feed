@@ -1,0 +1,4 @@
+#!/bin/bash
+set -x
+
+integ-tests/add-sample-resources http://ocw.nd.edu/ http://ocw.nd.edu/courselist/rss 

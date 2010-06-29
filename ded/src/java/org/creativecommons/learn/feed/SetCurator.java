@@ -28,7 +28,11 @@ public class SetCurator {
 
 		Feed feed;
 		try {
-			feed = RdfStore.forDEd().load(Feed.class, feed_url);
+            // Note that this assumes that all feeds come from the site
+            // configuration store. That's fine as long as AddFeed always adds
+            // them to the site configuration store, which it does at time of
+            // writing.
+            feed = RdfStore.forDEd().load(Feed.class, feed_url);
 			Curator curator = new Curator(curator_url);
 
 			feed.setCurator(curator);

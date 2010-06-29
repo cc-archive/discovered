@@ -30,14 +30,22 @@ public class DumpStore {
 		String format = (args.length > 0) ? args[0] : "RDF/XML";
 		
 		// get an iterator for all subjects
-		Model store = RdfStore.forDEd().getModel();
-		ResIterator subjects = store.listSubjects();
-		
-		// write out one subject at a time
-		while (subjects.hasNext()) {
-			store.query(new SubjectSelector(subjects.nextResource())).
-					write(System.out, format);
-		}
+        for (String provURI: RdfStore.getAllKnownTripleStoreUris()) {
+            RdfStore store = RdfStore.forProvenance(provURI);
+            Model model = store.getModel();
+            ResIterator subjects = model.listSubjects();
+
+            // write out one subject at a time
+            while (subjects.hasNext()) {
+                SubjectSelector selector = new SubjectSelector(subjects.nextResource());
+                model.query(selector).write(System.out, format);
+            }
+
+            // We're advised to use this whenever we loop over
+            // getAllKnownTripleStoreUris() and create lots of RdfStores with
+            // it.
+            store.close();
+        }
 		
 	}
 

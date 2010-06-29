@@ -167,6 +167,8 @@ public class FeedUpdater {
 			}
 
 		} // not opml...
+
+        store.close();
 	} // poll
 
 	public static void startCountingGETs() {
