@@ -70,4 +70,36 @@
   </description>
 </property>
 
+<!--
+  The configuration file conf/nutch-site.xml is a good place to write some
+  predicate, prefix pairs, like this:
+
+     <property>
+         <predicate>http://purl.org/dc/terms/educationLevel</predicate>
+         <name>query.basic.edlevel.boost</name>
+         <value>1.0</value>
+     </property>
+
+     That will allow users to type this into the search query box:
+     edlevel:highschool and get results.
+
+     The more technical side of the story... This property section does the following:
+
+     At indexing time, DiscoverEd will copy the data about education levels
+     from the Jena store and paste this data into Lucene. (Specifically, it
+     copies any data whose predicate is
+     http://purl.org/dc/terms/educationLevel.) Nutch can then find this data at
+     querying time.  Nutch will also permit users to search Lucene using a
+     field named "edlevel".
+
+     The number in <value> is the "boost", i.e., the weight this term carries
+     when Nutch ranks search results.
+     
+     For more about what Nutch is doing, see
+     <http://wiki.apache.org/nutch/HowToMakeCustomSearch>. Notice that
+     the tags <property>, <name>, and <value> are part of the Nutch specification,
+     while the <predicate> tag is part of the Discovered specification.
+
+     -->
+
 </configuration>
