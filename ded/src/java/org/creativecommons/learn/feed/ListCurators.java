@@ -10,11 +10,11 @@ import org.creativecommons.learn.oercloud.Curator;
 public class ListCurators {
 
 	/**
+     * List feeds we're tracking
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		
-		// list feeds we're tracking
 		Collection<Curator> curators = RdfStore.forDEd().load(Curator.class); 
 			
 		for (Curator c : curators) {
