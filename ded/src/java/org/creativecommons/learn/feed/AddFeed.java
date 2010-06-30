@@ -33,8 +33,7 @@ public class AddFeed {
 	}
 	
 	public static void addFeed(String type, String url, String curator) throws SQLException {
-		String graphName = "http://creativecommons.org/#site-configuration";
-		RdfStore store = RdfStore.forProvenance(graphName);
+		RdfStore store = RdfStore.forDEd();
 		
 		/* Make sure we already have heard of that Curator. */
 		Collection<Curator> curator_objs = store.load(Curator.class);
