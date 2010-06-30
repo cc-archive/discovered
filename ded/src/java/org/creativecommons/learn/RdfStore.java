@@ -45,26 +45,23 @@ import org.creativecommons.learn.oercloud.IExtensibleResource;
  * @author nathan
  */
 public class RdfStore {
-
-	private IDBConnection conn = null;
-	private Model model = null;
-
-	private RDF2Bean loader = null;
-	private Bean2RDF saver = null;
+    
+	private final static Log LOG = LogFactory.getLog(RdfStore.class);
 
 	private static String databaseName = null;
-
-	private static Connection connection = null;
-
+	private static Connection dbConnection = null;
+    
+	private Model model = null;
+	private RDF2Bean loader = null;
+	private Bean2RDF saver = null;
+    private IDBConnection jenaDBConnection = null;
 	private String uri = null;
-
-	private final static Log LOG = LogFactory.getLog(RdfStore.class);
 
 	public RdfStore(Model model, IDBConnection connection) {
 		super();
 
 		this.model = model;
-		this.conn = connection;
+		this.jenaDBConnection = connection;
 
 	}
 
@@ -90,7 +87,7 @@ public class RdfStore {
 		driver.setTableNamePrefix(tableNamePrefix);
 
 		this.model = maker.createDefaultModel();
-		this.conn = conn;
+		this.jenaDBConnection = conn;
 
 		this.loader = new RDF2Bean(this.model);
 		this.saver = new Bean2RDF(this.model);
@@ -126,11 +123,11 @@ public class RdfStore {
 
 	public static int getOrCreateTablePrefixFromURIAsInteger(String uri) {
 		try {
-			connection = getDatabaseConnection();
-			createRdfStoresTableIfNeeded(connection);
+			dbConnection = getDatabaseConnection();
+			createRdfStoresTableIfNeeded(dbConnection);
 
 			// Do we already have a table prefix? If so, return it.
-			java.sql.PreparedStatement matchingTablePrefixes = connection
+			java.sql.PreparedStatement matchingTablePrefixes = dbConnection
 					.prepareStatement("SELECT table_prefix FROM rdf_stores WHERE uri = ? ");
 			matchingTablePrefixes.setString(1, uri);
 			ResultSet cursor = matchingTablePrefixes.executeQuery();
@@ -140,7 +137,7 @@ public class RdfStore {
 
 			// Prepare a SQL statement that saves a row in a table called
 			// rdf_stores, and fill in the values
-			java.sql.PreparedStatement statement = connection
+			java.sql.PreparedStatement statement = dbConnection
 					.prepareStatement("INSERT INTO rdf_stores (uri) VALUES (?)");
 			statement.setString(1, uri);
 
@@ -162,11 +159,11 @@ public class RdfStore {
 
 	public static String getProvenanceURIFromTablePrefix(int tablePrefix) {
 		try {
-			connection = getDatabaseConnection();
-			createRdfStoresTableIfNeeded(connection);
+			dbConnection = getDatabaseConnection();
+			createRdfStoresTableIfNeeded(dbConnection);
 
 			// Do we already have a table prefix? If so, return it.
-			java.sql.PreparedStatement matchingURIs = connection
+			java.sql.PreparedStatement matchingURIs = dbConnection
 					.prepareStatement("SELECT uri FROM rdf_stores WHERE table_prefix = ? ");
 			matchingURIs.setInt(1, tablePrefix);
 			ResultSet cursor = matchingURIs.executeQuery();
@@ -188,13 +185,13 @@ public class RdfStore {
 
 	// Connect to the database
 	private static Connection getDatabaseConnection() throws SQLException {
-		if (connection == null) {
+		if (dbConnection == null) {
 			Configuration config = DEdConfiguration.create();
-			connection = DriverManager.getConnection(
+			dbConnection = DriverManager.getConnection(
 					getDatabaseConnectionURL(), config.get("rdfstore.db.user"),
 					config.get("rdfstore.db.password"));
 		}
-		return connection;
+		return dbConnection;
 	}
 
 	private static void createRdfStoresTableIfNeeded(Connection connection) {
@@ -271,13 +268,13 @@ public class RdfStore {
 	public void close() {
 
 		// if no connection was supplied, nothing to do here
-		if (this.conn == null) {
+		if (this.jenaDBConnection == null) {
 			return;
 		}
 
 		try {
 			// Close the database connection
-			conn.close();
+			this.jenaDBConnection.close();
 		} catch (SQLException ex) {
 			Logger.getLogger(RdfStore.class.getName()).log(Level.SEVERE, null,
 					ex);
