@@ -1,11 +1,9 @@
 package org.creativecommons.learn.oercloud;
-import org.creativecommons.learn.RdfStore;
 
+import org.creativecommons.learn.RdfStore;
 
 import java.util.Collection;
 import java.util.Date;
-
-import org.creativecommons.learn.RdfStore;
 
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfProperty;
@@ -75,7 +73,7 @@ public class Feed {
 	}
 	
 	public String getSource() {
-		return "http://creativecommons.org/#site-configuration";
+		return RdfStore.SITE_CONFIG_URI; 
 	}
 	
 }
