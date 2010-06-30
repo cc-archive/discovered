@@ -50,7 +50,8 @@ public class AddFeed {
 		
 		Feed feed = new Feed(url);
 		feed.setFeedType(type);
-		feed.setCurator(curator_obj); // It would be nice if this validated whether the curator exists.
+		feed.setCurator(curator_obj);
+        // FIXME: ^^ It would be nice if this validated whether the curator exists.
 		store.save(feed);
 		
 	}
