@@ -48,6 +48,7 @@ public class RdfStore {
     
 	private final static Log LOG = LogFactory.getLog(RdfStore.class);
 
+	protected static HashMap<String, RdfStore> cache = null;
 	private static String databaseName = null;
 	private static Connection dbConnection = null;
     
@@ -93,6 +94,10 @@ public class RdfStore {
 		this.saver = new Bean2RDF(this.model);
 	}
 	
+	public static void emptyCache() {
+		RdfStore.cache = null;
+	}
+
 	/**
 	 * Returns the RdfStore devoted to feeds that the system administrator adds
 	 * when configuring this DiscoverEd instance.
@@ -107,18 +112,54 @@ public class RdfStore {
 		return new RdfStore(model, null);
 	}
 
+	private static HashMap<String, RdfStore> getCache() {
+		if (cache == null) {
+			cache = new HashMap<String, RdfStore>();
+		}
+		return cache;
+	}
+
     /*
      * Create a database-backed RdfStore corresponding to data with a
      * particular provenance.
      */
 	public static RdfStore forProvenance(String provURI) {
 		/**
-         * this may eventually cause use to exceed MySQL's connection limit. So
-         * it's super important that callers to this method use store.close()
+		 * For speed, let's make a cache of RdfStores, at most ten.
+         *
+		 * Since we don't have a cache HashMap<Model, RdfStore>, this may
+		 * eventually cause use to exceed MySQL's connection limit. So it's
+		 * super important that callers to this method use store.close()
 		 */
+
+		/*
+		 * When we "create" an RdfStore, actually look in the cache first to see
+		 * if it's there.
+		 */
+		if (RdfStore.getCache().containsKey(provURI)) {
+			return RdfStore.getCache().get(provURI);
+		}
+
+		// If we get this far, then the RdfStore wasn't cached.
+		failIfCacheIsFull();
+
 		RdfStore store = new RdfStore(provURI);
 
+		RdfStore.getCache().put(provURI, store);
+
 		return store;
+	}
+
+	private static void failIfCacheIsFull() {
+		/*
+		 * If the RdfStore has more than 10 entries, throw an entry away at
+		 * random.
+		 */
+		if (RdfStore.getCache().size() >= 10) {
+            throw new RuntimeException("The cache is full. Be sure to .close() your RdfStores when you're finished with them.");
+            // If we don't throw an RTE here, we eventually open too many MySQL
+            // connections, and MySQL itself will utter its terrible complaint.
+		}
 	}
 
 	public static int getOrCreateTablePrefixFromURIAsInteger(String uri) {
