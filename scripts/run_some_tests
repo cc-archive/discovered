@@ -1,0 +1,3 @@
+#!/bin/bash
+# Run all the tests in org.creativecommons.learn.test
+find ded/src/java/org/creativecommons/learn/test/ | g java$ | sed 's,ded/src/java/org/creativecommons/learn/test/,,' | sed 's/\.java$//' | xargs -n1 -I TEST ant -f dedbuild.xml cc_test -Dtest=TEST
