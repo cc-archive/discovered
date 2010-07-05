@@ -308,13 +308,6 @@ public class RdfStore {
 
 	public void close() {
 
-        // Remove from cache, to prevent this RdfStore from being used again.
-        // If it were used again, it would have no db connection, and we'd get
-        // a "com.mysql.jdbc.exceptions.jdbc4.MySQLNonTransientConnectionException:
-        // No operations allowed after statement closed."
-
-        RdfStore.cache.remove(this.uri);
-
 		// if no connection was supplied, nothing to do here
 		if (this.jenaDBConnection == null) {
 			return;
