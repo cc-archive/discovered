@@ -14,8 +14,7 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 	 * @throws SQLException 
 	 * @throws ClassNotFoundException */
 	public void addCurator() throws SQLException, ClassNotFoundException {
-		String graphName = "http://creativecommons.org/#site-configuration";
-		RdfStore store = RdfStore.forProvenance(graphName);
+		RdfStore store = RdfStore.forDEd();
 		
 		/* We have no Curators at the start */
 		Collection<Curator> available_curators = store.load(org.creativecommons.learn.oercloud.Curator.class);
@@ -33,12 +32,11 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 		assertEquals(curator.getUrl(), "http://ocw.nd.edu/");
 		
 		/* Get a different RdfStore */
-		RdfStore aDifferentStore = RdfStore.forProvenance("http://other.example.com/#site-configuration");
+		RdfStore aDifferentStore = RdfStore.forProvenance("http://other.example.com/");
 		
 		/* We have no Curators in the different RdfStore */
 		Collection<Curator> aDifferentListOfCurators = aDifferentStore.load(org.creativecommons.learn.oercloud.Curator.class);
 		assertEquals(0, aDifferentListOfCurators.size());
-		store.close();
 	}
 	
 	public void testAddCurator() throws SQLException, ClassNotFoundException {
@@ -50,7 +48,7 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 	 * @throws ClassNotFoundException */
 	public void testAddFeed() throws SQLException, ClassNotFoundException {
 		
-		RdfStore store = RdfStore.forProvenance("http://creativecommons.org/#site-configuration");
+		RdfStore store = RdfStore.forDEd();
 		this.addCurator();
 
 		/* We have no Feeds at the start */
@@ -68,6 +66,7 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 		assertEquals(feed.getCurator().getUrl(), "http://ocw.nd.edu/");
 		assertEquals(feed.getFeedType(), "rss");
 		assertEquals(feed.getUrl(), "http://ocw.nd.edu/courselist/rss");
+		store.close();
 	}
 	
 	/** 
