@@ -8,7 +8,6 @@ import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.oercloud.Resource;
 
 import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.impl.LiteralImpl;
 
 
 public class GetPredicatesForSubject extends DiscoverEdTestCase {
