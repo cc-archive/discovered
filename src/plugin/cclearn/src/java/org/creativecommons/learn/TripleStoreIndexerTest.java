@@ -1,6 +1,7 @@
 package org.creativecommons.learn;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import org.apache.hadoop.conf.Configuration;
 import org.creativecommons.learn.oercloud.Curator;
@@ -19,7 +20,44 @@ import junit.framework.TestCase;
 public class TripleStoreIndexerTest extends TestCase {
 	public static void testCuratorListAppearsInALuceneColumn() {
 		// First, create a Resource that appears in feeds curated by multiple organizations
+		Resource r = new Resource("http://example.com/#resource");
+		r.setTitle("A title");
+
+		// curator 1
+		Curator c1 = new Curator("http://example.com/#curator1");
+		RdfStore.forDEd().save(c1);
+		
+		// feed 1
+		Feed f1 = new Feed("http://example.com/#feed1");
+		f1.setCurator(c1);
+		RdfStore.forDEd().save(f1);
+		
+		// provenance 1
+		RdfStore store1 = RdfStore.forProvenance(f1.getUrl());
+		store1.save(r);
+		
+		// curator 2
+		Curator c2 = new Curator("http://example.com/#curator2");
+		RdfStore.forDEd().save(c2);
+		
+		// feed 1
+		Feed f2 = new Feed("http://example.com/#feed2");
+		f2.setCurator(c2);
+		RdfStore.forDEd().save(f2);
+		
+		// provenance 2
+		RdfStore store2 = RdfStore.forProvenance(f2.getUrl());
+		store2.save(r);
+		
 		// Then, test that we can know ask the Resource to tell us all the URIs that have curated it
+		Collection<String> curatorURIs = r.getAllCuratorURIs();
+		
+		HashSet<String> expected = new HashSet<String>();
+		expected.add(c1.getUrl());
+		expected.add(c2.getUrl());
+		
+		assertEquals(curatorURIs, expected);
+		
 		// Assume we jam that into the Lucene document (test this with Luke)
 		// Then, in Luke, execute a query showing that there is a query that can correctly exclude a document by a particular curator
 	}

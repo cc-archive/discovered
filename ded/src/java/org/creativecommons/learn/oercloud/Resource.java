@@ -1,12 +1,16 @@
 package org.creativecommons.learn.oercloud;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
+import org.creativecommons.learn.RdfStore;
+
 import thewebsemantic.Namespace;
+import thewebsemantic.NotFoundException;
 import thewebsemantic.RdfProperty;
 import thewebsemantic.Uri;
 
@@ -35,6 +39,27 @@ public class Resource implements IExtensibleResource {
 
     public Resource(String url) {
         this.url = url;
+    }
+    
+    /* Holy Jesus, this thing is going to be inefficient. */
+    public Set<String> getAllCuratorURIs() {
+    	HashSet<String> ret = new HashSet<String>();
+        for (String provURI: RdfStore.getAllKnownTripleStoreUris()) {
+        	RdfStore store = RdfStore.forProvenance(provURI);
+        	try {
+        		Resource thing = store.load(Resource.class, this.getUrl());
+        		if (thing != null) {
+        			// okay, so the provenance URI we got was probably the feed.
+        			// in that case, look for a curator.
+        			Feed f = RdfStore.forDEd().load(Feed.class, provURI);
+        			String curatorURI = f.getCurator().getUrl();        		
+        			ret.add(curatorURI);
+        		}
+        	} catch (NotFoundException nfe) {
+        		// in that case, simply do not add this provenance.
+        	}
+        }
+        return ret;
     }
 
     @Uri
