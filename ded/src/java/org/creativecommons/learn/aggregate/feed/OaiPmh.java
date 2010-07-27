@@ -134,6 +134,7 @@ public class OaiPmh {
 	}
 	
 	public void poll(Feed feed, boolean force) {
+		RdfStore store = RdfStore.forProvenance(feed.getUrl());
 
 		Boolean moreResults = true;
 		OaiPmhServer server = new OaiPmhServer(feed.getUrl());
@@ -177,10 +178,10 @@ public class OaiPmh {
 
 					// create the OaiResource if needed
 					OaiResource resource = null;
-					if (RdfStore.forDEd().exists(OaiResource.class,
+					if (store.exists(OaiResource.class,
 							header.getIdentifier())) {
 						try {
-							resource = RdfStore.forDEd().load(
+							resource = store.load(
 									OaiResource.class, header.getIdentifier());
 						} catch (NotFoundException e) {
 						}
@@ -196,7 +197,7 @@ public class OaiPmh {
 					}
 					
 					try {
-						RdfStore.forDEd().save(resource);
+						store.save(resource);
 					} catch (NullPointerException e) {
 						System.out.println(resource);
 						System.out.println(resource.getId());
@@ -240,7 +241,7 @@ public class OaiPmh {
 			} // while more results...
 
 		} // for each format...
-
+		store.close();
 	} // public void poll
 
 	public static void main(String[] args) {

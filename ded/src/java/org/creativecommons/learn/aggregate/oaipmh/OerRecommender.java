@@ -28,6 +28,7 @@ public class OerRecommender extends OaiMetadataFormat implements IResourceExtrac
 
 	@Override
 	public void process(Feed feed, OaiPmhServer server, String identifier) throws OAIException {
+		RdfStore store = RdfStore.forProvenance(feed.getUrl()); 
 
 		// Retrieve the resource metadata from the server
 		Record oai_record = server.getRecord(identifier, this.format.getPrefix());
@@ -37,7 +38,8 @@ public class OerRecommender extends OaiMetadataFormat implements IResourceExtrac
 		metadata.addNamespace(OERR, OERR_URL);
 
 		// get a handle to the resource
-		Resource resource = this.getResource(this.getNodeText(metadata, "//oerr:url"));
+		Resource resource = this.getResource(this.getNodeText(metadata, "//oerr:url"),
+				store);
 		
 		// add source information
 		resource.getSources().add(feed);
@@ -58,7 +60,7 @@ public class OerRecommender extends OaiMetadataFormat implements IResourceExtrac
 			e.printStackTrace();
 		}
 		
-		RdfStore.forDEd().save(resource);
+		store.save(resource);
 
 	}
 

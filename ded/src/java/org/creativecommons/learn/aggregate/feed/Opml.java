@@ -67,7 +67,7 @@ public class Opml {
 
 	public void poll(Feed feed) {
 		try {
-
+			RdfStore store = RdfStore.forProvenance(feed.getUrl());
 			// load the OPML feed as a JDOM document
 			Document opml = new SAXBuilder().build(new URL(feed.getUrl()));
 
@@ -93,7 +93,7 @@ public class Opml {
 					
 					// check if this feed already exists
 					System.out.println(feed_url);
-					if (RdfStore.forDEd().exists(Feed.class, feed_url))
+					if (store.exists(Feed.class, feed_url))
 						continue;
 
 					// create the new Feed object
@@ -132,9 +132,11 @@ public class Opml {
 					
 				} // non-OPML feed
 
-				RdfStore.forDEd().save(node_feed);
+				store.save(node_feed);
 				// XXX poll here?
 			}
+		store.close();
+
 
 		} catch (JDOMException ex) {
 			Logger.getLogger(Opml.class.getName()).log(Level.SEVERE, null, ex);

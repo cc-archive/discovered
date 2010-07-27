@@ -20,6 +20,7 @@ import thewebsemantic.NotFoundException;
 public abstract class OaiMetadataFormat implements IResourceExtractor{
 
 	protected MetadataFormat format;
+	protected RdfStore store;
 
 	public OaiMetadataFormat(MetadataFormat f) {
 		super();
@@ -27,14 +28,14 @@ public abstract class OaiMetadataFormat implements IResourceExtractor{
 		this.format = f; 
 
 	}
-
-	public Resource getResource(String url) {
+	
+	public Resource getResource(String url, RdfStore store) {
 		
 		Resource result = null;
 		
-		if (RdfStore.forDEd().exists(Resource.class, url)) {
+		if (store.exists(Resource.class, url)) {
 			try {
-				result = RdfStore.forDEd().load(Resource.class, url);
+				result = store.load(Resource.class, url);
 			} catch (NotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -42,6 +42,7 @@ public class OaiDcMetadata extends OaiMetadataFormat implements IResourceExtract
 
 	@Override
 	public void process(Feed feed, OaiPmhServer server, String identifier) throws OAIException {
+		RdfStore store = RdfStore.forProvenance(feed.getUrl());
 		
 		// Retrieve the resource metadata from the server
 		Record oai_record = server.getRecord(identifier, this.format.getPrefix());
@@ -55,7 +56,7 @@ public class OaiDcMetadata extends OaiMetadataFormat implements IResourceExtract
 		String resource_url = getNodeTextAsUrl(metadata, "//dc:identifier");
 		if (resource_url == null) return;
 		
-		Resource item = getResource(resource_url);
+		Resource item = getResource(resource_url, store);
 		item.getSources().add(feed);
 
 		// title
@@ -87,14 +88,14 @@ public class OaiDcMetadata extends OaiMetadataFormat implements IResourceExtract
 		
 		// see also
 		try {
-			item.getSeeAlso().add(RdfStore.forDEd().load(OaiResource.class, identifier));
+			item.getSeeAlso().add(store.load(OaiResource.class, identifier));
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		// persist the Resource
-		RdfStore.forDEd().save(item);
+		store.save(item);
 	}
 
 }

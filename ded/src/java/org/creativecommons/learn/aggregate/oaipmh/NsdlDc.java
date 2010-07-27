@@ -46,6 +46,8 @@ public class NsdlDc extends OaiMetadataFormat implements IResourceExtractor {
 
  * 
  */
+		RdfStore store = RdfStore.forProvenance(feed.getUrl());
+		
 		// Retrieve the resource metadata from the server
 		Record oai_record = server.getRecord(identifier, this.format.getPrefix());
 		Element metadata = oai_record.getMetadata();
@@ -63,7 +65,7 @@ public class NsdlDc extends OaiMetadataFormat implements IResourceExtractor {
 		
 		if (resource_url == null) return;
 		
-		Resource item = getResource(resource_url);
+		Resource item = getResource(resource_url, store);
 
 		// source
 		item.getSources().add(feed);
@@ -88,14 +90,14 @@ public class NsdlDc extends OaiMetadataFormat implements IResourceExtractor {
 				
 		// see also
 		try {
-			item.getSeeAlso().add(RdfStore.forDEd().load(OaiResource.class, identifier));
+			item.getSeeAlso().add(store.load(OaiResource.class, identifier));
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		// persist the Resource
-		RdfStore.forDEd().save(item);
+		store.save(item);
 	}
 
 }

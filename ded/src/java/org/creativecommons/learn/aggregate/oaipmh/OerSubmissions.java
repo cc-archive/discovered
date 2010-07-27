@@ -28,6 +28,7 @@ public class OerSubmissions extends OaiMetadataFormat implements IResourceExtrac
 
 	@Override
 	public void process(Feed feed, OaiPmhServer server, String identifier) throws OAIException {
+		RdfStore store = RdfStore.forProvenance(feed.getUrl());
 
 		// Retrieve the resource metadata from the server
 		Record oai_record = server.getRecord(identifier, this.format.getPrefix());
@@ -37,7 +38,7 @@ public class OerSubmissions extends OaiMetadataFormat implements IResourceExtrac
 		metadata.addNamespace(OERS, OERS_URL);
 
 		// get a handle to the resource
-		Resource resource = this.getResource(this.getNodeText(metadata, "//oers:url"));
+		Resource resource = this.getResource(this.getNodeText(metadata, "//oers:url"), store);
 		
 		// tags/subjects
 		Collection<String> tags = this.getNodesText(metadata, "//oers:tags/oers:tag"); 
