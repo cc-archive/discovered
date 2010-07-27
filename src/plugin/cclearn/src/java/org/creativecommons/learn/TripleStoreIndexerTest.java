@@ -17,6 +17,13 @@ import com.hp.hpl.jena.rdf.model.impl.ModelCom;
 import junit.framework.TestCase;
 
 public class TripleStoreIndexerTest extends TestCase {
+	public static void testCuratorListAppearsInALuceneColumn() {
+		// First, create a Resource that appears in feeds curated by multiple organizations
+		// Then, test that we can know ask the Resource to tell us all the URIs that have curated it
+		// Assume we jam that into the Lucene document (test this with Luke)
+		// Then, in Luke, execute a query showing that there is a query that can correctly exclude a document by a particular curator
+	}
+
 	public static void testGenerateAllPossibleColumnNames() {
 		// first, create a Triple (admittedly, in the siteConfigurationStore) that
 		// has a predicate that's attached to a Resource.
