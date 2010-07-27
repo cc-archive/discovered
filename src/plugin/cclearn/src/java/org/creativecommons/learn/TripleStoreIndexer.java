@@ -40,6 +40,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.SimpleSelector;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
@@ -134,7 +135,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 		}
 
 	} // addIndexBackendOptions
-
+	
     /*
      * If there are no values for that field name we return null
      */
@@ -154,6 +155,15 @@ public class TripleStoreIndexer implements IndexingFilter {
     	 * Aggregate those objects into the HashSet.
     	 */
     	for (String provenanceURI: RdfStore.getAllKnownTripleStoreUris()) {
+    		HashSet<String> this_provenance_set_of_uris = this.getProvenanceResourceCache().get(provenanceURI);
+    		if (this_provenance_set_of_uris == null) {
+    			continue; // next triple store; this one is useless
+    		}
+    		if (! this_provenance_set_of_uris.contains(resourceURI)) {
+    			continue; // next triple store; this one is useless
+    		}
+    		String provenanceURI_plus_resourceURI = provenanceURI + "___" + resourceURI;
+    		
             LOG.info("Looping over triple store uri " + provenanceURI +
                     " looking for triples matching " + resourceURI +
                     predicateURI + " _____");
@@ -321,6 +331,33 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 	public Configuration getConf() {
 		return this.conf;
+	}
+
+	private HashMap<String, HashSet<String>> provenanceResourceCache;
+	
+	public HashMap<String, HashSet<String>> getProvenanceResourceCache() {
+		if (provenanceResourceCache == null) {
+			provenanceResourceCache = new HashMap<String, HashSet<String>>();
+	    	for (String provenanceURI: RdfStore.getAllKnownTripleStoreUris()) {
+	    		RdfStore store = RdfStore.forProvenance(provenanceURI);
+	    		
+	    		
+	    		Model model = store.getModel();
+	    		ResIterator iter = model.listSubjects();
+	    		while (iter.hasNext()) {
+	    			com.hp.hpl.jena.rdf.model.Resource r = iter.next();
+	    			String resourceURI = r.getURI();
+	    			HashSet<String> available_resources = provenanceResourceCache.get(provenanceURI);
+	    			if (available_resources == null) {
+	    				available_resources = new HashSet<String>();
+	    			}
+	    			available_resources.add(resourceURI);
+	    			provenanceResourceCache.put(provenanceURI, available_resources);
+	    		}
+	    	}
+		}
+		return provenanceResourceCache;
+		
 	}
 
 } // TripleStoreIndexer

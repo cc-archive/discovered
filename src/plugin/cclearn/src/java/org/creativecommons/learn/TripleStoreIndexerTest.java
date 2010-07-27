@@ -1,6 +1,7 @@
 package org.creativecommons.learn;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.apache.hadoop.conf.Configuration;
@@ -60,6 +61,55 @@ public class TripleStoreIndexerTest extends TestCase {
 		
 		// Assume we jam that into the Lucene document (test this with Luke)
 		// Then, in Luke, execute a query showing that there is a query that can correctly exclude a document by a particular curator
+	}
+	
+	public static void testCreateTripleStoreResourceCache() {
+		// First, create a Resource that appears in feeds curated by multiple organizations
+		Resource r1 = new Resource("http://example.com/#resource");
+
+		// curator 1
+		Curator c1 = new Curator("http://example.com/#curator1");
+		RdfStore.forDEd().save(c1);
+		
+		// feed 1
+		Feed f1 = new Feed("http://example.com/#feed1");
+		f1.setCurator(c1);
+		RdfStore.forDEd().save(f1);
+		
+		// provenance 1
+		RdfStore store1 = RdfStore.forProvenance(f1.getUrl());
+		store1.save(r1);
+		
+		Resource r2 = new Resource("http://example.com/#resource2");
+		
+		// curator 2
+		Curator c2 = new Curator("http://example.com/#curator2");
+		RdfStore.forDEd().save(c2);
+		
+		// feed 1
+		Feed f2 = new Feed("http://example.com/#feed2");
+		f2.setCurator(c2);
+		RdfStore.forDEd().save(f2);
+		
+		// provenance 2
+		RdfStore store2 = RdfStore.forProvenance(f2.getUrl());
+		store2.save(r2);
+		
+		// Then, test that we can know ask the Resource to tell us all the URIs that have curated it
+		TripleStoreIndexer tsi = new TripleStoreIndexer();
+		
+		HashMap<String, HashSet<String>> map = tsi.getProvenanceResourceCache();
+		
+		HashSet<String> prov1_resources = map.get(f1.getUrl());
+		HashSet<String> prov1_resources_expected = new HashSet<String>();
+		prov1_resources_expected.add(r1.getUrl());
+		assertEquals(prov1_resources, prov1_resources_expected);
+		
+		HashSet<String> prov2_resources = map.get(f2.getUrl());
+		HashSet<String> prov2_resources_expected = new HashSet<String>();
+		prov2_resources_expected.add(r2.getUrl());
+		assertEquals(prov2_resources, prov2_resources_expected);
+			
 	}
 
 	public static void testGenerateAllPossibleColumnNames() {
