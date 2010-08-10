@@ -42,29 +42,68 @@
 		</exec>
 	</target>
 
-    <target name="runtest" description="Runs the test you specify on the command 
-        line with -Dtest=" depends="compile-core">
-        <junit printsummary="withOutAndErr" fork="yes"> 
-            <classpath refid="classpath" />
-            <formatter type="plain" usefile="false"/>
-            <batchtest>
-                <fileset dir="${src}">
-                    <include name="**/${test}.java"/>
-                </fileset>
-            </batchtest>
-        </junit>
-    </target>
+  <!-- ================================================================== -->
+  <!-- Compile test code                                                  --> 
+  <!-- ================================================================== -->
+  <target name="compile-ded-test" depends="compile-core">
+    <javac 
+     encoding="${build.encoding}" 
+     srcdir="${ded.test.src.dir}"
+     includes="org/creativecommons/**/*.java"
+     destdir="${test.build.classes}"
+     debug="${javac.debug}"
+     optimize="${javac.optimize}"
+     target="${javac.version}"
+     source="${javac.version}"
+     deprecation="${javac.deprecation}">
+      <classpath refid="test.classpath"/>
+    </javac>    
+  </target>
 
-	<target name="cc_test" depends="compile-core">
-	    <junit>
-	        <formatter type="plain" usefile="false"/>
-	        <classpath refid="test.classpath"/>
-            <test name="org.creativecommons.learn.test.${test}" />
-	        <batchtest>
-	            <formatter type="brief" usefile="false" />
-	        </batchtest>
-	    </junit>
-	</target>
+  <!-- ================================================================== -->
+  <!-- Run a single test, specified on the command line                   --> 
+  <!-- ================================================================== -->
+  <target name="runtest" description="Runs the test you specify on the command 
+				      line with -Dtest="
+				      depends="job, compile-ded-test">
+    <junit printsummary="withOutAndErr" fork="yes" dir="${basedir}"> 
+      <classpath refid="test.classpath" />
+      <formatter type="plain" usefile="false"/>
+      <batchtest>
+        <fileset dir="${ded.test.src.dir}">
+          <include name="**/${test}.java"/>
+          <include name="**/Test${test}.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!-- ================================================================== -->
+  <!-- Run all tests for core DiscoverEd code                             --> 
+  <!-- ================================================================== -->
+  <target name="test" depends="job, compile-ded-test">
+
+    <junit printsummary="yes" haltonfailure="no" fork="yes" dir="${basedir}"
+      errorProperty="tests.failed" failureProperty="tests.failed" maxmemory="1000m">
+      <classpath refid="test.classpath"/>
+      <formatter type="${test.junit.output.format}" />
+
+      <batchtest todir="${test.build.dir}">
+        <fileset dir="${ded.test.src.dir}"
+                 includes="**/Test*.java" />
+      </batchtest>
+    </junit>
+
+    <fail if="tests.failed">Tests failed!</fail>
+
+  </target>   
+
+  <!-- ================================================================== -->
+  <!-- Run tests for DiscoverEd plugins                                   --> 
+  <!-- ================================================================== -->
+  <target name="test-plugins" depends="compile">
+    <ant dir="${ded.dir}/src/plugin" target="test" inheritAll="false"/>
+  </target>
 
 
 </project>
