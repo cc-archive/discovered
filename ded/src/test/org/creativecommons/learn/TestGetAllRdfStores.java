@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.creativecommons.learn.RdfStore;
 
-public class GetAllRdfStores extends DiscoverEdTestCase {
+public class TestGetAllRdfStores extends DiscoverEdTestCase {
 
 	public static void test() throws SQLException {
 		RdfStore store = RdfStore.forDEd();

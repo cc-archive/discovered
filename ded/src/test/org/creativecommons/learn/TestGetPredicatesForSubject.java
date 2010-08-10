@@ -10,7 +10,7 @@ import org.creativecommons.learn.oercloud.Resource;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
 
-public class GetPredicatesForSubject extends DiscoverEdTestCase {
+public class TestGetPredicatesForSubject extends DiscoverEdTestCase {
 
 	final String RESOURCE_URI = "http://example.com/#resource";
 		

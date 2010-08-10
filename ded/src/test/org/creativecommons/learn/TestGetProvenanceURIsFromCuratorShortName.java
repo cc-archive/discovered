@@ -6,7 +6,7 @@ import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
 
-public class GetProvenanceURIsFromCuratorShortName extends DiscoverEdTestCase {
+public class TestGetProvenanceURIsFromCuratorShortName extends DiscoverEdTestCase {
 	public void test() {
 		
 		// Pre-conditions

@@ -4,7 +4,7 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 import junit.framework.TestCase;
 
-public class ResourceTest extends TestCase {
+public class TestResource extends TestCase {
 
 	public void testAddField() {
 

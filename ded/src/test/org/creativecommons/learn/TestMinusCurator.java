@@ -20,7 +20,7 @@ import org.apache.nutch.searcher.NutchBean;
 import org.apache.nutch.searcher.Query;
 import org.apache.nutch.util.NutchConfiguration;
 
-public class MinusCurator extends DiscoverEdTestCase {
+public class TestMinusCurator extends DiscoverEdTestCase {
 
 	public void dontRunThisReallyLongTestForNow() throws Exception {
 

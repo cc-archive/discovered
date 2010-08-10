@@ -10,7 +10,7 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.vocabulary.DC;
 import com.hp.hpl.jena.vocabulary.RDF;
 
-public class RdfStoreTest extends TestCase {
+public class TestRdfStore extends TestCase {
 
 	public void testSaveIExtensibleResource() {
 
