@@ -1,4 +1,4 @@
-package org.creativecommons.learn.test;
+package org.creativecommons.learn;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
