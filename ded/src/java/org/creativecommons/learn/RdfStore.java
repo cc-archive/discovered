@@ -63,6 +63,8 @@ public class RdfStore {
 		this.model = model;
 		this.jenaDBConnection = connection;
 
+		this.loader = new RDF2Bean(this.model);
+		this.saver = new Bean2RDF(this.model);
 	}
 
 	private RdfStore(String provenanceURI) {
