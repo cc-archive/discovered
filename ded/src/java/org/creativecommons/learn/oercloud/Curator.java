@@ -1,4 +1,6 @@
 package org.creativecommons.learn.oercloud;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 
 import org.creativecommons.learn.RdfStore;
@@ -12,14 +14,15 @@ import thewebsemantic.Uri;
 @Namespace("http://learn.creativecommons.org/ns#")
 public class Curator {
 
-	private String url = null;
+	private URI uri = null;
 	private String name = null;
 		
-	public Curator(String url) {
-		
-		super();
-		
-		this.url = url;		
+	public Curator(String url) throws URISyntaxException {
+		this.uri = new URI(url);		
+	}
+	
+	public Curator(URI uri) {
+		this.uri = uri;
 	}
 	
 	public static Curator getByUrl(RdfStore store, String url) {
@@ -35,16 +38,18 @@ public class Curator {
 		this.name = name;
 	}
 
-	@Uri
+	@Deprecated
 	public String getUrl() {
-		return url;
+		return uri.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.creativecommons.learn.oercloud.IRdfMapped#setUrl(java.lang.String)
-	 */
-	public void setUrl(String url) {
-		this.url = url;
+	@Uri
+	public URI getUri() {
+		return uri;
+	}
+	
+	public void setUri(URI uri) {
+		this.uri = uri;
 	}
 	
 	public Collection<Feed> getFeeds() {

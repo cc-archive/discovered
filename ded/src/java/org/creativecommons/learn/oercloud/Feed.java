@@ -1,5 +1,7 @@
 package org.creativecommons.learn.oercloud;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Date;
 
@@ -14,12 +16,16 @@ import thewebsemantic.Uri;
 public class Feed {
 
 	private Curator curator = null;
-	private String url = null;
+	private URI uri = null;
 	private String feedType = null;
 	private Date lastImport = new Date(0);
 	
-	public Feed(String url) {
-		this.url = url;
+	public Feed(String url) throws URISyntaxException {
+		this.uri = new URI(url);
+	}
+
+	public Feed(URI uri) {
+		this.uri = uri;
 	}
 
 	@RdfProperty("http://learn.creativecommons.org/ns#hasCurator")
@@ -31,13 +37,18 @@ public class Feed {
 		this.curator = curator;
 	}
 
-	@Uri
+	@Deprecated
 	public String getUrl() {
-		return url;
+		return uri.toString();
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	@Uri
+	public URI getUri() {
+		return uri;
+	}
+
+	public void setUri(URI uri) {
+		this.uri = uri;
 	}
 
 	@RdfProperty("http://learn.creativecommons.org/ns#feedType")

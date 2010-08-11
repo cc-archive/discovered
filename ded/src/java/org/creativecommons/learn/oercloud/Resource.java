@@ -1,5 +1,7 @@
 package org.creativecommons.learn.oercloud;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,7 +22,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 @Namespace("http://learn.creativecommons.org/ns#")
 public class Resource implements IExtensibleResource {
 
-    private String url = null;
+    private URI url = null;
     private String title = null;
     private String description = null;
     private Collection<String> subjects = new Vector<String>();
@@ -37,10 +39,14 @@ public class Resource implements IExtensibleResource {
     private Collection<OaiResource> seeAlso = new Vector<OaiResource>();
     private HashMap<Property, HashSet<RDFNode>> fields = new HashMap<Property, HashSet<RDFNode>>();
 
-    public Resource(String url) {
+    public Resource(URI url) {
         this.url = url;
     }
     
+    public Resource(String url) throws URISyntaxException {
+        this.url = new URI(url);
+    }
+
     /* XXX Holy Jesus, this thing is going to be inefficient. */
     public Set<String> getAllCuratorURIs() {
     	HashSet<String> ret = new HashSet<String>();
@@ -62,12 +68,17 @@ public class Resource implements IExtensibleResource {
         return ret;
     }
 
-    @Uri
+    @Deprecated
     public String getUrl() {
+        return url.toString();
+    }
+
+    @Uri
+    public URI getUri() {
         return url;
     }
 
-    public void setUrl(String url) {
+    public void setUri(URI url) {
         this.url = url;
     }
 
