@@ -124,6 +124,12 @@ public class RdfStoreFactory {
 		return provenances;
 	}
 
+	/**
+	 * This method returns an RdfStoreReader which, when queried, returns
+	 * data from all provenances.
+	 *
+	 * @return
+	 */
 	public RdfStoreReader getReader() {
 		return new RdfStoreReader(this.graphset.asJenaModel(SITE_CONFIG_URI));
 		
