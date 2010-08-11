@@ -18,7 +18,7 @@ import com.hp.hpl.jena.rdf.model.impl.ModelCom;
 
 import junit.framework.TestCase;
 
-public class TripleStoreIndexerTest extends TestCase {
+public class TestTripleStoreIndexer extends DiscoverEdTestCase {
 	public static void testCuratorListAppearsInALuceneColumn() {
 		// First, create a Resource that appears in feeds curated by multiple organizations
 		Resource r = new Resource("http://example.com/#resource");
@@ -124,7 +124,7 @@ public class TripleStoreIndexerTest extends TestCase {
 		TripleStoreIndexer indexer = new TripleStoreIndexer();
 		
 		Collection<String> got = indexer.getAllPossibleFieldNames();
-		assertTrue(got.contains("1__dct_title"));
+		assertTrue(got.contains(RdfStoreFactory.get().getOrCreateTablePrefixFromURIAsInteger(RdfStoreFactory.SITE_CONFIG_URI) + "__dct_title"));
 	}
 
     public static void testAddSearchableColumnViaConfigurationFile() {

@@ -339,20 +339,19 @@ public class TripleStoreIndexer implements IndexingFilter {
 		if (provenanceResourceCache == null) {
 			provenanceResourceCache = new HashMap<String, HashSet<String>>();
 	    	for (String provenanceURI: RdfStoreFactory.get().getAllKnownTripleStoreUris()) {
+	
 	    		RdfStore store = RdfStoreFactory.get().forProvenance(provenanceURI);
 	    		
-	    		
-	    		Model model = store.getModel();
-	    		ResIterator iter = model.listSubjects();
-	    		while (iter.hasNext()) {
-	    			com.hp.hpl.jena.rdf.model.Resource r = iter.next();
-	    			String resourceURI = r.getURI();
+	    		for (Resource r : store.load(Resource.class)) {
+	    			String resourceURI = r.getUrl();
+
 	    			HashSet<String> available_resources = provenanceResourceCache.get(provenanceURI);
 	    			if (available_resources == null) {
 	    				available_resources = new HashSet<String>();
 	    			}
 	    			available_resources.add(resourceURI);
 	    			provenanceResourceCache.put(provenanceURI, available_resources);
+	    			
 	    		}
 	    	}
 		}
