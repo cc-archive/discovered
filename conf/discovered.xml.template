@@ -7,17 +7,17 @@
 
 <property>
   <name>rdfstore.db.driver</name>
-  <value>com.mysql.jdbc.Driver</value>
+  <value>org.apache.derby.jdbc.EmbeddedDriver</value>
 </property>
 
 <property>
   <name>rdfstore.db.url</name>
-  <value>jdbc:mysql://localhost/discovered?autoReconnect=true</value>
+  <value>jdbc:derby:discovered.db;create=true</value>
 </property>
 
 <property>
   <name>rdfstore.db.user</name>
-  <value>discovered</value>
+  <value></value>
 </property>
 
 <property>
@@ -27,7 +27,7 @@
 
 <property>
   <name>rdfstore.db.type</name>
-  <value>MySQL</value>
+  <value>Derby</value>
 </property>
 
 <property>

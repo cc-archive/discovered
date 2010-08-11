@@ -40,3 +40,4 @@ conf/suffix-urlfilter.txt
 
 # the testing suite creates this directory for testing purpose
 urls_dir
+discovered.db

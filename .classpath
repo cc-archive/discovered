@@ -103,7 +103,6 @@
 	<classpathentry kind="lib" path="conf"/>
 	<classpathentry kind="lib" path="lib/jid3lib-0.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/rtf-parser.jar"/>
-	<classpathentry kind="lib" path="lib/ant.jar"/>
 	<classpathentry kind="lib" path="lib/antlr-2.7.5.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/concurrent.jar"/>
@@ -179,5 +178,6 @@
 	<classpathentry kind="lib" path="ded/lib/jena-2.6.2.jar"/>
 	<classpathentry kind="lib" path="ded/lib/java-rdfa-0.4.jar"/>
 	<classpathentry kind="lib" path="ded/lib/htmlparser-1.2.1.jar"/>
+	<classpathentry kind="lib" path="ded/lib/derby.jar"/>
 	<classpathentry kind="output" path="tmp_build"/>
 </classpath>
