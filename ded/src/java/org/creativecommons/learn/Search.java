@@ -9,6 +9,8 @@ public class Search {
     public static String TAGS_QUERY_FIELD = "tag";
     public static float  TAGS_BOOST = 2.0f;
 
+    public static String ALL_CURATORS_INDEX_FIELD = "_ccl_all_curators";
+
     public static String CURATOR_INDEX_FIELD = "_ccl_hasCurator";
     public static String CURATOR_QUERY_FIELD = "curator";
     public static float  CURATOR_BOOST = 1.0f;
