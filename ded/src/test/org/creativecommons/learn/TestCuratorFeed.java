@@ -1,10 +1,8 @@
 package org.creativecommons.learn;
 
 import java.net.URISyntaxException;
-import java.sql.SQLException;
 import java.util.Collection;
 
-import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
 import org.creativecommons.learn.oercloud.Resource;

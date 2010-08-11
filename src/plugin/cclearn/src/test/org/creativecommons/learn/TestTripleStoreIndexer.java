@@ -14,11 +14,6 @@ import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 
-import com.hp.hpl.jena.rdf.model.impl.LiteralImpl;
-import com.hp.hpl.jena.rdf.model.impl.ModelCom;
-
-import junit.framework.TestCase;
-
 public class TestTripleStoreIndexer extends DiscoverEdTestCase {
 	public static void testCuratorListAppearsInALuceneColumn() {
 		// First, create a Resource that appears in feeds curated by multiple organizations

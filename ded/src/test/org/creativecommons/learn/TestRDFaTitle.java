@@ -1,15 +1,7 @@
 package org.creativecommons.learn;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Collection;
 
-import junit.framework.TestCase;
-
-import org.apache.hadoop.conf.Configuration;
-import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.oercloud.Resource;
 
 public class TestRDFaTitle extends DiscoverEdTestCase {

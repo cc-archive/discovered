@@ -4,10 +4,6 @@
  */
 
 package org.creativecommons.learn.aggregate;
-import org.creativecommons.learn.RdfStore;
-import org.creativecommons.learn.RdfStoreFactory;
-
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -25,7 +21,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.RdfStoreFactory;
 import org.creativecommons.learn.oercloud.Feed;
 
 

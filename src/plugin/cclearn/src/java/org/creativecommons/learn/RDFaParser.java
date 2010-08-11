@@ -18,7 +18,6 @@
 package org.creativecommons.learn;
 
 import java.io.ByteArrayInputStream;
-import java.sql.SQLException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

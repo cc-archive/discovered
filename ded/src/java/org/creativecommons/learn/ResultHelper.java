@@ -1,6 +1,4 @@
 package org.creativecommons.learn;
-import org.creativecommons.learn.RdfStore;
-
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -12,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.nutch.searcher.HitDetails;
 import org.creativecommons.learn.oercloud.Curator;
-import org.creativecommons.learn.oercloud.Resource;
 import org.creativecommons.license.License;
 
 import thewebsemantic.NotFoundException;
