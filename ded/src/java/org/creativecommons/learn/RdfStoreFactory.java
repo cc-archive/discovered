@@ -104,8 +104,10 @@ public class RdfStoreFactory {
 		// return the wrapper for this named graph
 		return new RdfStore(ModelFactory.createModelForGraph(this.graphset.getGraph(provURI)));
 	}
-//
-//	public static int getOrCreateTablePrefixFromURIAsInteger(String uri) {
+
+	public int getOrCreateTablePrefixFromURIAsInteger(String uri) {
+		return uri.hashCode();
+	}
 //		try {
 //			dbConnection = getDatabaseConnection();
 //			createRdfStoresTableIfNeeded(dbConnection);

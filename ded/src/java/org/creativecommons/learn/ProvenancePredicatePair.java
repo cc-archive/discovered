@@ -1,6 +1,5 @@
 package org.creativecommons.learn;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +43,7 @@ public class ProvenancePredicatePair {
 	}
 	
 	public static String makeCompleteFieldNameWithProvenance(String provenanceURI, String thePredicatePartOfTheFieldName) {
-		int tablePrefix = new RdfStoreFactory().getOrCreateTablePrefixFromURIAsInteger(provenanceURI);
+		int tablePrefix = RdfStoreFactory.get().getOrCreateTablePrefixFromURIAsInteger(provenanceURI);
 		return tablePrefix + "_" + thePredicatePartOfTheFieldName;
 	}
 	
