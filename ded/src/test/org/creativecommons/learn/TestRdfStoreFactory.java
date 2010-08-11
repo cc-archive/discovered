@@ -24,6 +24,22 @@ public class TestRdfStoreFactory extends TestCase {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
+	
+	public void testGet() {
+		
+		// get a reference to the singleton
+		RdfStoreFactory store = RdfStoreFactory.get();
+		
+		// assert that the graphset is not null
+		assertNotNull(store.getGraphset());
+		
+		// get the DEd configuration store
+		assertNotNull(store.forDEd());
+		
+		// we get the same instance with subsequent calls
+		assertEquals(store, RdfStoreFactory.get());
+		
+	}
 
 	public void testForDEd() {
 		// create the factory
