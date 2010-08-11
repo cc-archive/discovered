@@ -1,9 +1,5 @@
 package org.creativecommons.learn.feed;
-import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.RdfStoreFactory;
-
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ResIterator;
 
 public class DumpStore {
 
@@ -17,40 +13,18 @@ public class DumpStore {
 		if (args.length == 1 && args[0].equals("--help")) {
 			System.out.println("DumpStore");
 			System.out.println("usage: DumpStore [format]");
-			System.out.println("where format is a Jena output format, ie: 'N-TRIPLE', 'RDF/XML', 'RDX/XML-ABBREV'");
-			System.out.println("if not provided, default to RDF/XML");
+			System.out.println("where format is the output format, ie: 'TRIX', 'TRIG', 'RDF/XML', 'N-TRIPLE' and 'N3'");
+			System.out.println("if not provided, default to TRIX");
 			System.out.println();
 
 			System.exit(1);
 		}
 		
-		// determine the output format, defaulting to RDF/XML
-		String format = (args.length > 0) ? args[0] : "RDF/XML";
+		// determine the output format, defaulting to TRIX
+		String format = (args.length > 0) ? args[0] : "TRIX";
 		
-		// get an iterator for all subjects
-        for (String provURI: RdfStoreFactory.get().getAllKnownTripleStoreUris()) {
-            // <for testing>
-            if (provURI == RdfStoreFactory.SITE_CONFIG_URI) {
-                System.out.println("skipping site config store");
-                continue;
-            }
-            // </for testing>
-            RdfStore store = RdfStore.forProvenance(provURI);
-            Model model = store.getModel();
-            ResIterator subjects = model.listSubjects();
+		RdfStoreFactory.get().getGraphset().write(System.out, format, null);
 
-            // write out one subject at a time
-            while (subjects.hasNext()) {
-                SubjectSelector selector = new SubjectSelector(subjects.nextResource());
-                model.query(selector).write(System.out, format);
-            }
-
-            // We're advised to use this whenever we loop over
-            // getAllKnownTripleStoreUris() and create lots of RdfStores with
-            // it.
-            store.close();
-        }
-		
 	}
 
 }

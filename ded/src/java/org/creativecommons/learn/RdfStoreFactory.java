@@ -187,6 +187,10 @@ public class RdfStoreFactory {
 		return uris;
 	}
 
+	public NamedGraphSet getGraphset() {
+		return graphset;
+	}
+
 	public void close() {
 
 		this.graphset.close();
