@@ -16,21 +16,6 @@
 </property>
 
 <property>
-  <name>rdfstore.db.server_url</name>
-  <value>jdbc:mysql://localhost/</value>
-</property>
-
-<property>
-  <name>rdfstore.db.root_user</name>
-  <value>root</value>
-</property>
-
-<property>
-  <name>rdfstore.db.root_password</name>
-  <value></value>
-</property>
-
-<property>
   <name>rdfstore.db.user</name>
   <value>discovered</value>
 </property>
@@ -43,11 +28,6 @@
 <property>
   <name>rdfstore.db.type</name>
   <value>MySQL</value>
-</property>
-
-<property>
-  <name>rdfstore.db.database_name</name>
-  <value>discovered</value>
 </property>
 
 <property>
