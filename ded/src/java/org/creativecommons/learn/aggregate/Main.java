@@ -69,7 +69,7 @@ public class Main {
      * @param args the command line arguments
      * @throws SQLException 
      */
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
 
 		// create the parser
 		CommandLineParser parser = new GnuParser();

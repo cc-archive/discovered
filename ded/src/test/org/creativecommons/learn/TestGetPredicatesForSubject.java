@@ -1,5 +1,6 @@
 package org.creativecommons.learn;
 
+import java.net.URI;
 import java.util.HashMap;
 
 import org.creativecommons.learn.oercloud.Resource;
@@ -44,7 +45,7 @@ public class TestGetPredicatesForSubject extends DiscoverEdTestCase {
 	
 	public Resource createResourceWithProvenance(String resourceURI, String provenanceURI) {
 		// Create a Resource, give it a dc:title.
-		Resource r = new Resource(resourceURI);
+		Resource r = new Resource(URI.create(resourceURI));
 		r.setTitle("my title");
 		
 		// Get an RdfStore for a certain URI

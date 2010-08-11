@@ -1,5 +1,7 @@
 package org.creativecommons.learn;
 
+import java.net.URI;
+
 import junit.framework.TestCase;
 
 import org.creativecommons.learn.oercloud.Curator;
@@ -47,7 +49,7 @@ public class TestRdfStoreFactory extends TestCase {
 
 		// get the wrapper for DEd configuration and add something
 		RdfStore ded = store.forDEd();
-		ded.save(new Curator("http://example.com/curator"));
+		ded.save(new Curator(URI.create("http://example.com/curator")));
 
 		// assert the quad exists in the factory
 		assert (store.getGraphset()
@@ -66,15 +68,15 @@ public class TestRdfStoreFactory extends TestCase {
 		RdfStoreFactory store = new RdfStoreFactory(this.graphset);
 
 		// get the wrappers for multiple provenances and add information
-		Resource r1 = new Resource("http://example.org/resource");
+		Resource r1 = new Resource(URI.create("http://example.org/resource"));
 		r1.getSubjects().add("subject1");
 		store.forProvenance("http://example.org/feed1").save(r1);
 
-		Resource r2 = new Resource("http://example.org/resource");
+		Resource r2 = new Resource(URI.create("http://example.org/resource"));
 		r2.getSubjects().add("subject2");
 		store.forProvenance("http://example.org/feed2").save(r2);
 
-		Resource r3 = new Resource("http://example.org/resource");
+		Resource r3 = new Resource(URI.create("http://example.org/resource"));
 		r3.getSubjects().add("subject3");
 		store.forProvenance("http://example.org/feed3").save(r3);
 
@@ -104,11 +106,11 @@ public class TestRdfStoreFactory extends TestCase {
 
 		// get the wrappers for multiple provenances and add information
 		store.forProvenance("http://example.org/feed1").save(
-				new Resource("http://example.org/resource"));
+				new Resource(URI.create("http://example.org/resource")));
 		store.forProvenance("http://example.org/feed2").save(
-				new Resource("http://example.org/resource"));
+				new Resource(URI.create("http://example.org/resource")));
 		store.forProvenance("http://example.org/feed3").save(
-				new Resource("http://example.org/resource"));
+				new Resource(URI.create("http://example.org/resource")));
 
 		// list the known graphs and assert our provenances are there
 		assertEquals(store.getAllKnownTripleStoreUris().size(), 3);

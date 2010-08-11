@@ -3,6 +3,7 @@ import org.creativecommons.learn.RdfStore;
 
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
@@ -29,7 +30,7 @@ public abstract class OaiMetadataFormat implements IResourceExtractor{
 
 	}
 	
-	public Resource getResource(String url, RdfStore store) {
+	public Resource getResource(String url, RdfStore store) throws URISyntaxException {
 		
 		Resource result = null;
 		

@@ -1,4 +1,6 @@
 package org.creativecommons.learn.feed;
+import java.net.URISyntaxException;
+
 import org.creativecommons.learn.RdfStoreFactory;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
@@ -39,6 +41,8 @@ public class SetCurator {
 
 			System.out.println("Feed (" + feed_url + ") not found.");
 			System.exit(1);
+		} catch (URISyntaxException e) {			
+			System.out.println("Malformed curator URI: " + curator_url);
 		}
 
 	}

@@ -1,5 +1,6 @@
 package org.creativecommons.learn;
 
+import java.net.URI;
 import java.util.HashMap;
 
 import org.creativecommons.learn.oercloud.Resource;
@@ -13,7 +14,7 @@ public class TestPPP extends DiscoverEdTestCase {
 		String subjectURI = "http://example.com/#subject";
 		String provenanceURI = "http://example.com/#provenance";
 		RdfStore store = RdfStoreFactory.get().forProvenance(provenanceURI);
-		Resource r = new Resource(subjectURI);
+		Resource r = new Resource(URI.create(subjectURI));
 		r.setTitle("my title");
 		String titlePredicate = "http://purl.org/dc/elements/1.1/title";
 		String titlePredicateAbbrev = "_dct_title";

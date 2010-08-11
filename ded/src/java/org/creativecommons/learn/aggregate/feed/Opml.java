@@ -6,6 +6,7 @@
 package org.creativecommons.learn.aggregate.feed;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
@@ -140,9 +141,11 @@ public class Opml {
 			Logger.getLogger(Opml.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (IOException ex) {
 			Logger.getLogger(Opml.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (IllegalArgumentException ex) {
+			Logger.getLogger(Opml.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (URISyntaxException ex) {
+			Logger.getLogger(Opml.class.getName()).log(Level.SEVERE, null, ex);
+
 		}
 	}
 }

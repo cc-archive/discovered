@@ -1,4 +1,6 @@
 package org.creativecommons.learn.aggregate.oaipmh;
+import java.net.URISyntaxException;
+
 import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.RdfStoreFactory;
 import org.creativecommons.learn.feed.IResourceExtractor;
@@ -38,7 +40,7 @@ public class OaiDcMetadata extends OaiMetadataFormat implements IResourceExtract
 	}
 
 	@Override
-	public void process(Feed feed, OaiPmhServer server, String identifier) throws OAIException {
+	public void process(Feed feed, OaiPmhServer server, String identifier) throws OAIException, URISyntaxException {
 		RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUrl());
 		
 		// Retrieve the resource metadata from the server

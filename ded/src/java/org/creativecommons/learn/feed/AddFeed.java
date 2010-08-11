@@ -1,6 +1,6 @@
 package org.creativecommons.learn.feed;
 
-import java.sql.SQLException;
+import java.net.URISyntaxException;
 import java.util.Collection;
 
 import org.creativecommons.learn.RdfStore;
@@ -12,9 +12,9 @@ public class AddFeed {
 
 	/**
 	 * @param args
-	 * @throws SQLException 
+	 * @throws URISyntaxException 
 	 */
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws URISyntaxException {
 
 		if (args.length < 3) {
 			System.out.println("AddFeed");
@@ -32,7 +32,7 @@ public class AddFeed {
 		
 	}
 	
-	public static void addFeed(String type, String url, String curator) throws SQLException {
+	public static void addFeed(String type, String url, String curator) throws URISyntaxException {
 		RdfStore store = RdfStoreFactory.get().forDEd();
 		
 		/* Make sure we already have heard of that Curator. */

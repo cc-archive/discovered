@@ -1,5 +1,7 @@
 package org.creativecommons.learn.oercloud;
 
+import java.net.URI;
+
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 import junit.framework.TestCase;
@@ -8,7 +10,7 @@ public class TestResource extends TestCase {
 
 	public void testAddField() {
 
-		Resource r = new Resource("http://example.org/foo");
+		Resource r = new Resource(URI.create("http://example.org/foo"));
 		Object[] expected = new Object[1];
 		expected[0] = ResourceFactory.createPlainLiteral("value");
 
@@ -26,7 +28,7 @@ public class TestResource extends TestCase {
 
 	public void testGetFieldValues() {
 
-		Resource r = new Resource("http://example.org/foo");
+		Resource r = new Resource(URI.create("http://example.org/foo"));
 
 		// Fields is empty when we begin
 		assertEquals(r.getFields().size(), 0);
@@ -45,7 +47,7 @@ public class TestResource extends TestCase {
 	}
 
 	public void testGetFields() {
-		Resource r = new Resource("http://example.org/foo");
+		Resource r = new Resource(URI.create("http://example.org/foo"));
 
 		// Add two fields with a value each
 		r.addField(ResourceFactory.createProperty("http://example.org/ns#a"),

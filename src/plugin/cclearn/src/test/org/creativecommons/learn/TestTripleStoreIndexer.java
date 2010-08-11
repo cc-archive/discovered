@@ -1,5 +1,6 @@
 package org.creativecommons.learn;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,15 +22,15 @@ import junit.framework.TestCase;
 public class TestTripleStoreIndexer extends DiscoverEdTestCase {
 	public static void testCuratorListAppearsInALuceneColumn() {
 		// First, create a Resource that appears in feeds curated by multiple organizations
-		Resource r = new Resource("http://example.com/#resource");
+		Resource r = new Resource(URI.create("http://example.com/#resource"));
 		r.setTitle("A title");
 
 		// curator 1
-		Curator c1 = new Curator("http://example.com/#curator1");
+		Curator c1 = new Curator(URI.create("http://example.com/#curator1"));
 		RdfStoreFactory.get().forDEd().save(c1);
 		
 		// feed 1
-		Feed f1 = new Feed("http://example.com/#feed1");
+		Feed f1 = new Feed(URI.create("http://example.com/#feed1"));
 		f1.setCurator(c1);
 		RdfStoreFactory.get().forDEd().save(f1);
 		
@@ -38,11 +39,11 @@ public class TestTripleStoreIndexer extends DiscoverEdTestCase {
 		store1.save(r);
 		
 		// curator 2
-		Curator c2 = new Curator("http://example.com/#curator2");
+		Curator c2 = new Curator(URI.create("http://example.com/#curator2"));
 		RdfStoreFactory.get().forDEd().save(c2);
 		
 		// feed 1
-		Feed f2 = new Feed("http://example.com/#feed2");
+		Feed f2 = new Feed(URI.create("http://example.com/#feed2"));
 		f2.setCurator(c2);
 		RdfStoreFactory.get().forDEd().save(f2);
 		
@@ -65,14 +66,14 @@ public class TestTripleStoreIndexer extends DiscoverEdTestCase {
 	
 	public static void testCreateTripleStoreResourceCache() {
 		// First, create a Resource that appears in feeds curated by multiple organizations
-		Resource r1 = new Resource("http://example.com/#resource");
+		Resource r1 = new Resource(URI.create("http://example.com/#resource"));
 
 		// curator 1
-		Curator c1 = new Curator("http://example.com/#curator1");
+		Curator c1 = new Curator(URI.create("http://example.com/#curator1"));
 		RdfStoreFactory.get().forDEd().save(c1);
 		
 		// feed 1
-		Feed f1 = new Feed("http://example.com/#feed1");
+		Feed f1 = new Feed(URI.create("http://example.com/#feed1"));
 		f1.setCurator(c1);
 		RdfStoreFactory.get().forDEd().save(f1);
 		
@@ -80,14 +81,14 @@ public class TestTripleStoreIndexer extends DiscoverEdTestCase {
 		RdfStore store1 = RdfStoreFactory.get().forProvenance(f1.getUrl());
 		store1.save(r1);
 		
-		Resource r2 = new Resource("http://example.com/#resource2");
+		Resource r2 = new Resource(URI.create("http://example.com/#resource2"));
 		
 		// curator 2
-		Curator c2 = new Curator("http://example.com/#curator2");
+		Curator c2 = new Curator(URI.create("http://example.com/#curator2"));
 		RdfStoreFactory.get().forDEd().save(c2);
 		
 		// feed 1
-		Feed f2 = new Feed("http://example.com/#feed2");
+		Feed f2 = new Feed(URI.create("http://example.com/#feed2"));
 		f2.setCurator(c2);
 		RdfStoreFactory.get().forDEd().save(f2);
 		
@@ -115,7 +116,7 @@ public class TestTripleStoreIndexer extends DiscoverEdTestCase {
 	public static void testGenerateAllPossibleColumnNames() {
 		// first, create a Triple (admittedly, in the siteConfigurationStore) that
 		// has a predicate that's attached to a Resource.
-		Resource r = new Resource("http://example.com/#resource");
+		Resource r = new Resource(URI.create("http://example.com/#resource"));
 		r.setTitle("A title");
 		RdfStore store = RdfStoreFactory.get().forDEd();
 		store.save(r);
@@ -144,14 +145,14 @@ public class TestTripleStoreIndexer extends DiscoverEdTestCase {
          
         /* second, create such a Resource
          * ------------------------------ */
-        Curator c = new Curator("http://example.com/#i_am_a_curator");
-        Feed f = new Feed("http://example.com/#i_am_a_feed");
+        Curator c = new Curator(URI.create("http://example.com/#i_am_a_curator"));
+        Feed f = new Feed(URI.create("http://example.com/#i_am_a_feed"));
         f.setCurator(c);
 
         site_store.save(c);
         site_store.save(f);
 
-        Resource r = new Resource("http://example.com/#i_am_a_resource");
+        Resource r = new Resource(URI.create("http://example.com/#i_am_a_resource"));
         // Make the resource's education level = xyz
         Model m = site_store.getModel();
         Property edLevel = m.createProperty(customPredicateURI);

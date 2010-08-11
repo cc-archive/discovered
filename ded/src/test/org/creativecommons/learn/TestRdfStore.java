@@ -1,5 +1,7 @@
 package org.creativecommons.learn;
 
+import java.net.URI;
+
 import junit.framework.TestCase;
 
 import org.creativecommons.learn.oercloud.Resource;
@@ -23,7 +25,7 @@ public class TestRdfStore extends TestCase {
 		Model model = store.getModel();
 
 		// create a Resource
-		Resource r = new Resource("http://example.org/resource");
+		Resource r = new Resource(URI.create("http://example.org/resource"));
 
 		// add some metadata
 		r.setTitle("Title");
@@ -56,7 +58,7 @@ public class TestRdfStore extends TestCase {
 		Model model = store.getModel();
 		
 		// create a Resource and save it -- "stub" declaration
-		Resource without_metadata = new Resource("http://example.org/resource");
+		Resource without_metadata = new Resource(URI.create("http://example.org/resource"));
 		store.save(without_metadata);
 
 		// add triples for a Resource with metadata

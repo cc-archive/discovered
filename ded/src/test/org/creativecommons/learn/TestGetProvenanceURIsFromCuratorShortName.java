@@ -1,5 +1,6 @@
 package org.creativecommons.learn;
 
+import java.net.URI;
 import java.util.ArrayList;
 
 import org.creativecommons.learn.RdfStore;
@@ -12,19 +13,19 @@ public class TestGetProvenanceURIsFromCuratorShortName extends DiscoverEdTestCas
 		// Pre-conditions
 		
 		// Create a Curator with a nickname
-		Curator c = new Curator("http://example.com/#curator");
+		Curator c = new Curator(URI.create("http://example.com/#curator"));
 		c.setName("shorty");
 		
 		// That curator has a feed
-		Feed f = new Feed("http://example.com/#feed");
+		Feed f = new Feed(URI.create("http://example.com/#feed"));
 		f.setCurator(c);
 		
 		// Create a different Curator with a nickname
-		Curator distractor = new Curator("http://example.com/#curator_the_distractor");
+		Curator distractor = new Curator(URI.create("http://example.com/#curator_the_distractor"));
 		distractor.setName("mwaha!");
 		
 		// That second curator has a feed
-		Feed distractorFeed = new Feed("http://example.com/#distractor_feed");
+		Feed distractorFeed = new Feed(URI.create("http://example.com/#distractor_feed"));
 		distractorFeed.setCurator(distractor);
 		
 		RdfStore store = RdfStoreFactory.get().forDEd();

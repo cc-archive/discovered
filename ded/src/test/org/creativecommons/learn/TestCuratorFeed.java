@@ -1,5 +1,6 @@
 package org.creativecommons.learn;
 
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.Collection;
 
@@ -11,9 +12,9 @@ import org.creativecommons.learn.oercloud.Resource;
 public class TestCuratorFeed extends DiscoverEdTestCase {
 	
 	/** A unit test that shows adding a curator works. 
-	 * @throws SQLException 
-	 * @throws ClassNotFoundException */
-	public void addCurator() throws SQLException, ClassNotFoundException {
+	 * @throws ClassNotFoundException 
+	 * @throws URISyntaxException */
+	public void addCurator() throws ClassNotFoundException, URISyntaxException {
 		RdfStore store = RdfStoreFactory.get().forDEd();
 		
 		/* We have no Curators at the start */
@@ -39,14 +40,14 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 		assertEquals(0, aDifferentListOfCurators.size());
 	}
 	
-	public void testAddCurator() throws SQLException, ClassNotFoundException {
+	public void testAddCurator() throws ClassNotFoundException, URISyntaxException {
 		this.addCurator();
 	}
 	
 	/** A unit test that shows adding a curator works. 
-	 * @throws SQLException 
-	 * @throws ClassNotFoundException */
-	public void testAddFeed() throws SQLException, ClassNotFoundException {
+	 * @throws ClassNotFoundException 
+	 * @throws URISyntaxException */
+	public void testAddFeed() throws ClassNotFoundException, URISyntaxException {
 		
 		RdfStore store = RdfStoreFactory.get().forDEd();
 		this.addCurator();
@@ -77,8 +78,9 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 	You aggregate
 	You query the **feed**'s store for the resource
 	You can access the dc:title with getTitle
+	 * @throws URISyntaxException 
 	*/	
-	public void testURLTitleProvenance() throws SQLException {
+	public void testURLTitleProvenance() throws URISyntaxException {
 		// Add a curator		
 		String curatorURI = "http://ocw.nd.edu/";
 		org.creativecommons.learn.feed.AddCurator.addCurator("Notre Dame OpenCourseWare", curatorURI);
@@ -114,7 +116,7 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
         assertTrue( "TestExample", true );
     }
 
-    public void testAddFeedMustPointToCuratorWithinTheStore() throws SQLException {
+    public void testAddFeedMustPointToCuratorWithinTheStore() throws URISyntaxException {
     	try {
 			RdfStore store = RdfStoreFactory.get().forDEd();
 			

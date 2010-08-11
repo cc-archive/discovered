@@ -1,6 +1,7 @@
 package org.creativecommons.learn.aggregate;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.SQLException;
@@ -43,10 +44,10 @@ public class FeedUpdater {
 	 * Take the SyndEntry "entry", and add or update a corresponding Resource in
 	 * our RdfStore.
 	 * 
-	 * @throws SQLException
+	 * @throws URISyntaxException 
 	 */
 	protected void addEntry(RdfStore store, SyndEntry entry)
-			throws SQLException {
+			throws URISyntaxException {
 
 		// XXX check if the entry exists first...
 		Resource r = new Resource(entry.getUri());
@@ -107,7 +108,7 @@ public class FeedUpdater {
 		store.saveDeep(r);
 	} // addEntry
 
-	public void update(boolean force) throws IOException, SQLException {
+	public void update(boolean force) throws IOException {
 		// get the contents of the feed and emit events for each
 		// FIXME: each what?
 		RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUrl());
@@ -153,6 +154,9 @@ public class FeedUpdater {
 
 				}
 				// XXX still need to log feed errors if it's not OAI-PMH
+				Logger.getLogger(Feed.class.getName()).log(Level.SEVERE, null,
+						ex);
+			} catch (URISyntaxException ex) {
 				Logger.getLogger(Feed.class.getName()).log(Level.SEVERE, null,
 						ex);
 			} finally {
