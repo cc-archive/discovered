@@ -145,15 +145,6 @@ public class TripleStoreIndexer implements IndexingFilter {
     	 * Aggregate those objects into the HashSet.
     	 */
     	for (String provenanceURI: RdfStoreFactory.get().getAllKnownTripleStoreUris()) {
-    		HashSet<String> this_provenance_set_of_uris = this.getProvenanceResourceCache().get(provenanceURI);
-    		if (this_provenance_set_of_uris == null) {
-    			continue; // next triple store; this one is useless
-    		}
-    		if (! this_provenance_set_of_uris.contains(resourceURI)) {
-    			continue; // next triple store; this one is useless
-    		}
-    		String provenanceURI_plus_resourceURI = provenanceURI + "___" + resourceURI;
-    		
             LOG.info("Looping over triple store uri " + provenanceURI +
                     " looking for triples matching " + resourceURI +
                     predicateURI + " _____");
