@@ -83,6 +83,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 		
 		fieldNames.add(Search.FEED_FIELD);
 		fieldNames.add(Search.CURATOR_INDEX_FIELD);
+		fieldNames.add(Search.ALL_CURATORS_INDEX_FIELD);
 
 		return fieldNames;
 	}
