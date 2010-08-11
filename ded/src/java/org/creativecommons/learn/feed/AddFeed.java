@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 import org.creativecommons.learn.RdfStore;
-import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.RdfStoreFactory;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
 
@@ -33,7 +33,7 @@ public class AddFeed {
 	}
 	
 	public static void addFeed(String type, String url, String curator) throws SQLException {
-		RdfStore store = RdfStore.forDEd();
+		RdfStore store = RdfStoreFactory.get().forDEd();
 		
 		/* Make sure we already have heard of that Curator. */
 		Collection<Curator> curator_objs = store.load(Curator.class);

@@ -1,10 +1,8 @@
 package org.creativecommons.learn.aggregate.oaipmh;
-import org.creativecommons.learn.RdfStore;
-
-
 import java.util.Collection;
 
 import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.RdfStoreFactory;
 import org.creativecommons.learn.feed.IResourceExtractor;
 import org.creativecommons.learn.oercloud.Feed;
 import org.creativecommons.learn.oercloud.OaiResource;
@@ -28,7 +26,7 @@ public class OerSubmissions extends OaiMetadataFormat implements IResourceExtrac
 
 	@Override
 	public void process(Feed feed, OaiPmhServer server, String identifier) throws OAIException {
-		RdfStore store = RdfStore.forProvenance(feed.getUrl());
+		RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUrl());
 
 		// Retrieve the resource metadata from the server
 		Record oai_record = server.getRecord(identifier, this.format.getPrefix());
@@ -49,13 +47,13 @@ public class OerSubmissions extends OaiMetadataFormat implements IResourceExtrac
 		
 		// see also
 		try {
-			resource.getSeeAlso().add(RdfStore.forDEd().load(OaiResource.class, identifier));
+			resource.getSeeAlso().add(RdfStoreFactory.get().forDEd().load(OaiResource.class, identifier));
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		RdfStore.forDEd().save(resource);
+		RdfStoreFactory.get().forDEd().save(resource);
 	}
 
 }

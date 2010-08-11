@@ -1,8 +1,6 @@
 package org.creativecommons.learn.feed;
 import org.creativecommons.learn.RdfStore;
-
-
-import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.RdfStoreFactory;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ResIterator;
@@ -30,9 +28,9 @@ public class DumpStore {
 		String format = (args.length > 0) ? args[0] : "RDF/XML";
 		
 		// get an iterator for all subjects
-        for (String provURI: RdfStore.getAllKnownTripleStoreUris()) {
+        for (String provURI: RdfStoreFactory.get().getAllKnownTripleStoreUris()) {
             // <for testing>
-            if (provURI == RdfStore.SITE_CONFIG_URI) {
+            if (provURI == RdfStoreFactory.SITE_CONFIG_URI) {
                 System.out.println("skipping site config store");
                 continue;
             }

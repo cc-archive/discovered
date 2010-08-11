@@ -4,9 +4,6 @@
  */
 
 package org.creativecommons.learn.aggregate.feed;
-import org.creativecommons.learn.RdfStore;
-
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.RdfStoreFactory;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
 import org.jdom.Document;
@@ -67,7 +65,7 @@ public class Opml {
 
 	public void poll(Feed feed) {
 		try {
-			RdfStore store = RdfStore.forProvenance(feed.getUrl());
+			RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUrl());
 			// load the OPML feed as a JDOM document
 			Document opml = new SAXBuilder().build(new URL(feed.getUrl()));
 
@@ -109,15 +107,15 @@ public class Opml {
 						// see if we already have a Curator with the URL
 						if (rome_feed.getLink() != null) {
 							// the feed has a link
-							if (RdfStore.forDEd().exists(Curator.class,
+							if (RdfStoreFactory.get().forDEd().exists(Curator.class,
 									rome_feed.getLink())) {
-								curator = RdfStore.forDEd().load(Curator.class,
+								curator = RdfStoreFactory.get().forDEd().load(Curator.class,
 										rome_feed.getLink());
 							} else {
 								curator = new Curator(rome_feed.getLink());
 								curator.setName(rome_feed.getTitle());
 
-								RdfStore.forDEd().save(curator);
+								RdfStoreFactory.get().forDEd().save(curator);
 							}
 						}
 					} // if we were able to retrieve the feed

@@ -1,10 +1,7 @@
 package org.creativecommons.learn.feed;
-import org.creativecommons.learn.RdfStore;
-
-
 import java.util.Date;
 
-import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.RdfStoreFactory;
 import org.creativecommons.learn.oercloud.Feed;
 
 import thewebsemantic.NotFoundException;
@@ -28,7 +25,7 @@ public class ResetAggregationDate {
 		
 		Feed feed = null;
 		try {
-			feed = RdfStore.forDEd().load(Feed.class, feed_url);
+			feed = RdfStoreFactory.get().forDEd().load(Feed.class, feed_url);
 		} catch (NotFoundException e) {
 			
 			System.out.println("Feed " + feed_url + " not found.");
@@ -37,7 +34,7 @@ public class ResetAggregationDate {
 
 		feed.setLastImport(new Date(0));
 				
-		RdfStore.forDEd().save(feed);
+		RdfStoreFactory.get().forDEd().save(feed);
 						
 	}
 

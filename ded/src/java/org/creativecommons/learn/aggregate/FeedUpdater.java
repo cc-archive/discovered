@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.DEdConfiguration;
+import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.RdfStoreFactory;
 import org.creativecommons.learn.aggregate.feed.OaiPmh;
 import org.creativecommons.learn.aggregate.feed.Opml;
 import org.creativecommons.learn.oercloud.Feed;
@@ -109,7 +110,7 @@ public class FeedUpdater {
 	public void update(boolean force) throws IOException, SQLException {
 		// get the contents of the feed and emit events for each
 		// FIXME: each what?
-		RdfStore store = RdfStore.forProvenance(feed.getUrl());
+		RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUrl());
 
 		// OPML
 		if (feed.getFeedType().toLowerCase().equals("opml")) {

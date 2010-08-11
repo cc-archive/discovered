@@ -1,7 +1,4 @@
 package org.creativecommons.learn.feed;
-import org.creativecommons.learn.RdfStore;
-
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,6 +15,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.creativecommons.learn.CCLEARN;
 import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.RdfStoreFactory;
 
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -105,8 +103,8 @@ public class MakeSeed {
 		if (!line.hasOption("curator")) {
 			// all resources
             
-            for (String uri: RdfStore.getAllKnownTripleStoreUris()) {
-                RdfStore store = RdfStore.forProvenance(uri);
+            for (String uri: RdfStoreFactory.get().getAllKnownTripleStoreUris()) {
+                RdfStore store = RdfStoreFactory.get().forProvenance(uri);
 		        Model model = store.getModel();
                 writeURIsFromModel(model, output);
                 store.close();
@@ -117,8 +115,8 @@ public class MakeSeed {
 			String[] curators = line.getOptionValues("curator");
 
 			for (String curator_url : curators) {
-                for (String uri: RdfStore.getAllKnownTripleStoreUris()) {
-                    RdfStore store = RdfStore.forProvenance(uri);
+                for (String uri: RdfStoreFactory.get().getAllKnownTripleStoreUris()) {
+                    RdfStore store = RdfStoreFactory.get().forProvenance(uri);
                     Model model = store.getModel();
                     writeURIsForCuratorFromAModel(curator_url, model, output);
                     store.close();

@@ -1,9 +1,9 @@
 package org.creativecommons.learn.oercloud;
 
-import org.creativecommons.learn.RdfStore;
-
 import java.util.Collection;
 import java.util.Date;
+
+import org.creativecommons.learn.RdfStoreFactory;
 
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfProperty;
@@ -68,12 +68,12 @@ public class Feed {
 			+ "?s cclearn:source <" + this.getUrl() + ">. \n"
 			+ "   }\n";
 		
-		return Sparql.exec(RdfStore.forDEd().getModel(), Resource.class, query);
+		return Sparql.exec(RdfStoreFactory.get().forDEd().getModel(), Resource.class, query);
 		
 	}
 	
 	public String getSource() {
-		return RdfStore.SITE_CONFIG_URI; 
+		return RdfStoreFactory.SITE_CONFIG_URI; 
 	}
 	
 }

@@ -1,13 +1,11 @@
 package org.creativecommons.learn.aggregate.feed;
-import org.creativecommons.learn.RdfStore;
-
-
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.RdfStoreFactory;
 import org.creativecommons.learn.aggregate.oaipmh.NsdlDc;
 import org.creativecommons.learn.aggregate.oaipmh.OaiDcMetadata;
 import org.creativecommons.learn.aggregate.oaipmh.OerRecommender;
@@ -134,7 +132,7 @@ public class OaiPmh {
 	}
 	
 	public void poll(Feed feed, boolean force) {
-		RdfStore store = RdfStore.forProvenance(feed.getUrl());
+		RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUrl());
 
 		Boolean moreResults = true;
 		OaiPmhServer server = new OaiPmhServer(feed.getUrl());

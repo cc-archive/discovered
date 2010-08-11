@@ -43,7 +43,7 @@ public class RDFaParser implements HtmlParseFilter {
 		RdfStore store = null;
 
 		try {
-			store = RdfStore.forProvenance(uri);
+			store = RdfStoreFactory.get().forProvenance(uri);
 			// This is not a no-op
 			Class.forName("net.rootdev.javardfa.jena.RDFaReader");
 			

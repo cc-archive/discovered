@@ -3,7 +3,7 @@ package org.creativecommons.learn.feed;
 import java.sql.SQLException;
 
 import org.creativecommons.learn.RdfStore;
-import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.RdfStoreFactory;
 import org.creativecommons.learn.oercloud.Curator;
 
 public class AddCurator {
@@ -28,7 +28,7 @@ public class AddCurator {
 	}
 		
 	public static void addCurator(String name, String url) throws SQLException {
-		RdfStore store = RdfStore.forDEd();
+		RdfStore store = RdfStoreFactory.get().forDEd();
 		
 		Curator new_curator = new Curator(url);
 		new_curator.setName(name);

@@ -1,11 +1,8 @@
 package org.creativecommons.learn.oercloud;
-import org.creativecommons.learn.RdfStore;
-
-
 import java.util.Collection;
-import java.util.List;
 
 import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.RdfStoreFactory;
 
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfProperty;
@@ -60,7 +57,7 @@ public class Curator {
 			+ "?s cclearn:hasCurator <" + this.getUrl() + ">. \n"
 			+ "   }\n";
 		
-		return Sparql.exec(RdfStore.forDEd().getModel(), Feed.class, query);
+		return Sparql.exec(RdfStoreFactory.get().forDEd().getModel(), Feed.class, query);
 	
 	}
 	

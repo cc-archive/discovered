@@ -44,7 +44,7 @@ public class ProvenancePredicatePair {
 	}
 	
 	public static String makeCompleteFieldNameWithProvenance(String provenanceURI, String thePredicatePartOfTheFieldName) {
-		int tablePrefix = RdfStore.getOrCreateTablePrefixFromURIAsInteger(provenanceURI);
+		int tablePrefix = new RdfStoreFactory().getOrCreateTablePrefixFromURIAsInteger(provenanceURI);
 		return tablePrefix + "_" + thePredicatePartOfTheFieldName;
 	}
 	

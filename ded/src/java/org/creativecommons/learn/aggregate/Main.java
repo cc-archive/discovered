@@ -5,6 +5,7 @@
 
 package org.creativecommons.learn.aggregate;
 import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.RdfStoreFactory;
 
 
 import java.io.IOException;
@@ -100,7 +101,7 @@ public class Main {
     	oneDayAgo.add(Calendar.DATE, -1);
     	
     	// Get a list of all available feeds in the site configuration store
-    	Collection<Feed> all_feeds = RdfStore.forDEd().loadDeep(Feed.class);
+    	Collection<Feed> all_feeds = RdfStoreFactory.get().forDEd().loadDeep(Feed.class);
     	
     	// If the user specifies a particular curator,
     	// only collect feeds by that curator
@@ -145,7 +146,7 @@ public class Main {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
                 	feed.setLastImport(import_date);
-                	RdfStore.forDEd().save(feed);
+                	RdfStoreFactory.get().forDEd().save(feed);
                 }
             }
             

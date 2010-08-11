@@ -26,28 +26,28 @@ public class TripleStoreIndexerTest extends TestCase {
 
 		// curator 1
 		Curator c1 = new Curator("http://example.com/#curator1");
-		RdfStore.forDEd().save(c1);
+		RdfStoreFactory.get().forDEd().save(c1);
 		
 		// feed 1
 		Feed f1 = new Feed("http://example.com/#feed1");
 		f1.setCurator(c1);
-		RdfStore.forDEd().save(f1);
+		RdfStoreFactory.get().forDEd().save(f1);
 		
 		// provenance 1
-		RdfStore store1 = RdfStore.forProvenance(f1.getUrl());
+		RdfStore store1 = RdfStoreFactory.get().forProvenance(f1.getUrl());
 		store1.save(r);
 		
 		// curator 2
 		Curator c2 = new Curator("http://example.com/#curator2");
-		RdfStore.forDEd().save(c2);
+		RdfStoreFactory.get().forDEd().save(c2);
 		
 		// feed 1
 		Feed f2 = new Feed("http://example.com/#feed2");
 		f2.setCurator(c2);
-		RdfStore.forDEd().save(f2);
+		RdfStoreFactory.get().forDEd().save(f2);
 		
 		// provenance 2
-		RdfStore store2 = RdfStore.forProvenance(f2.getUrl());
+		RdfStore store2 = RdfStoreFactory.get().forProvenance(f2.getUrl());
 		store2.save(r);
 		
 		// Then, test that we can know ask the Resource to tell us all the URIs that have curated it
@@ -69,30 +69,30 @@ public class TripleStoreIndexerTest extends TestCase {
 
 		// curator 1
 		Curator c1 = new Curator("http://example.com/#curator1");
-		RdfStore.forDEd().save(c1);
+		RdfStoreFactory.get().forDEd().save(c1);
 		
 		// feed 1
 		Feed f1 = new Feed("http://example.com/#feed1");
 		f1.setCurator(c1);
-		RdfStore.forDEd().save(f1);
+		RdfStoreFactory.get().forDEd().save(f1);
 		
 		// provenance 1
-		RdfStore store1 = RdfStore.forProvenance(f1.getUrl());
+		RdfStore store1 = RdfStoreFactory.get().forProvenance(f1.getUrl());
 		store1.save(r1);
 		
 		Resource r2 = new Resource("http://example.com/#resource2");
 		
 		// curator 2
 		Curator c2 = new Curator("http://example.com/#curator2");
-		RdfStore.forDEd().save(c2);
+		RdfStoreFactory.get().forDEd().save(c2);
 		
 		// feed 1
 		Feed f2 = new Feed("http://example.com/#feed2");
 		f2.setCurator(c2);
-		RdfStore.forDEd().save(f2);
+		RdfStoreFactory.get().forDEd().save(f2);
 		
 		// provenance 2
-		RdfStore store2 = RdfStore.forProvenance(f2.getUrl());
+		RdfStore store2 = RdfStoreFactory.get().forProvenance(f2.getUrl());
 		store2.save(r2);
 		
 		// Then, test that we can know ask the Resource to tell us all the URIs that have curated it
@@ -117,7 +117,7 @@ public class TripleStoreIndexerTest extends TestCase {
 		// has a predicate that's attached to a Resource.
 		Resource r = new Resource("http://example.com/#resource");
 		r.setTitle("A title");
-		RdfStore store = RdfStore.forDEd();
+		RdfStore store = RdfStoreFactory.get().forDEd();
 		store.save(r);
 		
 		// Now, ask the TripleStoreIndexer what column names it has.		
@@ -140,7 +140,7 @@ public class TripleStoreIndexerTest extends TestCase {
         TripleStoreIndexer indexer = new TripleStoreIndexer();
         Configuration customFieldsConfiguration = indexer.getCustomFieldConfiguration();
         customFieldsConfiguration.set(customLuceneFieldName, customPredicateURI);
-        RdfStore site_store = RdfStore.forDEd();
+        RdfStore site_store = RdfStoreFactory.get().forDEd();
          
         /* second, create such a Resource
          * ------------------------------ */
@@ -158,7 +158,7 @@ public class TripleStoreIndexerTest extends TestCase {
         Literal xyz = m.createLiteral("xyz");
         r.addField(edLevel, xyz);
         r.getSources().add(f);
-        RdfStore.forProvenance(f.getUrl()).save(r);
+        RdfStoreFactory.get().forProvenance(f.getUrl()).save(r);
 
         /* third, can the triple store indexer find this custom field and its
          * values?

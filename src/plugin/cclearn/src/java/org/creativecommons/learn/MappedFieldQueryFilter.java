@@ -46,7 +46,7 @@ public class MappedFieldQueryFilter implements QueryFilter {
 	
 	private ArrayList<String> getActiveProvenanceURIs(Query input) {
 		
-		ArrayList<String> provenanceURIs = RdfStore.getAllKnownTripleStoreUris();
+		ArrayList<String> provenanceURIs = RdfStoreFactory.get().getAllKnownTripleStoreUris();
 		
 		// Find active provenances
 		ArrayList<String> activeProvenanceURIs = new ArrayList<String>();
@@ -76,7 +76,7 @@ public class MappedFieldQueryFilter implements QueryFilter {
 		
 		// Now we have a list of short names of curators the user wants to exclude from this query
 		for (String curatorShortName: curatorShortNamesToExclude) {
-			for (String excludeThisProvenanceURI : RdfStore.getProvenanceURIsFromCuratorShortName(curatorShortName)) {
+			for (String excludeThisProvenanceURI : RdfStoreFactory.get().getProvenanceURIsFromCuratorShortName(curatorShortName)) {
 				activeProvenanceURIs.remove(excludeThisProvenanceURI);
 			}
 		}

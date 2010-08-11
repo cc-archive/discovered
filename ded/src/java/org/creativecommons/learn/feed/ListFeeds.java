@@ -1,10 +1,7 @@
 package org.creativecommons.learn.feed;
-import org.creativecommons.learn.RdfStore;
-
-
 import java.util.Collection;
 
-import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.RdfStoreFactory;
 import org.creativecommons.learn.oercloud.Feed;
 
 public class ListFeeds {
@@ -15,7 +12,7 @@ public class ListFeeds {
 	public static void main(String[] args) {
 		
 		// list feeds we're tracking
-		Collection<Feed> feeds = RdfStore.forDEd().load(Feed.class);
+		Collection<Feed> feeds = RdfStoreFactory.get().forDEd().load(Feed.class);
 			
 		for (Feed f : feeds) {
 			System.out.println(f.getUrl() + " (" + f.getFeedType() + ", " + f.getCurator().getUrl() + " )");

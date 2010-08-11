@@ -1,10 +1,7 @@
 package org.creativecommons.learn.feed;
-import org.creativecommons.learn.RdfStore;
-
-
 import java.util.Collection;
 
-import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.RdfStoreFactory;
 import org.creativecommons.learn.oercloud.Curator;
 
 public class ListCurators {
@@ -15,7 +12,7 @@ public class ListCurators {
 	 */
 	public static void main(String[] args) {
 		
-		Collection<Curator> curators = RdfStore.forDEd().load(Curator.class); 
+		Collection<Curator> curators = RdfStoreFactory.get().forDEd().load(Curator.class); 
 			
 		for (Curator c : curators) {
 			System.out.println(c.getName() + " (" + c.getUrl() + ")");

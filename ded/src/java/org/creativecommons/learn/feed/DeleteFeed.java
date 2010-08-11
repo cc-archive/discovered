@@ -1,8 +1,5 @@
 package org.creativecommons.learn.feed;
-import org.creativecommons.learn.RdfStore;
-
-
-import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.RdfStoreFactory;
 import org.creativecommons.learn.oercloud.Feed;
 
 import thewebsemantic.NotFoundException;
@@ -26,14 +23,14 @@ public class DeleteFeed {
 		String url = args[0];
 		
 		//  make sure the feed exists
-		if (!(RdfStore.forDEd().exists(Feed.class, url))) {			
+		if (!(RdfStoreFactory.get().forDEd().exists(Feed.class, url))) {			
 			System.out.println("Feed does not exist");
 			System.exit(1);
 		}
 		
 		try {
-			RdfStore.forDEd().delete(
-					RdfStore.forDEd().load(Feed.class, url)
+			RdfStoreFactory.get().forDEd().delete(
+					RdfStoreFactory.get().forDEd().load(Feed.class, url)
 					);
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
