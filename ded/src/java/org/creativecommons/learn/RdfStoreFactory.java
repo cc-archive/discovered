@@ -105,6 +105,10 @@ public class RdfStoreFactory {
 		return new RdfStore(ModelFactory.createModelForGraph(this.graphset.getGraph(provURI)));
 	}
 
+	public RdfStoreReader getReader() {
+		return new RdfStoreReader(this.graphset.asJenaModel(SITE_CONFIG_URI));
+		
+	}
 	public int getOrCreateTablePrefixFromURIAsInteger(String uri) {
 		return uri.hashCode();
 	}

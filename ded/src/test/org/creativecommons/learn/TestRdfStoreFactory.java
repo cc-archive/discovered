@@ -77,8 +77,8 @@ public class TestRdfStoreFactory extends TestCase {
 		assertFalse(r.getSubjects().contains("subject3"));
 		
 		// get the full resource
-		//r = new RdfStore(store.asModel()).load(Resource.class, "http://example.org/resource");
-		//System.out.println(r.getSubjects().size());
+		r = store.getReader().load(Resource.class, "http://example.org/resource");
+		assertEquals(r.getSubjects().size(), 3);
 	}
 
 	public void testGetAllKnownTripleStoreUris() {
