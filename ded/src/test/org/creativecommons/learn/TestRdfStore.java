@@ -5,10 +5,11 @@ import junit.framework.TestCase;
 import org.creativecommons.learn.oercloud.Resource;
 
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.vocabulary.DC;
 import com.hp.hpl.jena.vocabulary.RDF;
+
+import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
 public class TestRdfStore extends TestCase {
 
@@ -16,11 +17,10 @@ public class TestRdfStore extends TestCase {
 
         String provenanceURI = "http://example.com/#provenance";
 
-		// create a Jena model
-		Model model = ModelFactory.createDefaultModel();
-
-		// create a Triple Store with that model
-		RdfStore store = RdfStore.forModel(model);
+		// Create an in-memory store factory, instantiate a store, and get the model
+		RdfStoreFactory factory = new RdfStoreFactory(new NamedGraphSetImpl());
+		RdfStore store = factory.forProvenance(provenanceURI); 
+		Model model = store.getModel();
 
 		// create a Resource
 		Resource r = new Resource("http://example.org/resource");
@@ -50,11 +50,10 @@ public class TestRdfStore extends TestCase {
 
         String provenanceURI = "http://example.com/#provenance";
 
-		// create a Jena model
-		Model model = ModelFactory.createDefaultModel();
-
-		// create a Triple Store for our model
-		RdfStore store = RdfStore.forModel(model);
+		// Create an in-memory store factory, instantiate a store, and get the model
+		RdfStoreFactory factory = new RdfStoreFactory(new NamedGraphSetImpl());
+		RdfStore store = factory.forProvenance(provenanceURI); 
+		Model model = store.getModel();
 		
 		// create a Resource and save it -- "stub" declaration
 		Resource without_metadata = new Resource("http://example.org/resource");

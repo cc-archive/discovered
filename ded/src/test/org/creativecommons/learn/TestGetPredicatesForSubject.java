@@ -1,10 +1,7 @@
 package org.creativecommons.learn;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 
-import org.creativecommons.learn.ProvenancePredicatePair;
-import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.oercloud.Resource;
 
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -14,7 +11,7 @@ public class TestGetPredicatesForSubject extends DiscoverEdTestCase {
 
 	final String RESOURCE_URI = "http://example.com/#resource";
 		
-	public void test() throws SQLException, ClassNotFoundException {
+	public void test() {
 
 		// Let's add two resources
 		String provenanceURI = "http://example.com/#prov1";
@@ -25,7 +22,7 @@ public class TestGetPredicatesForSubject extends DiscoverEdTestCase {
 		
 		// Invoke the method getPPP2ObjectMapForSubject (this is the method we're testing)
 		// The output of this method should be a HashMap of ProvenancePredicatePairs to Strings.
-		HashMap<ProvenancePredicatePair, RDFNode> map = RdfStore.getPPP2ObjectMapForSubject(RESOURCE_URI);
+		HashMap<ProvenancePredicatePair, RDFNode> map = RdfStoreFactory.get().getPPP2ObjectMapForSubject(RESOURCE_URI);
 		
 		boolean foundPair1 = false;
 		boolean foundPair2 = false;
@@ -45,13 +42,13 @@ public class TestGetPredicatesForSubject extends DiscoverEdTestCase {
 		assertTrue(foundPair2);
 	}
 	
-	public Resource createResourceWithProvenance(String resourceURI, String provenanceURI) throws SQLException {
+	public Resource createResourceWithProvenance(String resourceURI, String provenanceURI) {
 		// Create a Resource, give it a dc:title.
 		Resource r = new Resource(resourceURI);
 		r.setTitle("my title");
 		
 		// Get an RdfStore for a certain URI
-		RdfStore store = RdfStore.forProvenance(provenanceURI);
+		RdfStore store = RdfStoreFactory.get().forProvenance(provenanceURI);
 		// Save the resource into the store
 		store.save(r);
 		

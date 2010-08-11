@@ -27,13 +27,13 @@ public class TestGetProvenanceURIsFromCuratorShortName extends DiscoverEdTestCas
 		Feed distractorFeed = new Feed("http://example.com/#distractor_feed");
 		distractorFeed.setCurator(distractor);
 		
-		RdfStore store = RdfStore.forDEd();
+		RdfStore store = RdfStoreFactory.get().forDEd();
 		store.save(c);
 		store.save(f);
 		store.save(distractor);
 		store.save(distractorFeed);
 		
-		ArrayList<String> uris = RdfStore.getProvenanceURIsFromCuratorShortName("shorty");
+		ArrayList<String> uris = RdfStoreFactory.get().getProvenanceURIsFromCuratorShortName("shorty");
 		
 		// That there above variable "uris" should be a list of URIs of provenances (= feed URLs) pertaining to the curator named "shorty"
 		assertEquals(uris.get(0), f.getUrl());

@@ -14,7 +14,7 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 	 * @throws SQLException 
 	 * @throws ClassNotFoundException */
 	public void addCurator() throws SQLException, ClassNotFoundException {
-		RdfStore store = RdfStore.forDEd();
+		RdfStore store = RdfStoreFactory.get().forDEd();
 		
 		/* We have no Curators at the start */
 		Collection<Curator> available_curators = store.load(org.creativecommons.learn.oercloud.Curator.class);
@@ -32,7 +32,7 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 		assertEquals(curator.getUrl(), "http://ocw.nd.edu/");
 		
 		/* Get a different RdfStore */
-		RdfStore aDifferentStore = RdfStore.forProvenance("http://other.example.com/");
+		RdfStore aDifferentStore = RdfStoreFactory.get().forProvenance("http://other.example.com/");
 		
 		/* We have no Curators in the different RdfStore */
 		Collection<Curator> aDifferentListOfCurators = aDifferentStore.load(org.creativecommons.learn.oercloud.Curator.class);
@@ -48,7 +48,7 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 	 * @throws ClassNotFoundException */
 	public void testAddFeed() throws SQLException, ClassNotFoundException {
 		
-		RdfStore store = RdfStore.forDEd();
+		RdfStore store = RdfStoreFactory.get().forDEd();
 		this.addCurator();
 
 		/* We have no Feeds at the start */
@@ -92,7 +92,7 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 		org.creativecommons.learn.aggregate.Main.main(args);
 		
 		// Query that curator's RdfStore, find the triple URI-title-literal
-		RdfStore store = RdfStore.forProvenance(feedURI);
+		RdfStore store = RdfStoreFactory.get().forProvenance(feedURI);
 		Collection<Resource> resources = store.load(org.creativecommons.learn.oercloud.Resource.class);
 		Resource r = resources.iterator().next();
 		String title = r.getTitle();
@@ -116,7 +116,7 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 
     public void testAddFeedMustPointToCuratorWithinTheStore() throws SQLException {
     	try {
-			RdfStore store = RdfStore.forDEd();
+			RdfStore store = RdfStoreFactory.get().forDEd();
 			
 			/* Try adding a feed where we have no data stored about
 			 * the curator. */

@@ -34,7 +34,7 @@ public class TestMinusCurator extends DiscoverEdTestCase {
 
 		// Add some pages to the database...
 		
-		RdfStore siteConfigStore = RdfStore.forDEd();
+		RdfStore siteConfigStore = RdfStoreFactory.get().forDEd();
 
 		Curator nsdl = new Curator("http://example.com/#nsdl");
 		nsdl.setName("nsdl");
@@ -56,14 +56,14 @@ public class TestMinusCurator extends DiscoverEdTestCase {
 		justChemistry.add("chemistry");
 		
 		// One page was tagged by the NSDL with subject:Chemistry
-		RdfStore nsdlFeedStore = RdfStore.forProvenance(nsdlFeed.getUrl());
+		RdfStore nsdlFeedStore = RdfStoreFactory.get().forProvenance(nsdlFeed.getUrl());
 		Resource pageOneAccordingToNSDL = new Resource(PAGE_ONE_URL);
 
 		pageOneAccordingToNSDL.setSubjects(justChemistry);
 		nsdlFeedStore.save(pageOneAccordingToNSDL);
 		
 		// A second page was tagged by MIT OCW with subject:Chemistry
-		RdfStore ocwFeedStore = RdfStore.forProvenance(ocwFeed.getUrl());
+		RdfStore ocwFeedStore = RdfStoreFactory.get().forProvenance(ocwFeed.getUrl());
 		Resource pageTwoAccordingToOCW = new Resource(PAGE_TWO_URL);
 		pageTwoAccordingToOCW.setSubjects(justChemistry);
 		ocwFeedStore.save(pageTwoAccordingToOCW);
@@ -82,13 +82,13 @@ public class TestMinusCurator extends DiscoverEdTestCase {
 		// Let's just add a resource to the site configuration store and see if we can find it via the nutch searcherbean.
 		siteConfigStore.save(pageThreeAccordingToNSDL);
 		
-		RdfStore siteConfigStoreStrikesBack = RdfStore.forDEd();
+		RdfStore siteConfigStoreStrikesBack = RdfStoreFactory.get().forDEd();
 		Collection<Resource> resourcez = siteConfigStoreStrikesBack.load(org.creativecommons.learn.oercloud.Resource.class);
 		assertTrue(resourcez.size() > 0);
 		
 		String url3  = pageThreeAccordingToNSDL.getUrl();
 		
-		Resource resource = RdfStore.forDEd().loadDeep(Resource.class, url3);
+		Resource resource = RdfStoreFactory.get().forDEd().loadDeep(Resource.class, url3);
 		assertSame(resource.getSubjects().iterator().next(), justChemistry.iterator().next());
 		
 		// Let's crawl...

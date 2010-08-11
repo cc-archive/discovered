@@ -108,16 +108,9 @@ public class TestRdfStoreFactory extends TestCase {
 		assert (store.getGraphset().equals(this.graphset));
 	}
 
-	public void testGetPPP2ObjectMapForSubject() {
-		fail("Not yet implemented"); // TODO
-	}
-
 	public void testGetPPP2ObjectMapForSubjectAndPredicate() {
 		fail("Not yet implemented"); // TODO
 	}
 
-	public void testGetProvenanceURIsFromCuratorShortName() {
-		fail("Not yet implemented"); // TODO
-	}
 
 }

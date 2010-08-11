@@ -1,20 +1,18 @@
 package org.creativecommons.learn;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 
-import org.creativecommons.learn.ProvenancePredicatePair;
-import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.oercloud.Resource;
+
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
 public class TestPPP extends DiscoverEdTestCase {
-	public void test() throws SQLException {
+	public void test() {
 		
 		// Create a resource with a provenance
 		String subjectURI = "http://example.com/#subject";
 		String provenanceURI = "http://example.com/#provenance";
-		RdfStore store = RdfStore.forProvenance(provenanceURI);
+		RdfStore store = RdfStoreFactory.get().forProvenance(provenanceURI);
 		Resource r = new Resource(subjectURI);
 		r.setTitle("my title");
 		String titlePredicate = "http://purl.org/dc/elements/1.1/title";
@@ -22,9 +20,11 @@ public class TestPPP extends DiscoverEdTestCase {
 		store.save(r);
 		
 		HashMap<ProvenancePredicatePair, RDFNode> map =
-			store.getPPP2ObjectMapForSubjectAndPredicate(subjectURI, titlePredicate);
+			RdfStoreFactory.get().getPPP2ObjectMapForSubjectAndPredicate(subjectURI, titlePredicate);
 		ProvenancePredicatePair p3 = map.keySet().iterator().next();
-		assertEquals(p3.toFieldName(), "1_" + titlePredicateAbbrev);
+
+		assertEquals(p3.toFieldName(), 
+				RdfStoreFactory.get().getOrCreateTablePrefixFromURIAsInteger(provenanceURI) + "_" + titlePredicateAbbrev);
 		
 	}
 }
