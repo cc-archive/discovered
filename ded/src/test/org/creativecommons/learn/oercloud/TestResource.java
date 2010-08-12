@@ -1,6 +1,11 @@
 package org.creativecommons.learn.oercloud;
 
 import java.net.URI;
+import java.util.Collection;
+import java.util.HashSet;
+
+import org.creativecommons.learn.RdfStore;
+import org.creativecommons.learn.RdfStoreFactory;
 
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
@@ -26,6 +31,47 @@ public class TestResource extends TestCase {
 
 	}
 
+	public static void testResourceCanListItsProvenances() {
+		// First, create a Resource that appears in feeds curated by multiple organizations
+		Resource r = new Resource(URI.create("http://example.com/#resource"));
+		r.setTitle("A title");
+
+		// curator 1
+		Curator c1 = new Curator(URI.create("http://example.com/#curator1"));
+		RdfStoreFactory.get().forDEd().save(c1);
+
+		// feed 1
+		Feed f1 = new Feed(URI.create("http://example.com/#feed1"));
+		f1.setCurator(c1);
+		RdfStoreFactory.get().forDEd().save(f1);
+
+		// provenance 1
+		RdfStore store1 = RdfStoreFactory.get().forProvenance(f1.getUrl());
+		store1.save(r);
+
+		// curator 2
+		Curator c2 = new Curator(URI.create("http://example.com/#curator2"));
+		RdfStoreFactory.get().forDEd().save(c2);
+
+		// feed 1
+		Feed f2 = new Feed(URI.create("http://example.com/#feed2"));
+		f2.setCurator(c2);
+		RdfStoreFactory.get().forDEd().save(f2);
+
+		// provenance 2
+		RdfStore store2 = RdfStoreFactory.get().forProvenance(f2.getUrl());
+		store2.save(r);
+
+		// Then, test that we can know ask the Resource to tell us all the URIs that have curated it
+		Collection<String> curatorURIs = r.getAllCuratorURIs();
+
+		HashSet<String> expected = new HashSet<String>();
+		expected.add(c1.getUrl());
+		expected.add(c2.getUrl());
+
+		assertEquals(curatorURIs, expected);
+
+	}
 	public void testGetFieldValues() {
 
 		Resource r = new Resource(URI.create("http://example.org/foo"));
