@@ -233,9 +233,7 @@ public class TripleStoreIndexer implements IndexingFilter {
         LOG.info("TripleStoreIndexer: Calculating all curators string.");
         Resource resource = RdfStoreFactory.get().getReader().load(
         		Resource.class, url.toString());
-        ArrayList<String> sortedListOfCuratorURIs = new ArrayList<String>(resource.getAllCuratorURIs());
-        java.util.Collections.sort(sortedListOfCuratorURIs);
-        String all_curators_string = StringUtils.join(sortedListOfCuratorURIs.iterator(), " ");
+        String all_curators_string = resource.getAllCuratorURIsInCanonicalForm();
         doc.removeField(Search.ALL_CURATORS_INDEX_FIELD);
         doc.add(Search.ALL_CURATORS_INDEX_FIELD, all_curators_string);
         LOG.info("TripleStoreIndexer: Stored all curators for " + url.toString() + " as " + all_curators_string);
