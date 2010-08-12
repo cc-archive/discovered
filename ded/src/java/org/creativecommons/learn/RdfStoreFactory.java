@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -15,6 +16,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
 
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -26,6 +28,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
+import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.db.NamedGraphSetDB;
 
 /**
@@ -103,6 +106,21 @@ public class RdfStoreFactory {
 		
 		// return the wrapper for this named graph
 		return new RdfStore(ModelFactory.createModelForGraph(this.graphset.getGraph(provURI)));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Collection<String> getProvenancesThatKnowResourceWithThisURI(String resourceURI) {
+		HashSet<String> provenances = new HashSet<String>();
+		Iterator it = this.graphset.findQuads(
+				Node.ANY,
+				Node.createURI(resourceURI),
+				Node.createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+				Node.createURI(CCLEARN.Resource.getURI()));
+		while (it.hasNext()) {
+		    Quad q = (Quad) it.next();
+		    provenances.add(q.getGraphName().getURI());
+		}
+		return provenances;
 	}
 
 	public RdfStoreReader getReader() {

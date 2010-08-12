@@ -1,6 +1,9 @@
 package org.creativecommons.learn;
 
 import java.net.URI;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
@@ -41,6 +44,31 @@ public class TestRdfStoreFactory extends TestCase {
 		// we get the same instance with subsequent calls
 		assertEquals(store, RdfStoreFactory.get());
 		
+	}
+
+	public void testGetProvenenacesForResourceURI() {
+		// create the factory
+		RdfStoreFactory store = new RdfStoreFactory(this.graphset);
+
+		// get the wrappers for multiple provenances and add information
+		Resource r1 = new Resource(URI.create("http://example.org/resource"));
+		r1.getSubjects().add("subject1");
+		store.forProvenance("http://example.org/feed1").save(r1);
+
+		Resource r2 = new Resource(URI.create("http://example.org/resource"));
+		r2.getSubjects().add("subject2");
+		store.forProvenance("http://example.org/feed2").save(r2);
+
+		Resource r3 = new Resource(URI.create("http://example.org/resource"));
+		r3.getSubjects().add("subject3");
+		store.forProvenance("http://example.org/feed3").save(r3);
+		
+		Collection<String> actual = store.getProvenancesThatKnowResourceWithThisURI("http://example.org/resource");
+		HashSet<String> expected = new HashSet<String>();
+		expected.add("http://example.org/feed3");
+		expected.add("http://example.org/feed2");
+		expected.add("http://example.org/feed1");
+		assertEquals(expected, actual);
 	}
 
 	public void testForDEd() {
