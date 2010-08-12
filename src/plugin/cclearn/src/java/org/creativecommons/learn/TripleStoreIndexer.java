@@ -228,6 +228,11 @@ public class TripleStoreIndexer implements IndexingFilter {
             }
         }
 
+        LOG.info("TripleStoreIndexer: Calculating all curators string.");
+        String all_curators_string = "__DUMMY__";
+        doc.removeField(Search.ALL_CURATORS_INDEX_FIELD);
+        doc.add(Search.ALL_CURATORS_INDEX_FIELD, all_curators_string);
+
 		// Return the document
 		return doc;
 
