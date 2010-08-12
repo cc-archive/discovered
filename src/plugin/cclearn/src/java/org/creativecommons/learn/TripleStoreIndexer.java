@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
+import org.apache.commons.lang.StringUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -214,6 +215,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 		// Follow special cases (curator)
 		LOG.debug("RdfStore: indexing special cases.");
 		LOG.warn("TripleStoreIndexer is about to try to index this URL: " + url.toString());
+
         for (String provURI: RdfStoreFactory.get().getAllKnownTripleStoreUris()) {
             RdfStore store = RdfStoreFactory.get().forProvenance(provURI);
             try {
@@ -229,9 +231,14 @@ public class TripleStoreIndexer implements IndexingFilter {
         }
 
         LOG.info("TripleStoreIndexer: Calculating all curators string.");
-        String all_curators_string = "__DUMMY__";
+        Resource resource = RdfStoreFactory.get().getReader().load(
+        		Resource.class, url.toString());
+        ArrayList<String> sortedListOfCuratorURIs = new ArrayList<String>(resource.getAllCuratorURIs());
+        java.util.Collections.sort(sortedListOfCuratorURIs);
+        String all_curators_string = StringUtils.join(sortedListOfCuratorURIs.iterator(), " ");
         doc.removeField(Search.ALL_CURATORS_INDEX_FIELD);
         doc.add(Search.ALL_CURATORS_INDEX_FIELD, all_curators_string);
+        LOG.info("TripleStoreIndexer: Stored all curators for " + url.toString() + " as " + all_curators_string);
 
 		// Return the document
 		return doc;
