@@ -11,10 +11,10 @@ import java.util.Vector;
 import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.RdfStoreFactory;
 
+import thewebsemantic.Id;
 import thewebsemantic.Namespace;
 import thewebsemantic.NotFoundException;
 import thewebsemantic.RdfProperty;
-import thewebsemantic.Uri;
 
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -73,7 +73,7 @@ public class Resource implements IExtensibleResource {
         return url.toString();
     }
 
-    @Uri
+    @Id
     public URI getUri() {
         return url;
     }

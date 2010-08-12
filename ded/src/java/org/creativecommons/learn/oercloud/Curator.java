@@ -9,7 +9,7 @@ import org.creativecommons.learn.RdfStoreFactory;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfProperty;
 import thewebsemantic.Sparql;
-import thewebsemantic.Uri;
+import thewebsemantic.Id;
 
 @Namespace("http://learn.creativecommons.org/ns#")
 public class Curator {
@@ -43,7 +43,7 @@ public class Curator {
 		return uri.toString();
 	}
 
-	@Uri
+	@Id
 	public URI getUri() {
 		return uri;
 	}

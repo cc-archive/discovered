@@ -7,10 +7,10 @@ import java.util.Date;
 
 import org.creativecommons.learn.RdfStoreFactory;
 
+import thewebsemantic.Id;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfProperty;
 import thewebsemantic.Sparql;
-import thewebsemantic.Uri;
 
 @Namespace("http://learn.creativecommons.org/ns#")
 public class Feed {
@@ -42,7 +42,7 @@ public class Feed {
 		return uri.toString();
 	}
 
-	@Uri
+	@Id
 	public URI getUri() {
 		return uri;
 	}
