@@ -40,6 +40,8 @@
 
   <property name="deploy.dir" location="${nutch.root}/build/plugins/${name}"/>
 
+  <property name="test.junit.output.format" value="plain" />
+
   <!-- load nutch defaults last so that they can be overridden above -->
   <property file="${nutch.root}/default.properties" />
 
@@ -187,7 +189,7 @@
       <sysproperty key="test.data" value="${build.test}/data"/>
       <sysproperty key="test.input" value="${root}/data"/>
       <classpath refid="test.classpath"/>
-      <formatter type="plain" />
+      <formatter type="${test.junit.output.format}" />
       <batchtest todir="${build.test}" unless="testcase">
         <fileset dir="${src.test}"
                  includes="**/Test*.java" excludes="**/${test.exclude}.java" />
