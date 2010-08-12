@@ -25,6 +25,7 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.vocabulary.RDF;
 
 import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.NamedGraphSet;
@@ -114,8 +115,8 @@ public class RdfStoreFactory {
 		Iterator it = this.graphset.findQuads(
 				Node.ANY,
 				Node.createURI(resourceURI),
-				Node.createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-				Node.createURI(CCLEARN.Resource.getURI()));
+				RDF.type.asNode(),
+				CCLEARN.Resource.asNode());
 		while (it.hasNext()) {
 		    Quad q = (Quad) it.next();
 		    provenances.add(q.getGraphName().getURI());
