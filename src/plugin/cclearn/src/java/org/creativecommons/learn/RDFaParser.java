@@ -18,6 +18,7 @@
 package org.creativecommons.learn;
 
 import java.io.ByteArrayInputStream;
+import java.net.URISyntaxException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,6 +27,7 @@ import org.apache.nutch.parse.HTMLMetaTags;
 import org.apache.nutch.parse.HtmlParseFilter;
 import org.apache.nutch.parse.ParseResult;
 import org.apache.nutch.protocol.Content;
+import org.creativecommons.learn.oercloud.Resource;
 import org.w3c.dom.DocumentFragment;
 
 public class RDFaParser implements HtmlParseFilter {
@@ -39,17 +41,23 @@ public class RDFaParser implements HtmlParseFilter {
 
 		String uri = content.getUrl();
 
-		RdfStore store = null;
+		RdfStore store = RdfStoreFactory.get().forProvenance(uri);
 
 		try {
-			store = RdfStoreFactory.get().forProvenance(uri);
 			// This is not a no-op
+			// Register the RDFaReader with Jena
 			Class.forName("net.rootdev.javardfa.jena.RDFaReader");
+			
+			// create the Resource in this provenance
+			store.save(new Resource(uri));
 			
 			store.getModel().read(new ByteArrayInputStream(content
 					.getContent()),
 					uri, "HTML");
 		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
