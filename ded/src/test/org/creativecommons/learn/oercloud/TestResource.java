@@ -46,7 +46,7 @@ public class TestResource extends TestCase {
 		RdfStoreFactory.get().forDEd().save(f1);
 
 		// provenance 1
-		RdfStore store1 = RdfStoreFactory.get().forProvenance(f1.getUrl());
+		RdfStore store1 = RdfStoreFactory.get().forProvenance(f1.getUri().toString());
 		store1.save(r);
 
 		// curator 2
@@ -59,15 +59,15 @@ public class TestResource extends TestCase {
 		RdfStoreFactory.get().forDEd().save(f2);
 
 		// provenance 2
-		RdfStore store2 = RdfStoreFactory.get().forProvenance(f2.getUrl());
+		RdfStore store2 = RdfStoreFactory.get().forProvenance(f2.getUri().toString());
 		store2.save(r);
 
 		// Then, test that we can know ask the Resource to tell us all the URIs that have curated it
 		Collection<String> curatorURIs = r.getAllCuratorURIs();
 
 		HashSet<String> expected = new HashSet<String>();
-		expected.add(c1.getUrl());
-		expected.add(c2.getUrl());
+		expected.add(c1.getUri().toString());
+		expected.add(c2.getUri().toString());
 
 		assertEquals(curatorURIs, expected);
 
