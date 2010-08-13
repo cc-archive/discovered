@@ -76,10 +76,15 @@ public class Resource implements IExtensibleResource {
      * @return A string that is the space-joined, sorted version of getAllCuratorURIs 
      */
     public String getAllCuratorURIsInCanonicalForm() {
-        ArrayList<String> sortedListOfCuratorURIs = new ArrayList<String>(this.getAllCuratorURIs());
+    	return getAllCuratorURIsInCanonicalForm(this.getAllCuratorURIs());
+    }
+    
+    public static String getAllCuratorURIsInCanonicalForm(Collection<String> curatorURIs) {
+    	ArrayList<String> sortedListOfCuratorURIs = new ArrayList<String>(curatorURIs);
         java.util.Collections.sort(sortedListOfCuratorURIs);
         String all_curators_string = StringUtils.join(sortedListOfCuratorURIs.iterator(), " ");
         return all_curators_string;
+    	
     }
 
     @Deprecated
