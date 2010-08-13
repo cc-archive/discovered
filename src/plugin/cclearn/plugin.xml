@@ -89,4 +89,13 @@
       </implementation>
    </extension>
 
+   <extension id="org.creativecommons.learn.excludecuratordocumentfilter"
+              name="Filter to exclude documents based on excludecurator arguments"
+              point="org.apache.nutch.searcher.QueryFilter">
+      <implementation id="DocumentExclusionBasedOnCuratorQueryFilter"
+                      class="org.creativecommons.learn.DocumentExclusionBasedOnCuratorQueryFilter">
+        <parameter name="fields" value="excludecurator"/>
+      </implementation>
+   </extension>
+
 </plugin>
