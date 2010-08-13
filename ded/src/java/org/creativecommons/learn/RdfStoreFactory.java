@@ -235,6 +235,7 @@ public class RdfStoreFactory {
 	 * That means that Curators.org has labeled this resource as appropriate for
 	 * high schoolers.
 	 */
+	// FIXME: Migrate this method to stop using getAllKnownTripleStoreUris
 	public HashMap<ProvenancePredicatePair, RDFNode> getPPP2ObjectMapForSubject(
 			String subjectURL) {
 
