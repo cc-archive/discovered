@@ -84,7 +84,6 @@ public class Resource implements IExtensibleResource {
         java.util.Collections.sort(sortedListOfCuratorURIs);
         String all_curators_string = StringUtils.join(sortedListOfCuratorURIs.iterator(), " ");
         return all_curators_string;
-    	
     }
 
     @Deprecated
