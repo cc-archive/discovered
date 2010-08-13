@@ -48,6 +48,15 @@ if [ "${failed_dependencies}" ]; then
     die "DiscoverEd requires the following missing dependencies:" "${failed_dependencies}" "You might be able to install this/these with a package manager like apt-get or yum."
 fi
 
+if [ -z $JAVA_HOME ]; then
+    die "To run this script, you'll need to set the environment variable \$JAVA_HOME. This might work:" "   export JAVA_HOME=/usr/lib/jvm/java-6-sun/"
+fi
+
+JAVAC_LOCATION_HOPEFULLY="$JAVA_HOME/bin/javac"
+if [ ! -f "$JAVAC_LOCATION_HOPEFULLY" ]; then
+    die "Couldn't find a java compiler. Looked in $JAVAC_LOCATION_HOPEFULLY. Make sure your JAVA_HOME points to a Java Development Kit (JDK), not just a Java Runtime Environment (JRE)."
+fi
+
 stty -echo
 read -p "MySQL root password: " MYSQL_ROOT_PASSWORD; echo
 stty echo
@@ -60,16 +69,6 @@ else
 fi
  
 # echo 'DROP DATABASE IF EXISTS discovered; CREATE DATABASE discovered; GRANT ALL ON discovered.* TO discovered@localhost' | mysql -uroot -p"$MYSQL_ROOT_PASSWORD" || die 'Please edit this script, and change the MYSQL_ROOT_PASSWORD variable to your MySQL root password.'
-
-JAVAC_LOCATION_HOPEFULLY="$JAVA_HOME/bin/javac"
-if [ ! -f "$JAVAC_LOCATION_HOPEFULLY" ]; then
-    die "Couldn't find a java compiler. Looked in $JAVAC_LOCATION_HOPEFULLY. Make sure your JAVA_HOME points to a Java Development Kit (JDK), not just a Java Runtime Environment (JRE)."
-fi
-
-
-if [ -z $JAVA_HOME ]; then
-    die "To run this script, you'll need to set the environment variable \$JAVA_HOME. This might work:" "   export JAVA_HOME=/usr/lib/jvm/java-6-sun/"
-fi
 
 ### Okay, all the prerequisites are set. Now we can mkdir and move forward.
 
