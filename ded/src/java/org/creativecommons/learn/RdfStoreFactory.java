@@ -110,15 +110,20 @@ public class RdfStoreFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public Iterator<Quad> findQuads(Node provenance, Node subject, Node predicate, Node value) {
+		return (Iterator<Quad>) this.graphset.findQuads(provenance, subject, predicate, value);
+	}
+	
+	
 	public Collection<String> getProvenancesThatKnowResourceWithThisURI(String resourceURI) {
 		HashSet<String> provenances = new HashSet<String>();
-		Iterator it = this.graphset.findQuads(
+		Iterator<Quad> it = this.findQuads(
 				Node.ANY,
 				Node.createURI(resourceURI),
 				RDF.type.asNode(),
 				CCLEARN.Resource.asNode());
 		while (it.hasNext()) {
-		    Quad q = (Quad) it.next();
+		    Quad q = it.next();
 		    provenances.add(q.getGraphName().getURI());
 		}
 		return provenances;
