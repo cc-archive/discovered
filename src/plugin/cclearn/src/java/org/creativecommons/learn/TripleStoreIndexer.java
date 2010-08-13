@@ -209,7 +209,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 		LOG.debug("RdfStore: indexing special cases.");
 		LOG.warn("TripleStoreIndexer is about to try to index this URL: " + url.toString());
 
-        for (String provURI: RdfStoreFactory.get().getAllKnownTripleStoreUris()) {
+        for (String provURI: RdfStoreFactory.get().getProvenancesThatKnowResourceWithThisURI(url.toString())) {
             RdfStore store = RdfStoreFactory.get().forProvenance(provURI);
             try {
                 Resource resource = store.loadDeep(Resource.class, url.toString());
