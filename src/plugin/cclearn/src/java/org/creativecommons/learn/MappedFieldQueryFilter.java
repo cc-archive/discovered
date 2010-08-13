@@ -44,7 +44,8 @@ public class MappedFieldQueryFilter implements QueryFilter {
 		this.boost = boost;
 	}
 	
-	private ArrayList<String> getActiveProvenanceURIs(Query input) {
+	// FIXME: Test this. This is almost definitely wrong.
+	public ArrayList<String> getActiveProvenanceURIs(Query input) {
 		
 		ArrayList<String> provenanceURIs = RdfStoreFactory.get().getAllKnownTripleStoreUris();
 		
