@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import org.apache.commons.lang.StringUtils;
 
@@ -23,6 +24,8 @@ import org.creativecommons.learn.oercloud.Resource;
 
 import thewebsemantic.NotFoundException;
 
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -35,6 +38,8 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.SimpleSelector;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+
+import de.fuberlin.wiwiss.ng4j.Quad;
 
 public class TripleStoreIndexer implements IndexingFilter {
         HashMap <String,String> DEFAULT_NAMESPACES = null;
@@ -141,44 +146,32 @@ public class TripleStoreIndexer implements IndexingFilter {
     	}
 
         LOG.info("predicate URI: " + predicateURI);
+        
+        // Find all triples that refer to that predicate as refers to this resource
+        RdfStoreFactory factory = RdfStoreFactory.get();
+        Iterator<Quad> it = factory.findQuads( 
+                Node.ANY, 
+                Node.createURI(resourceURI),
+                Node.createURI(predicateURI),
+                Node.ANY);
 
-        /* Now, each triple store, do a query looking for triples matching
-         * <resourceURI> <predicateURI> object.
-    	 * Aggregate those objects into the HashSet.
-    	 */
-    	for (String provenanceURI: RdfStoreFactory.get().getAllKnownTripleStoreUris()) {
-            LOG.info("Looping over triple store uri " + provenanceURI +
-                    " looking for triples matching " + resourceURI +
-                    predicateURI + " _____");
-    		RdfStore store = RdfStoreFactory.get().forProvenance(provenanceURI);
-    		Model model = store.getModel();
-    		SimpleSelector selector = new SimpleSelector(
-    				model.createResource(resourceURI), 
-    				model.createProperty(predicateURI),
-    				(RDFNode) null);
-   												      
-    		StmtIterator statements = model.listStatements(selector);
-    		while (statements.hasNext()) {
-                LOG.info("Looping over statement for subj: " + resourceURI +
-                        ", pred: " + fieldName);
-    			Statement statement = statements.next();
-    			RDFNode node = statement.getObject();
-    			if (node.isLiteral()) {
-    				Literal literal = (Literal) node;
-    				values.add(literal.getString());
-    			} else if (node.isResource()) {
-    				Resource r = (Resource) node;
-    				values.add(r.getUrl());
-    			} else {
-    				String asString = node.toString();
-    				LOG.warn("Weird, a node of an unusual type: " + asString);
-    				values.add(asString);
-    			}
-    		}
-            store.close();
-    	}
+        while (it.hasNext()) {
+            Quad q = it.next();
+            Triple statement = q.getTriple();
+			Node node = statement.getObject();
+			if (node.isLiteral()) {
+				Literal literal = (Literal) node;
+				values.add(literal.getString());
+			} else if (node.isURI()) {
+				values.add(node.getURI().toString());
+			} else {
+				String asString = node.toString();
+				LOG.warn("Weird, a node of an unusual type: " + asString);
+				values.add(asString);
+			}
+        }
 
-    	return values;
+        return values;
     }
 
 	@Override
