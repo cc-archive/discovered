@@ -49,9 +49,10 @@ public class MappedFieldQueryFilter implements QueryFilter {
 	
 	public static HashSet<String> getActiveProvenanceURIs(Collection<String> excludedCuratorURIs) {
 		HashSet<String> allProvenanceURIs = new HashSet<String>(RdfStoreFactory.get().getAllKnownTripleStoreUris());
+		RdfStoreFactory factory = RdfStoreFactory.get();
 		for (String excludeMyFeeds : excludedCuratorURIs) {
-			/* Find the feeds */
-			/* remove them */
+			Collection <String> feedsToExclude = factory.getProvenanceURIsFromCuratorURI(excludeMyFeeds);
+			allProvenanceURIs.removeAll(feedsToExclude);
 		}
 		return allProvenanceURIs;		
 	}
