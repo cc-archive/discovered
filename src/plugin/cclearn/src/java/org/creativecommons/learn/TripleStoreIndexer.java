@@ -1,10 +1,9 @@
 package org.creativecommons.learn;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map.Entry;
-import org.apache.commons.lang.StringUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,18 +22,11 @@ import org.creativecommons.learn.oercloud.Resource;
 
 import thewebsemantic.NotFoundException;
 
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.SimpleSelector;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
+
+import de.fuberlin.wiwiss.ng4j.Quad;
 
 public class TripleStoreIndexer implements IndexingFilter {
         HashMap <String,String> DEFAULT_NAMESPACES = null;
@@ -47,33 +39,18 @@ public class TripleStoreIndexer implements IndexingFilter {
 		// ProvenancePredicatePair, and add its .toFieldName() to a list. Return
 		// the list.
 		
-		ArrayList<String> provenanceURIs = RdfStoreFactory.get().getAllKnownTripleStoreUris();
+		RdfStoreFactory everything = RdfStoreFactory.get();
 		
-		for (String provenanceURI: provenanceURIs) {
+		Iterator<Quad> allQuads = everything.findQuads(Node.ANY, Node.ANY, Node.ANY, Node.ANY);
+		
+		while(allQuads.hasNext()) {
+			Quad q = allQuads.next();
 			
-			// Create a query
-			String queryString = "SELECT ?s ?p ?o WHERE { ?s ?p ?o .}";
-			Query query = QueryFactory.create(queryString);
-
-			// Execute the query and obtain results
-            RdfStore store = RdfStoreFactory.get().forProvenance(provenanceURI);
-			Model model;
-			model = store.getModel();
-
-			QueryExecution qe = QueryExecutionFactory.create(query, model);
-			ResultSet results = qe.execSelect();
-
-			while (results.hasNext()) {
-				QuerySolution stmt = results.nextSolution();
-				RDFNode predicate = stmt.get("p");
-				ProvenancePredicatePair pair = new ProvenancePredicatePair(provenanceURI, predicate);
-				String fieldName = pair.toFieldName(); //column name, field name, same thing
-				fieldNames.add(fieldName);
-			}
-			
-			// Important - free up resources used running the query
-			qe.close();
-            store.close();
+			Node predicate = q.getPredicate();
+			String provenanceURI = q.getGraphName().toString();
+			ProvenancePredicatePair pair = new ProvenancePredicatePair(provenanceURI, predicate);
+			String fieldName = pair.toFieldName(); //column name, field name, same thing
+			fieldNames.add(fieldName);
 		}
 		
 		// Add field names that come from the site-specific field_names.xml configuration file.
@@ -141,44 +118,32 @@ public class TripleStoreIndexer implements IndexingFilter {
     	}
 
         LOG.info("predicate URI: " + predicateURI);
+        
+        // Find all triples that refer to that predicate as refers to this resource
+        RdfStoreFactory factory = RdfStoreFactory.get();
+        Iterator<Quad> it = factory.findQuads( 
+                Node.ANY, 
+                Node.createURI(resourceURI),
+                Node.createURI(predicateURI),
+                Node.ANY);
 
-        /* Now, each triple store, do a query looking for triples matching
-         * <resourceURI> <predicateURI> object.
-    	 * Aggregate those objects into the HashSet.
-    	 */
-    	for (String provenanceURI: RdfStoreFactory.get().getAllKnownTripleStoreUris()) {
-            LOG.info("Looping over triple store uri " + provenanceURI +
-                    " looking for triples matching " + resourceURI +
-                    predicateURI + " _____");
-    		RdfStore store = RdfStoreFactory.get().forProvenance(provenanceURI);
-    		Model model = store.getModel();
-    		SimpleSelector selector = new SimpleSelector(
-    				model.createResource(resourceURI), 
-    				model.createProperty(predicateURI),
-    				(RDFNode) null);
-   												      
-    		StmtIterator statements = model.listStatements(selector);
-    		while (statements.hasNext()) {
-                LOG.info("Looping over statement for subj: " + resourceURI +
-                        ", pred: " + fieldName);
-    			Statement statement = statements.next();
-    			RDFNode node = statement.getObject();
-    			if (node.isLiteral()) {
-    				Literal literal = (Literal) node;
-    				values.add(literal.getString());
-    			} else if (node.isResource()) {
-    				Resource r = (Resource) node;
-    				values.add(r.getUrl());
-    			} else {
-    				String asString = node.toString();
-    				LOG.warn("Weird, a node of an unusual type: " + asString);
-    				values.add(asString);
-    			}
-    		}
-            store.close();
-    	}
+        while (it.hasNext()) {
+            Quad q = it.next();
+            Triple statement = q.getTriple();
+			Node node = statement.getObject();
+			if (node.isLiteral()) {
+				Literal literal = (Literal) node;
+				values.add(literal.getString());
+			} else if (node.isURI()) {
+				values.add(node.getURI().toString());
+			} else {
+				String asString = node.toString();
+				LOG.warn("Weird, a node of an unusual type: " + asString);
+				values.add(asString);
+			}
+        }
 
-    	return values;
+        return values;
     }
 
 	@Override
@@ -216,7 +181,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 		LOG.debug("RdfStore: indexing special cases.");
 		LOG.warn("TripleStoreIndexer is about to try to index this URL: " + url.toString());
 
-        for (String provURI: RdfStoreFactory.get().getAllKnownTripleStoreUris()) {
+        for (String provURI: RdfStoreFactory.get().getProvenancesThatKnowResourceWithThisURI(url.toString())) {
             RdfStore store = RdfStoreFactory.get().forProvenance(provURI);
             try {
                 Resource resource = store.loadDeep(Resource.class, url.toString());
@@ -246,12 +211,12 @@ public class TripleStoreIndexer implements IndexingFilter {
 	private void indexTriples(NutchDocument doc, Text url) {
 
 		String subjectURL = url.toString();
-		HashMap<ProvenancePredicatePair, RDFNode> map = RdfStoreFactory.get().getPPP2ObjectMapForSubject(subjectURL);
+		HashMap<ProvenancePredicatePair, Node> map = RdfStoreFactory.get().getPPP2ObjectMapForSubject(subjectURL);
 		
 		// Index the triples
-		for (Entry<ProvenancePredicatePair, RDFNode> entry: map.entrySet()) {
+		for (Entry<ProvenancePredicatePair, Node> entry: map.entrySet()) {
 			ProvenancePredicatePair p3 = entry.getKey();
-			RDFNode objectNode = entry.getValue();
+			Node objectNode = entry.getValue();
 			
 			// FIXME: Instead of simply using the predicate URI below, use a
 			// string that varies according to the predicate AND provenance.
@@ -294,7 +259,7 @@ public class TripleStoreIndexer implements IndexingFilter {
     }
 
 	private void indexStatement(NutchDocument doc, ProvenancePredicatePair p3,
-			RDFNode obj_node) {
+			Node obj_node) {
 
 		Field.Index tokenized = Field.Index.NOT_ANALYZED;
 
@@ -323,32 +288,6 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 	public Configuration getConf() {
 		return this.conf;
-	}
-
-	private HashMap<String, HashSet<String>> provenanceResourceCache;
-	
-	public HashMap<String, HashSet<String>> getProvenanceResourceCache() {
-		if (provenanceResourceCache == null) {
-			provenanceResourceCache = new HashMap<String, HashSet<String>>();
-	    	for (String provenanceURI: RdfStoreFactory.get().getAllKnownTripleStoreUris()) {
-	
-	    		RdfStore store = RdfStoreFactory.get().forProvenance(provenanceURI);
-	    		
-	    		for (Resource r : store.load(Resource.class)) {
-	    			String resourceURI = r.getUrl();
-
-	    			HashSet<String> available_resources = provenanceResourceCache.get(provenanceURI);
-	    			if (available_resources == null) {
-	    				available_resources = new HashSet<String>();
-	    			}
-	    			available_resources.add(resourceURI);
-	    			provenanceResourceCache.put(provenanceURI, available_resources);
-	    			
-	    		}
-	    	}
-		}
-		return provenanceResourceCache;
-		
 	}
 
 } // TripleStoreIndexer

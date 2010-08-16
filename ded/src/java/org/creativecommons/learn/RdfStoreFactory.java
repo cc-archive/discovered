@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
@@ -15,6 +16,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
+
+import thewebsemantic.NotFoundException;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Query;
@@ -110,15 +113,20 @@ public class RdfStoreFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public Iterator<Quad> findQuads(Node provenance, Node subject, Node predicate, Node value) {
+		return (Iterator<Quad>) this.graphset.findQuads(provenance, subject, predicate, value);
+	}
+	
+	
 	public Collection<String> getProvenancesThatKnowResourceWithThisURI(String resourceURI) {
 		HashSet<String> provenances = new HashSet<String>();
-		Iterator it = this.graphset.findQuads(
+		Iterator<Quad> it = this.findQuads(
 				Node.ANY,
 				Node.createURI(resourceURI),
 				RDF.type.asNode(),
 				CCLEARN.Resource.asNode());
 		while (it.hasNext()) {
-		    Quad q = (Quad) it.next();
+		    Quad q = it.next();
 		    provenances.add(q.getGraphName().getURI());
 		}
 		return provenances;
@@ -230,55 +238,36 @@ public class RdfStoreFactory {
 	 * That means that Curators.org has labeled this resource as appropriate for
 	 * high schoolers.
 	 */
-	public HashMap<ProvenancePredicatePair, RDFNode> getPPP2ObjectMapForSubject(
+	// FIXME: Migrate this method to stop using getAllKnownTripleStoreUris
+	public HashMap<ProvenancePredicatePair, Node> getPPP2ObjectMapForSubject(
 			String subjectURL) {
 
-		HashMap<ProvenancePredicatePair, RDFNode> map = new HashMap<ProvenancePredicatePair, RDFNode>();
-
-		for (String provenanceURI : this.getAllKnownTripleStoreUris()) {
-            RdfStore store = this.forProvenance(provenanceURI);
-
-			Model m;
-			m = store.getModel();
-
-			// Create a new query
-			String queryString = "SELECT ?p ?o " + "WHERE {" + "      <"
-					+ subjectURL.toString() + "> ?p ?o ." + "      }";
-			Query query = QueryFactory.create(queryString);
-
-			// Execute the query and obtain results
-			QueryExecution qe = QueryExecutionFactory.create(query, m);
-
-			com.hp.hpl.jena.query.ResultSet cursor = qe.execSelect();
-
-			// Index the triples
-			while (cursor.hasNext()) {
-				QuerySolution stmt = cursor.nextSolution();
-				RDFNode predicateNode = stmt.get("p");
-				ProvenancePredicatePair p3 = new ProvenancePredicatePair(
-						provenanceURI, predicateNode);
-				RDFNode objectNode = stmt.get("o");
-				System.out
-						.println("Found a triple for " + subjectURL + ": "
-								+ predicateNode.toString() + " courtesy of "
-								+ provenanceURI + ", value is "
-								+ objectNode.toString());
-				map.put(p3, objectNode);
-			}
-
-			// Important - free up resources used running the query
-			qe.close();
+		HashMap<ProvenancePredicatePair, Node> map = new HashMap<ProvenancePredicatePair, Node>();
+		
+		Iterator<Quad> iterator = this.findQuads(Node.ANY,
+				Node.createURI(subjectURL),
+				Node.ANY,
+				Node.ANY);
+		
+		while (iterator.hasNext()) {
+			Quad q = iterator.next();
+			Node predicateNode = q.getPredicate();
+			String provenanceURI = q.getGraphName().getURI().toString();
+			
+			ProvenancePredicatePair p3 = new ProvenancePredicatePair(
+					provenanceURI, predicateNode);
+			map.put(p3, q.getObject());
 		}
 
 		return map;
 	}
 
-	public HashMap<ProvenancePredicatePair, RDFNode> getPPP2ObjectMapForSubjectAndPredicate(
+	public HashMap<ProvenancePredicatePair, Node> getPPP2ObjectMapForSubjectAndPredicate(
 			String subjectURI, String titlePredicate) {
-		HashMap<ProvenancePredicatePair, RDFNode> map = this
+		HashMap<ProvenancePredicatePair, Node> map = this
 				.getPPP2ObjectMapForSubject(subjectURI);
-		HashMap<ProvenancePredicatePair, RDFNode> mapFiltered = new HashMap<ProvenancePredicatePair, RDFNode>();
-		for (Entry<ProvenancePredicatePair, RDFNode> entry : map.entrySet()) {
+		HashMap<ProvenancePredicatePair, Node> mapFiltered = new HashMap<ProvenancePredicatePair, Node>();
+		for (Entry<ProvenancePredicatePair, Node> entry : map.entrySet()) {
 			if (entry.getKey().predicateNode.toString().equals(titlePredicate)) {
 				mapFiltered.put(entry.getKey(), entry.getValue());
 			}
@@ -286,27 +275,17 @@ public class RdfStoreFactory {
 		return mapFiltered;
 	}
 
-	public ArrayList<String> getProvenanceURIsFromCuratorShortName(
-			String curatorShortName) {
+	public Set<String> getProvenanceURIsFromCuratorURI(
+			String curatorURI) {
 		/* Find the matching Curator, if any. */
-		Curator relevantCurator = null;
-		ArrayList<String> resultsSoFar = new ArrayList<String>();
-
 		RdfStore store = this.forDEd();
-		Collection<Curator> curators = store.load(Curator.class);
-
-		/* FIXME: This is a really lame way to do a query. */
-		for (Curator c : curators) {
-			if (c.getName().equals(curatorShortName)) {
-				relevantCurator = c;
-				break;
-			}
+		Curator relevantCurator;
+		try {
+			relevantCurator = store.load(Curator.class, curatorURI);
+		} catch (NotFoundException e) {
+			return new HashSet<String>();
 		}
-
-		// Okay, if there's no matching Curator, we bail out now.
-		if (relevantCurator == null) {
-			return resultsSoFar;
-		}
+		Set<String> resultsSoFar = new HashSet<String>();
 
 		// Otherwise, the answer is that the matching provenance URIs are the
 		// URLs of all
@@ -315,8 +294,8 @@ public class RdfStoreFactory {
 
 		// Search for Feeds whose curator is our friend, the relevantCurator
 		for (Feed f : all_feeds) {
-			if (f.getCurator().getUrl().equals(relevantCurator.getUrl())) {
-				resultsSoFar.add(f.getUrl());
+			if (f.getCurator().getUri().equals(relevantCurator.getUri())) {
+				resultsSoFar.add(f.getUri().toString());
 			}
 		}
 

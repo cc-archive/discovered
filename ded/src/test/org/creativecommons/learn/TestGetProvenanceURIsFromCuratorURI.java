@@ -2,22 +2,26 @@ package org.creativecommons.learn;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Set;
 
 import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
 
-public class TestGetProvenanceURIsFromCuratorShortName extends DiscoverEdTestCase {
-	public void test() {
-		
+public class TestGetProvenanceURIsFromCuratorURI extends DiscoverEdTestCase {
+	private Curator c;
+	private Feed f;
+	
+	public void setUp() {
+		super.setUp();
 		// Pre-conditions
 		
 		// Create a Curator with a nickname
-		Curator c = new Curator(URI.create("http://example.com/#curator"));
+		c = new Curator(URI.create("http://example.com/#curator"));
 		c.setName("shorty");
 		
 		// That curator has a feed
-		Feed f = new Feed(URI.create("http://example.com/#feed"));
+		f = new Feed(URI.create("http://example.com/#feed"));
 		f.setCurator(c);
 		
 		// Create a different Curator with a nickname
@@ -32,17 +36,23 @@ public class TestGetProvenanceURIsFromCuratorShortName extends DiscoverEdTestCas
 		store.save(c);
 		store.save(f);
 		store.save(distractor);
-		store.save(distractorFeed);
-		
-		ArrayList<String> uris = RdfStoreFactory.get().getProvenanceURIsFromCuratorShortName("shorty");
+		store.save(distractorFeed);		
+	}
+	
+	public void testFindAppropriateFeeds() {
+		Set<String> uris = RdfStoreFactory.get().getProvenanceURIsFromCuratorURI(c.getUri().toString());
 		
 		// That there above variable "uris" should be a list of URIs of provenances (= feed URLs) pertaining to the curator named "shorty"
-		assertEquals(uris.get(0), f.getUrl());
-		
+		assertEquals(uris.iterator().next(), f.getUri().toString());
+
 		// We didn't grab the distractor curator, did we? If we did, then the
 		// size() would be 2, obviously.
-		assertEquals(uris.size(), 1);
-		
+		assertEquals(1, uris.size());
+	}
+	
+	public void testExcludeNonexistentCurator() {
+		Set<String> uris = RdfStoreFactory.get().getProvenanceURIsFromCuratorURI("http://example.com/no-such-curator");
+		assertEquals(0, uris.size());
 	}
 }
 

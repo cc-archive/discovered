@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.creativecommons.learn.oercloud.Resource;
 
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
 
@@ -23,7 +24,7 @@ public class TestGetPredicatesForSubject extends DiscoverEdTestCase {
 		
 		// Invoke the method getPPP2ObjectMapForSubject (this is the method we're testing)
 		// The output of this method should be a HashMap of ProvenancePredicatePairs to Strings.
-		HashMap<ProvenancePredicatePair, RDFNode> map = RdfStoreFactory.get().getPPP2ObjectMapForSubject(RESOURCE_URI);
+		HashMap<ProvenancePredicatePair, Node> map = RdfStoreFactory.get().getPPP2ObjectMapForSubject(RESOURCE_URI);
 		
 		boolean foundPair1 = false;
 		boolean foundPair2 = false;

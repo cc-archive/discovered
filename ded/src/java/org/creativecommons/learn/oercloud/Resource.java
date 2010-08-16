@@ -18,8 +18,10 @@ import thewebsemantic.Namespace;
 import thewebsemantic.NotFoundException;
 import thewebsemantic.RdfProperty;
 
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.vocabulary.RDF;
 
 @Namespace("http://learn.creativecommons.org/ns#")
 public class Resource implements IExtensibleResource {
@@ -49,24 +51,21 @@ public class Resource implements IExtensibleResource {
         this.url = new URI(url);
     }
 
-    /* XXX Holy Jesus, this thing is going to be inefficient. */
     public Set<String> getAllCuratorURIs() {
     	HashSet<String> ret = new HashSet<String>();
-        for (String provURI: RdfStoreFactory.get().getAllKnownTripleStoreUris()) {
-        	RdfStore store = RdfStoreFactory.get().forProvenance(provURI);
-        	try {
-        		Resource thing = store.load(Resource.class, this.getUrl());
-        		if (thing != null) {
-        			// okay, so the provenance URI we got was probably the feed.
-        			// in that case, look for a curator.
-        			Feed f = RdfStoreFactory.get().forDEd().load(Feed.class, provURI);
-        			String curatorURI = f.getCurator().getUrl();        		
-        			ret.add(curatorURI);
-        		}
-        	} catch (NotFoundException nfe) {
-        		// in that case, simply do not add this provenance.
-        	}
-        }
+    	
+    	RdfStoreFactory factory = RdfStoreFactory.get();
+    	Collection<String> provenances = factory.getProvenancesThatKnowResourceWithThisURI(this.getUri().toString());
+    	RdfStore dedStore = RdfStoreFactory.get().forDEd();
+    	for (String provenance: provenances) {
+    		// Is this a Feed object that we can discover in the DEd store? If so, add its URI to ret
+    		try {
+    			Feed f = dedStore.load(Feed.class, provenance);
+    			ret.add(f.getCurator().getUri().toString());
+    		} catch (NotFoundException nfe) {
+    			// guess it's not a feed. Okay, we loop to the next one.
+    		}
+    	}
         return ret;
     }
     

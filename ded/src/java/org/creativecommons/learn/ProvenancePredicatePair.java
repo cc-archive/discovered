@@ -3,7 +3,7 @@ package org.creativecommons.learn;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.graph.Node;
 
 public class ProvenancePredicatePair {
 	
@@ -22,8 +22,8 @@ public class ProvenancePredicatePair {
 	}
 
 	public String provenanceURI;
-	public RDFNode predicateNode;
-	public ProvenancePredicatePair(String provenanceURI, RDFNode predicateNode) {
+	public Node predicateNode;
+	public ProvenancePredicatePair(String provenanceURI, Node predicateNode) {
 		this.provenanceURI = provenanceURI;
 		this.predicateNode = predicateNode;
 	}
@@ -34,7 +34,7 @@ public class ProvenancePredicatePair {
 		
 		// see if we want to collapse the predicate into a shorter convenience
 		// value
-		if (this.predicateNode.isResource()) {
+		if (this.predicateNode.isURI()) {
 			predicate = collapseResource(predicate);
 		}
 		

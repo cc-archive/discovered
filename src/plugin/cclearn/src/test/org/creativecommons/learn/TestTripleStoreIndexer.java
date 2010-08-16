@@ -15,55 +15,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 
 public class TestTripleStoreIndexer extends DiscoverEdTestCase {
-	public static void testCreateTripleStoreResourceCache() {
-		// First, create a Resource that appears in feeds curated by multiple organizations
-		Resource r1 = new Resource(URI.create("http://example.com/#resource"));
-
-		// curator 1
-		Curator c1 = new Curator(URI.create("http://example.com/#curator1"));
-		RdfStoreFactory.get().forDEd().save(c1);
-		
-		// feed 1
-		Feed f1 = new Feed(URI.create("http://example.com/#feed1"));
-		f1.setCurator(c1);
-		RdfStoreFactory.get().forDEd().save(f1);
-		
-		// provenance 1
-		RdfStore store1 = RdfStoreFactory.get().forProvenance(f1.getUrl());
-		store1.save(r1);
-		
-		Resource r2 = new Resource(URI.create("http://example.com/#resource2"));
-		
-		// curator 2
-		Curator c2 = new Curator(URI.create("http://example.com/#curator2"));
-		RdfStoreFactory.get().forDEd().save(c2);
-		
-		// feed 1
-		Feed f2 = new Feed(URI.create("http://example.com/#feed2"));
-		f2.setCurator(c2);
-		RdfStoreFactory.get().forDEd().save(f2);
-		
-		// provenance 2
-		RdfStore store2 = RdfStoreFactory.get().forProvenance(f2.getUrl());
-		store2.save(r2);
-		
-		// Then, test that we can know ask the Resource to tell us all the URIs that have curated it
-		TripleStoreIndexer tsi = new TripleStoreIndexer();
-		
-		HashMap<String, HashSet<String>> map = tsi.getProvenanceResourceCache();
-		
-		HashSet<String> prov1_resources = map.get(f1.getUrl());
-		HashSet<String> prov1_resources_expected = new HashSet<String>();
-		prov1_resources_expected.add(r1.getUrl());
-		assertEquals(prov1_resources, prov1_resources_expected);
-		
-		HashSet<String> prov2_resources = map.get(f2.getUrl());
-		HashSet<String> prov2_resources_expected = new HashSet<String>();
-		prov2_resources_expected.add(r2.getUrl());
-		assertEquals(prov2_resources, prov2_resources_expected);
-			
-	}
-
 	public static void testGenerateAllPossibleColumnNames() {
 		// first, create a Triple (admittedly, in the siteConfigurationStore) that
 		// has a predicate that's attached to a Resource.
