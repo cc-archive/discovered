@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import org.creativecommons.learn.oercloud.Resource;
 
-import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.graph.Node;
 
 public class TestPPP extends DiscoverEdTestCase {
 	public void test() {
@@ -20,7 +20,7 @@ public class TestPPP extends DiscoverEdTestCase {
 		String titlePredicateAbbrev = "_dct_title";
 		store.save(r);
 		
-		HashMap<ProvenancePredicatePair, RDFNode> map =
+		HashMap<ProvenancePredicatePair, Node> map =
 			RdfStoreFactory.get().getPPP2ObjectMapForSubjectAndPredicate(subjectURI, titlePredicate);
 		ProvenancePredicatePair p3 = map.keySet().iterator().next();
 

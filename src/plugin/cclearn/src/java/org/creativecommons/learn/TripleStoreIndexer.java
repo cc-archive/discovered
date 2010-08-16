@@ -39,33 +39,18 @@ public class TripleStoreIndexer implements IndexingFilter {
 		// ProvenancePredicatePair, and add its .toFieldName() to a list. Return
 		// the list.
 		
-		ArrayList<String> provenanceURIs = RdfStoreFactory.get().getAllKnownTripleStoreUris();
+		RdfStoreFactory everything = RdfStoreFactory.get();
 		
-		for (String provenanceURI: provenanceURIs) {
+		Iterator<Quad> allQuads = everything.findQuads(Node.ANY, Node.ANY, Node.ANY, Node.ANY);
+		
+		while(allQuads.hasNext()) {
+			Quad q = allQuads.next();
 			
-			// Create a query
-			String queryString = "SELECT ?s ?p ?o WHERE { ?s ?p ?o .}";
-			Query query = QueryFactory.create(queryString);
-
-			// Execute the query and obtain results
-            RdfStore store = RdfStoreFactory.get().forProvenance(provenanceURI);
-			Model model;
-			model = store.getModel();
-
-			QueryExecution qe = QueryExecutionFactory.create(query, model);
-			ResultSet results = qe.execSelect();
-
-			while (results.hasNext()) {
-				QuerySolution stmt = results.nextSolution();
-				RDFNode predicate = stmt.get("p");
-				ProvenancePredicatePair pair = new ProvenancePredicatePair(provenanceURI, predicate);
-				String fieldName = pair.toFieldName(); //column name, field name, same thing
-				fieldNames.add(fieldName);
-			}
-			
-			// Important - free up resources used running the query
-			qe.close();
-            store.close();
+			Node predicate = q.getPredicate();
+			String provenanceURI = q.getGraphName().toString();
+			ProvenancePredicatePair pair = new ProvenancePredicatePair(provenanceURI, predicate);
+			String fieldName = pair.toFieldName(); //column name, field name, same thing
+			fieldNames.add(fieldName);
 		}
 		
 		// Add field names that come from the site-specific field_names.xml configuration file.
@@ -226,12 +211,12 @@ public class TripleStoreIndexer implements IndexingFilter {
 	private void indexTriples(NutchDocument doc, Text url) {
 
 		String subjectURL = url.toString();
-		HashMap<ProvenancePredicatePair, RDFNode> map = RdfStoreFactory.get().getPPP2ObjectMapForSubject(subjectURL);
+		HashMap<ProvenancePredicatePair, Node> map = RdfStoreFactory.get().getPPP2ObjectMapForSubject(subjectURL);
 		
 		// Index the triples
-		for (Entry<ProvenancePredicatePair, RDFNode> entry: map.entrySet()) {
+		for (Entry<ProvenancePredicatePair, Node> entry: map.entrySet()) {
 			ProvenancePredicatePair p3 = entry.getKey();
-			RDFNode objectNode = entry.getValue();
+			Node objectNode = entry.getValue();
 			
 			// FIXME: Instead of simply using the predicate URI below, use a
 			// string that varies according to the predicate AND provenance.
@@ -274,7 +259,7 @@ public class TripleStoreIndexer implements IndexingFilter {
     }
 
 	private void indexStatement(NutchDocument doc, ProvenancePredicatePair p3,
-			RDFNode obj_node) {
+			Node obj_node) {
 
 		Field.Index tokenized = Field.Index.NOT_ANALYZED;
 

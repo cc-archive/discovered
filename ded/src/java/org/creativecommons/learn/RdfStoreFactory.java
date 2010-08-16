@@ -236,55 +236,35 @@ public class RdfStoreFactory {
 	 * high schoolers.
 	 */
 	// FIXME: Migrate this method to stop using getAllKnownTripleStoreUris
-	public HashMap<ProvenancePredicatePair, RDFNode> getPPP2ObjectMapForSubject(
+	public HashMap<ProvenancePredicatePair, Node> getPPP2ObjectMapForSubject(
 			String subjectURL) {
 
-		HashMap<ProvenancePredicatePair, RDFNode> map = new HashMap<ProvenancePredicatePair, RDFNode>();
-
-		for (String provenanceURI : this.getAllKnownTripleStoreUris()) {
-            RdfStore store = this.forProvenance(provenanceURI);
-
-			Model m;
-			m = store.getModel();
-
-			// Create a new query
-			String queryString = "SELECT ?p ?o " + "WHERE {" + "      <"
-					+ subjectURL.toString() + "> ?p ?o ." + "      }";
-			Query query = QueryFactory.create(queryString);
-
-			// Execute the query and obtain results
-			QueryExecution qe = QueryExecutionFactory.create(query, m);
-
-			com.hp.hpl.jena.query.ResultSet cursor = qe.execSelect();
-
-			// Index the triples
-			while (cursor.hasNext()) {
-				QuerySolution stmt = cursor.nextSolution();
-				RDFNode predicateNode = stmt.get("p");
-				ProvenancePredicatePair p3 = new ProvenancePredicatePair(
-						provenanceURI, predicateNode);
-				RDFNode objectNode = stmt.get("o");
-				System.out
-						.println("Found a triple for " + subjectURL + ": "
-								+ predicateNode.toString() + " courtesy of "
-								+ provenanceURI + ", value is "
-								+ objectNode.toString());
-				map.put(p3, objectNode);
-			}
-
-			// Important - free up resources used running the query
-			qe.close();
+		HashMap<ProvenancePredicatePair, Node> map = new HashMap<ProvenancePredicatePair, Node>();
+		
+		Iterator<Quad> iterator = this.findQuads(Node.ANY,
+				Node.createURI(subjectURL),
+				Node.ANY,
+				Node.ANY);
+		
+		while (iterator.hasNext()) {
+			Quad q = iterator.next();
+			Node predicateNode = q.getPredicate();
+			String provenanceURI = q.getGraphName().getURI().toString();
+			
+			ProvenancePredicatePair p3 = new ProvenancePredicatePair(
+					provenanceURI, predicateNode);
+			map.put(p3, q.getObject());
 		}
 
 		return map;
 	}
 
-	public HashMap<ProvenancePredicatePair, RDFNode> getPPP2ObjectMapForSubjectAndPredicate(
+	public HashMap<ProvenancePredicatePair, Node> getPPP2ObjectMapForSubjectAndPredicate(
 			String subjectURI, String titlePredicate) {
-		HashMap<ProvenancePredicatePair, RDFNode> map = this
+		HashMap<ProvenancePredicatePair, Node> map = this
 				.getPPP2ObjectMapForSubject(subjectURI);
-		HashMap<ProvenancePredicatePair, RDFNode> mapFiltered = new HashMap<ProvenancePredicatePair, RDFNode>();
-		for (Entry<ProvenancePredicatePair, RDFNode> entry : map.entrySet()) {
+		HashMap<ProvenancePredicatePair, Node> mapFiltered = new HashMap<ProvenancePredicatePair, Node>();
+		for (Entry<ProvenancePredicatePair, Node> entry : map.entrySet()) {
 			if (entry.getKey().predicateNode.toString().equals(titlePredicate)) {
 				mapFiltered.put(entry.getKey(), entry.getValue());
 			}
