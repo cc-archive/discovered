@@ -12,7 +12,7 @@
 
 <property>
   <name>rdfstore.db.url</name>
-  <value>jdbc:derby:discovered.db;create=true</value>
+  <value>jdbc:derby:DERBY_DATABASE_PATH;create=true</value>
 </property>
 
 <property>
