@@ -4,6 +4,9 @@
 package org.creativecommons.learn;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.lucene.index.Term;
@@ -44,15 +47,18 @@ public class MappedFieldQueryFilter implements QueryFilter {
 		this.boost = boost;
 	}
 	
+	public static HashSet<String> getActiveProvenanceURIs(Collection<String> excludedCuratorURIs) {
+		HashSet<String> allProvenanceURIs = new HashSet<String>(RdfStoreFactory.get().getAllKnownTripleStoreUris());
+		for (String excludeMyFeeds : excludedCuratorURIs) {
+			/* Find the feeds */
+			/* remove them */
+		}
+		return allProvenanceURIs;		
+	}
+	
 	// FIXME: Test this. This is almost definitely wrong.
-	public ArrayList<String> getActiveProvenanceURIs(Query input) {
-		
-		ArrayList<String> provenanceURIs = RdfStoreFactory.get().getAllKnownTripleStoreUris();
-		
-		// Find active provenances
-		ArrayList<String> activeProvenanceURIs = new ArrayList<String>();
-		
-		ArrayList<String> curatorShortNamesToExclude = new ArrayList<String>();
+	public static Set<String> getActiveProvenanceURIs(Query input) {
+		Set<String> curatorURIsToExclude = new HashSet<String>();
 		for (Clause c: input.getClauses()) {
 			
 			// FIXME: Use "-curator", not "excludecurator". We're just avoiding
@@ -67,25 +73,19 @@ public class MappedFieldQueryFilter implements QueryFilter {
 					PhraseQuery lucenePhrase = new PhraseQuery();
 
 					for (int j = 0; j < terms.length; j++) {
-						curatorShortNamesToExclude.add(terms[j].toString());
+						curatorURIsToExclude.add(terms[j].toString());
 					}
 				} else {
-					curatorShortNamesToExclude.add(c.getTerm().toString());
+					curatorURIsToExclude.add(c.getTerm().toString());
 				}
 			}
 		}
 		
-		// Now we have a list of short names of curators the user wants to exclude from this query
-		for (String curatorShortName: curatorShortNamesToExclude) {
-			for (String excludeThisProvenanceURI : RdfStoreFactory.get().getProvenanceURIsFromCuratorShortName(curatorShortName)) {
-				activeProvenanceURIs.remove(excludeThisProvenanceURI);
-			}
-		}
-		return activeProvenanceURIs;
+		return getActiveProvenanceURIs(curatorURIsToExclude);
 	}
 
 	protected org.apache.lucene.search.Query takeClauseAndCreateAMegaQueryContainingCertainProvenances(
-			ArrayList<String> provenanceURIs, Clause c) {
+			Collection<String> provenanceURIs, Clause c) {
 		DisjunctionMaxQuery ret = new DisjunctionMaxQuery(0);
 
 		// optimize phrase clause
@@ -141,7 +141,7 @@ public class MappedFieldQueryFilter implements QueryFilter {
 	public BooleanQuery filter(Query input, BooleanQuery output)
 			throws QueryException {
 		
-		ArrayList<String> activeProvenanceURIs = getActiveProvenanceURIs(input);
+		Set<String> activeProvenanceURIs = getActiveProvenanceURIs(input);
 		
 		// examine each clause in the Nutch query
 		Clause[] clauses = input.getClauses();

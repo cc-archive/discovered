@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
@@ -15,6 +16,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
+
+import thewebsemantic.NotFoundException;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Query;
@@ -272,27 +275,17 @@ public class RdfStoreFactory {
 		return mapFiltered;
 	}
 
-	public ArrayList<String> getProvenanceURIsFromCuratorShortName(
-			String curatorShortName) {
+	public Set<String> getProvenanceURIsFromCuratorURI(
+			String curatorURI) {
 		/* Find the matching Curator, if any. */
-		Curator relevantCurator = null;
-		ArrayList<String> resultsSoFar = new ArrayList<String>();
-
 		RdfStore store = this.forDEd();
-		Collection<Curator> curators = store.load(Curator.class);
-
-		/* FIXME: This is a really lame way to do a query. */
-		for (Curator c : curators) {
-			if (c.getName().equals(curatorShortName)) {
-				relevantCurator = c;
-				break;
-			}
+		Curator relevantCurator;
+		try {
+			relevantCurator = store.load(Curator.class, curatorURI);
+		} catch (NotFoundException e) {
+			return new HashSet<String>();
 		}
-
-		// Okay, if there's no matching Curator, we bail out now.
-		if (relevantCurator == null) {
-			return resultsSoFar;
-		}
+		Set<String> resultsSoFar = new HashSet<String>();
 
 		// Otherwise, the answer is that the matching provenance URIs are the
 		// URLs of all
