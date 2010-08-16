@@ -215,6 +215,7 @@
         <include name="commons-lang-*.jar"/>
         <include name="commons-logging-*.jar"/>
         <include name="log4j-*.jar"/>
+        <include name="slf4j-*.jar"/>
 				
 				<include name="xercesImpl.jar" />
 				<include name="stax-*.jar" />
