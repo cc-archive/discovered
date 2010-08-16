@@ -43,6 +43,25 @@
 	</target>
 
   <!-- ================================================================== -->
+  <!-- Build and run with the included Jetty container                    --> 
+  <!-- ================================================================== -->
+  <target name="serve" depends="war">
+    <property name="ded.opt.jetty_zip" value="jetty-distribution-7.1.6.v20100715"/>
+
+    <mkdir dir="${basedir}/tmp" />
+    <unzip src="${basedir}/ded/opt/${ded.opt.jetty_zip}.zip"
+	   dest="${basedir}/tmp" />
+    <copy file="${basedir}/build/nutch-1.1.war"
+	  todir="${basedir}/tmp/${ded.opt.jetty_zip}/webapps" />
+    <java jar="${basedir}/tmp/${ded.opt.jetty_zip}/start.jar"
+	  fork="true"
+	  dir="${basedir}/tmp/${ded.opt.jetty_zip}">
+<!--      <arg line="lib=${basedir}/lib:${basedir}/ded/lib" /> -->
+    </java>
+  </target>
+
+
+  <!-- ================================================================== -->
   <!-- Compile test code                                                  --> 
   <!-- ================================================================== -->
   <target name="compile-ded-test" depends="compile-core">
