@@ -294,8 +294,8 @@ public class RdfStoreFactory {
 
 		// Search for Feeds whose curator is our friend, the relevantCurator
 		for (Feed f : all_feeds) {
-			if (f.getCurator().getUrl().equals(relevantCurator.getUrl())) {
-				resultsSoFar.add(f.getUrl());
+			if (f.getCurator().getUri().equals(relevantCurator.getUri())) {
+				resultsSoFar.add(f.getUri().toString());
 			}
 		}
 
