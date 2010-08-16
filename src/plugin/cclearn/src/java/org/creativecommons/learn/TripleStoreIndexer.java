@@ -24,6 +24,7 @@ import thewebsemantic.NotFoundException;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.graph.impl.LiteralLabel;
 import com.hp.hpl.jena.rdf.model.Literal;
 
 import de.fuberlin.wiwiss.ng4j.Quad;
@@ -132,8 +133,8 @@ public class TripleStoreIndexer implements IndexingFilter {
             Triple statement = q.getTriple();
 			Node node = statement.getObject();
 			if (node.isLiteral()) {
-				Literal literal = (Literal) node;
-				values.add(literal.getString());
+				LiteralLabel literal = node.getLiteral();
+				values.add(literal.toString());
 			} else if (node.isURI()) {
 				values.add(node.getURI().toString());
 			} else {
@@ -268,7 +269,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 		// process the object...
 		if (obj_node.isLiteral()) {
-			object = ((Literal) obj_node).getValue().toString();
+			object = obj_node.getLiteral().toString();
 			tokenized = Field.Index.ANALYZED;
 		}
 		
