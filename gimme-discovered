@@ -7,12 +7,9 @@ set +x
 # --------------------------------------------------------
 
 DISCOVER_ED_ROOT=./discovered
-DED_BRANCH=jetty-included
-# DED_DB_NAME=discovered
+DED_BRANCH=next
 
 HTTP_PORT=8080
-#TOMCAT_SERVER_PORT=8006
-#TOMCAT_REDIRECT_PORT=8444
 
 function die() {
     echo 
