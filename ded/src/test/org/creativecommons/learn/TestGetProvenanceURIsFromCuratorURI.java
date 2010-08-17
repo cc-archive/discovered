@@ -1,10 +1,8 @@
 package org.creativecommons.learn;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Set;
 
-import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
 

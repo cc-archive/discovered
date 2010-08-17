@@ -2,8 +2,6 @@ package org.creativecommons.learn;
 
 import java.net.URI;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 
 import org.apache.hadoop.conf.Configuration;
 import org.creativecommons.learn.oercloud.Curator;

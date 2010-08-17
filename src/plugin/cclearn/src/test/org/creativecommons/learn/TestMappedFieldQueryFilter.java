@@ -7,8 +7,6 @@ import java.util.HashSet;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
 
-import junit.framework.TestCase;
-
 public class TestMappedFieldQueryFilter extends DiscoverEdTestCase {
 	
 	Curator c;

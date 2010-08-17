@@ -3,7 +3,6 @@ package org.creativecommons.learn;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import junit.framework.TestCase;
 

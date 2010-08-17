@@ -25,7 +25,6 @@ import thewebsemantic.NotFoundException;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.impl.LiteralLabel;
-import com.hp.hpl.jena.rdf.model.Literal;
 
 import de.fuberlin.wiwiss.ng4j.Quad;
 

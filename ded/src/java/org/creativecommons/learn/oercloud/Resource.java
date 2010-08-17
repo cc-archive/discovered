@@ -16,10 +16,8 @@ import thewebsemantic.Namespace;
 import thewebsemantic.NotFoundException;
 import thewebsemantic.RdfProperty;
 
-import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 @Namespace("http://learn.creativecommons.org/ns#")
 public class Resource implements IExtensibleResource {

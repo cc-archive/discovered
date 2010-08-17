@@ -6,7 +6,6 @@ import java.util.HashMap;
 import org.creativecommons.learn.oercloud.Resource;
 
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 
 
 public class TestGetPredicatesForSubject extends DiscoverEdTestCase {
