@@ -193,6 +193,7 @@
 
       <fileset dir="${ded.web.custom.dir}"/>
       <fileset dir="${ded.web.src.dir}/jsp"/>
+      <fileset dir="${ded.web.src.dir}/assets"/>
       <fileset dir="${web.src.dir}/jsp"/>
 
       <zipfileset dir="${docs.src}" includes="cc/*.html"/>
