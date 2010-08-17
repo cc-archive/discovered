@@ -2,14 +2,12 @@ package org.creativecommons.learn.oercloud;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import org.apache.commons.lang.StringUtils;
 import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.RdfStoreFactory;
 
@@ -73,19 +71,13 @@ public class Resource implements IExtensibleResource {
      * There is a need, a few times in the code, to get an alphabetized
      * list of the curator URIs for a document. So instead of everyone
      * sorting the output of getAllCuratorURIs, this method provides that.
+     * 
      * @return A string that is the space-joined, sorted version of getAllCuratorURIs 
      */
     public String getAllCuratorURIsInCanonicalForm() {
-    	return getAllCuratorURIsInCanonicalForm(this.getAllCuratorURIs());
+    	return Curator.curatorUriCollectionAsString(this.getAllCuratorURIs());
     }
     
-    public static String getAllCuratorURIsInCanonicalForm(Collection<String> curatorURIs) {
-    	ArrayList<String> sortedListOfCuratorURIs = new ArrayList<String>(curatorURIs);
-        java.util.Collections.sort(sortedListOfCuratorURIs);
-        String all_curators_string = StringUtils.join(sortedListOfCuratorURIs.iterator(), " ");
-        return all_curators_string;
-    }
-
     @Deprecated
     public String getUrl() {
         return url.toString();

@@ -14,7 +14,7 @@ import org.apache.nutch.searcher.QueryException;
 import org.apache.nutch.searcher.QueryFilter;
 import org.apache.nutch.searcher.Query.Clause;
 import org.apache.nutch.searcher.Query.Phrase;
-import org.creativecommons.learn.oercloud.Resource;
+import org.creativecommons.learn.oercloud.Curator;
 
 public class DocumentExclusionBasedOnCuratorQueryFilter implements QueryFilter {
     private static final Log LOG = 
@@ -110,7 +110,7 @@ public class DocumentExclusionBasedOnCuratorQueryFilter implements QueryFilter {
     	HashSet<String> curatorURIsToExclude = this.getCuratorsToExclude(input.getClauses());
 		
 		// Then canonicalize them by sorting and joining on space
-    	String canonicalForm = Resource.getAllCuratorURIsInCanonicalForm(curatorURIsToExclude);
+    	String canonicalForm = Curator.curatorUriCollectionAsString(curatorURIsToExclude);
     	
     	LOG.info("Canonical form: " + canonicalForm);
 		

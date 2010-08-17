@@ -1,15 +1,17 @@
 package org.creativecommons.learn.oercloud;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.lang.StringUtils;
 import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.RdfStoreFactory;
 
+import thewebsemantic.Id;
 import thewebsemantic.Namespace;
 import thewebsemantic.RdfProperty;
 import thewebsemantic.Sparql;
-import thewebsemantic.Id;
 
 @Namespace("http://learn.creativecommons.org/ns#")
 public class Curator {
@@ -65,5 +67,12 @@ public class Curator {
 		return Sparql.exec(RdfStoreFactory.get().forDEd().getModel(), Feed.class, query);
 	
 	}
-	
+
+	public static String curatorUriCollectionAsString(Collection<String> curatorURIs) {
+		ArrayList<String> sortedListOfCuratorURIs = new ArrayList<String>(curatorURIs);
+	    java.util.Collections.sort(sortedListOfCuratorURIs);
+	    String all_curators_string = StringUtils.join(sortedListOfCuratorURIs.iterator(), " ");
+	    return all_curators_string;
+	}
+
 }
