@@ -98,8 +98,6 @@
 	<classpathentry kind="lib" path="src/plugin/parse-swf/lib/javaswf.jar"/>
 	<classpathentry kind="lib" path="src/plugin/protocol-ftp/lib/commons-net-1.2.0-dev.jar"/>
 	<classpathentry kind="lib" path="src/plugin/urlfilter-automaton/lib/automaton.jar"/>
-	<classpathentry kind="lib" path="ded/lib/httpunit.jar"/>
-	<classpathentry kind="lib" path="ded/lib/js-1.6R5.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="conf"/>
 	<classpathentry kind="lib" path="lib/jid3lib-0.5.1.jar"/>
