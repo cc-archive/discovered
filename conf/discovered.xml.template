@@ -26,11 +26,6 @@
 </property>
 
 <property>
-  <name>rdfstore.db.type</name>
-  <value>Derby</value>
-</property>
-
-<property>
   <name>rdfstore.db.database_name_for_test_suite</name>
   <value>discovered_test</value>
 </property>
