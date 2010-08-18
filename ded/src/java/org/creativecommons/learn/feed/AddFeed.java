@@ -1,12 +1,13 @@
 package org.creativecommons.learn.feed;
 
 import java.net.URISyntaxException;
-import java.util.Collection;
 
 import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.RdfStoreFactory;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
+
+import thewebsemantic.NotFoundException;
 
 public class AddFeed {
 
@@ -23,35 +24,29 @@ public class AddFeed {
 
 			System.exit(1);
 		}
-
-		String type = args[0];
-		String url = args[1];
-		String curator = args[2];
 		
-		addFeed(type, url, curator);
+		addFeed(args[0], args[1], args[2]);
 		
 	}
 	
-	public static void addFeed(String type, String url, String curator) throws URISyntaxException {
+	public static void addFeed(String type, String url, String curator_uri) throws URISyntaxException {
+		
 		RdfStore store = RdfStoreFactory.get().forDEd();
 		
 		/* Make sure we already have heard of that Curator. */
-		Collection<Curator> curator_objs = store.load(Curator.class);
-		Curator curator_obj = null;
-		for (Curator c : curator_objs) {
-			if (c.getUrl().equals(curator)) {
-				curator_obj = c;
-				break;
-			}
+		Curator curator;
+		try {
+			curator = store.load(Curator.class, curator_uri);
 		}
-		if (curator_obj == null) {
+		catch (NotFoundException e) {
 			throw new IllegalArgumentException("You passed in a Curator about whom we have no data. You must run \"addcurator\" first (or maybe you typo'd the curator; check that argument).");
 		}
-		
+
+		// create the new feed
 		Feed feed = new Feed(url);
 		feed.setFeedType(type);
-		feed.setCurator(curator_obj);
-        // FIXME: ^^ It would be nice if this validated whether the curator exists.
+		feed.setCurator(curator);
+
 		store.save(feed);
 		
 	}
