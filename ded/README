@@ -1,0 +1,11 @@
+To test the DEd Nutch code
+
+$ ant -f dedbuild.xml test
+
+To test the DEd data retrieval plugins
+
+$ and -f dedbuild.xml test-plugins
+
+To test the cclearn Nutch plugin
+
+$ ant -f src/plugin/cclearn/build.xml test
