@@ -268,7 +268,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 
 		// process the object...
 		if (obj_node.isLiteral()) {
-			object = obj_node.getLiteral().toString();
+			object = obj_node.getLiteral().getValue().toString();
 			tokenized = Field.Index.ANALYZED;
 		}
 		
