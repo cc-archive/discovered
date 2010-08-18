@@ -94,7 +94,7 @@
               point="org.apache.nutch.searcher.QueryFilter">
       <implementation id="DocumentExclusionBasedOnCuratorQueryFilter"
                       class="org.creativecommons.learn.DocumentExclusionBasedOnCuratorQueryFilter">
-        <parameter name="fields" value="excludecurator"/>
+        <parameter name="raw-fields" value="excludecurator"/>
       </implementation>
    </extension>
 
