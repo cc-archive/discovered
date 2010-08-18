@@ -120,7 +120,7 @@ public class ResultHelper {
 			if (c != null) {
 				curator_links.add("<a href=\"" + curators[i] + "\">"
 						+ c.getName() + "</a> <a href=\"" + getCuratorQueryHref(request, curators[i]) 
-						+ "\"><img src=\"./img/magnifier.png\" border=\"0\" /></a>");
+						+ "\"><img src=\"../img/magnifier.png\" border=\"0\" /></a>");
 			}
 		}
 
