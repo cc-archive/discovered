@@ -62,16 +62,23 @@ public class DocumentExclusionBasedOnCuratorQueryFilter implements QueryFilter {
 		
     	HashSet<String> curatorURIsToExclude = this.getCuratorsToExclude(input.getClauses());
 		
-		// Then canonicalize them by sorting and joining on space
-    	String canonicalForm = Curator.curatorUriCollectionAsString(curatorURIsToExclude);
-    	
-    	LOG.info("Canonical form: " + canonicalForm);
-		
-		// Then add a Lucene constraint ensuring that we exclude documents with just the curators we want to exclude
-		LOG.info("Huh, we should be looking for documents that have their list of curators not set to equal " + canonicalForm);
-        TermQuery luceneClause = new TermQuery(new Term(Search.ALL_CURATORS_INDEX_FIELD, canonicalForm));
+    	/* The curatorURIsToExclude is a set of curators where, if a document
+    	 * is only curated by that curator, we should exclude it.
+    	 *
+    	 * But we also want to exclude all Documents curated only by any
+    	 * *subset* of those curators. To do that, we generate the power set of
+    	 * the provided curators, and exclude any documents whose
+    	 * ALL_CURATORS_INDEX_FIELD is set to any of those subsets.
+    	 */
+    	for (String canonicalForm: Curator.curatorUriPowerSetAsStrings(curatorURIsToExclude)) {
+	    	LOG.info("Canonical form: " + canonicalForm);
+			
+			// Then add a Lucene constraint ensuring that we exclude documents with just the curators we want to exclude
+			LOG.info("Huh, we should be looking for documents that have their list of curators not set to equal " + canonicalForm);
+	        TermQuery luceneClause = new TermQuery(new Term(Search.ALL_CURATORS_INDEX_FIELD, canonicalForm));
 
-        output.add(luceneClause, BooleanClause.Occur.MUST_NOT);
+	        output.add(luceneClause, BooleanClause.Occur.MUST_NOT);
+    	}
 
         return output;
 	}
