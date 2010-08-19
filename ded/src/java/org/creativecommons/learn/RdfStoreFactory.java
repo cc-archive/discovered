@@ -223,51 +223,6 @@ public class RdfStoreFactory {
 		
 	} // close
 
-	/*
-	 * Get a mapping of (Provenance, Predicate) -> RDFNode
-	 * 
-	 * E.g., ("http://curators.org", "dc:educationLevel") -> "high school"
-	 * 
-	 * That means that Curators.org has labeled this resource as appropriate for
-	 * high schoolers.
-	 */
-	// FIXME: Migrate this method to stop using getAllKnownTripleStoreUris
-	public HashMap<ProvenancePredicatePair, Node> getPPP2ObjectMapForSubject(
-			String subjectURL) {
-
-		HashMap<ProvenancePredicatePair, Node> map = new HashMap<ProvenancePredicatePair, Node>();
-		
-		Iterator<Quad> iterator = this.findQuads(Node.ANY,
-				Node.createURI(subjectURL),
-				Node.ANY,
-				Node.ANY);
-		
-		while (iterator.hasNext()) {
-			Quad q = iterator.next();
-			Node predicateNode = q.getPredicate();
-			String provenanceURI = q.getGraphName().getURI().toString();
-			
-			ProvenancePredicatePair p3 = new ProvenancePredicatePair(
-					provenanceURI, predicateNode);
-			map.put(p3, q.getObject());
-		}
-
-		return map;
-	}
-
-	public HashMap<ProvenancePredicatePair, Node> getPPP2ObjectMapForSubjectAndPredicate(
-			String subjectURI, String titlePredicate) {
-		HashMap<ProvenancePredicatePair, Node> map = this
-				.getPPP2ObjectMapForSubject(subjectURI);
-		HashMap<ProvenancePredicatePair, Node> mapFiltered = new HashMap<ProvenancePredicatePair, Node>();
-		for (Entry<ProvenancePredicatePair, Node> entry : map.entrySet()) {
-			if (entry.getKey().predicateNode.toString().equals(titlePredicate)) {
-				mapFiltered.put(entry.getKey(), entry.getValue());
-			}
-		}
-		return mapFiltered;
-	}
-
 	public Set<String> getProvenanceURIsFromCuratorURI(
 			String curatorURI) {
 		/* Find the matching Curator, if any. */

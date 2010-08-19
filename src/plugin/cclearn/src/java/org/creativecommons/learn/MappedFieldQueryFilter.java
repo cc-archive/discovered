@@ -108,7 +108,7 @@ public class MappedFieldQueryFilter implements QueryFilter {
 		// Do this once per provenance:
 		for (String provenanceURI : provenanceURIs) {
 
-			String fieldName = ProvenancePredicatePair.makeCompleteFieldNameWithProvenance(
+			String fieldName = LuceneFieldNameGeneratorFromQuad.makeCompleteFieldNameWithProvenance(
 					provenanceURI, index_field);
 			
 			// construct appropriate Lucene clause

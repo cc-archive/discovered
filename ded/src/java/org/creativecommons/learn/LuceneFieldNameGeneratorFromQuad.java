@@ -5,11 +5,13 @@ import java.util.Map;
 
 import com.hp.hpl.jena.graph.Node;
 
-public class ProvenancePredicatePair {
+import de.fuberlin.wiwiss.ng4j.Quad;
+
+public class LuceneFieldNameGeneratorFromQuad {
 	
-	Map<String, String> defaultNameSpaces = null;
+	static Map<String, String> defaultNameSpaces = null;
 	
-	protected Map<String, String> getDefaultNamespaces() {
+	protected static Map<String, String> getDefaultNamespaces() {
 		if (defaultNameSpaces == null) {
 			// initialize the set of default mappings
 			defaultNameSpaces = new HashMap<String, String>();
@@ -21,24 +23,20 @@ public class ProvenancePredicatePair {
 		return defaultNameSpaces;
 	}
 
-	public String provenanceURI;
-	public Node predicateNode;
-	public ProvenancePredicatePair(String provenanceURI, Node predicateNode) {
-		this.provenanceURI = provenanceURI;
-		this.predicateNode = predicateNode;
-	}
-	public String toFieldName() {
+	static public String toFieldName(Quad q) {
 		
+		String provenanceURI = q.getGraphName().getURI();
 		
-		String predicate = this.predicateNode.toString();
+		Node predicateNode = q.getPredicate();
+		String predicate = predicateNode.toString(); 
 		
 		// see if we want to collapse the predicate into a shorter convenience
 		// value
-		if (this.predicateNode.isURI()) {
+		if (predicateNode.isURI()) {
 			predicate = collapseResource(predicate);
 		}
 		
-		String fieldName = makeCompleteFieldNameWithProvenance(this.provenanceURI, predicate);
+		String fieldName = makeCompleteFieldNameWithProvenance(provenanceURI, predicate);
 		return fieldName;
 	}
 	
@@ -47,7 +45,7 @@ public class ProvenancePredicatePair {
 		return tablePrefix + "_" + thePredicatePartOfTheFieldName;
 	}
 	
-	protected String collapseResource(String uri) {
+	protected static String collapseResource(String uri) {
 		/*
 		 * Given a Resource URI, collapse it using our default namespace
 		 * mappings if possible. This is purely a convenience.
@@ -63,10 +61,6 @@ public class ProvenancePredicatePair {
 
 	} // collapseResource
 	
-	public String toString() {
-		return "<predicate: " + predicateNode.toString() + ", provenance: " + provenanceURI + ">";
-	}
-
 	/*
 	 * Maybe we'll need this. For now it's half-written.
 	 */
