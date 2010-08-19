@@ -46,7 +46,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 		
 		while(allQuads.hasNext()) {
 			Quad q = allQuads.next();
-			String fieldName = LuceneFieldNameGeneratorFromQuad.toFieldName(q);
+			String fieldName = IndexFieldName.toFieldName(q);
 			fieldNames.add(fieldName);
 		}
 		
@@ -267,7 +267,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 			tokenized = Field.Index.ANALYZED;
 		}
 		
-		String fieldName = LuceneFieldNameGeneratorFromQuad.toFieldName(q);
+		String fieldName = IndexFieldName.toFieldName(q);
 		// ^ This is the same as a predicate with the provenance encoded into it
 		
 		LOG.debug("Adding to document (" + fieldName + ", " + object + ").");

@@ -171,7 +171,7 @@ public class TestRdfStoreFactory extends TestCase {
 				Node.createURI(titlePredicate), Node.ANY);
 		Quad q = it.next();
 		
-		String fieldName = LuceneFieldNameGeneratorFromQuad.toFieldName(q);
+		String fieldName = IndexFieldName.toFieldName(q);
 		String expected = RdfStoreFactory.get().getOrCreateTablePrefixFromURIAsInteger(provenanceURI) + "_" + titlePredicateAbbrev;
 		assertEquals(expected, fieldName);
 	}

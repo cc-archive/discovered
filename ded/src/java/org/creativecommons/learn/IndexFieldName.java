@@ -7,7 +7,7 @@ import com.hp.hpl.jena.graph.Node;
 
 import de.fuberlin.wiwiss.ng4j.Quad;
 
-public class LuceneFieldNameGeneratorFromQuad {
+public class IndexFieldName {
 	
 	static Map<String, String> defaultNameSpaces = null;
 	
