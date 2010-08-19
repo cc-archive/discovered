@@ -1,4 +1,5 @@
 package org.creativecommons.learn;
+import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,7 +31,7 @@ import de.fuberlin.wiwiss.ng4j.Quad;
 
 public class TripleStoreIndexer implements IndexingFilter {
         HashMap <String,String> DEFAULT_NAMESPACES = null;
-
+        
 	public Collection<String> getAllPossibleFieldNames() {
 		HashSet<String> fieldNames = new HashSet<String>();
 
@@ -45,11 +46,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 		
 		while(allQuads.hasNext()) {
 			Quad q = allQuads.next();
-			
-			Node predicate = q.getPredicate();
-			String provenanceURI = q.getGraphName().toString();
-			ProvenancePredicatePair pair = new ProvenancePredicatePair(provenanceURI, predicate);
-			String fieldName = pair.toFieldName(); //column name, field name, same thing
+			String fieldName = LuceneFieldNameGeneratorFromQuad.toFieldName(q);
 			fieldNames.add(fieldName);
 		}
 		
@@ -211,16 +208,14 @@ public class TripleStoreIndexer implements IndexingFilter {
 	private void indexTriples(NutchDocument doc, Text url) {
 
 		String subjectURL = url.toString();
-		HashMap<ProvenancePredicatePair, Node> map = RdfStoreFactory.get().getPPP2ObjectMapForSubject(subjectURL);
+		RdfStoreFactory factory = RdfStoreFactory.get();
+		Iterator<Quad> it = factory.findQuads(
+				Node.ANY, Node.createURI(subjectURL), Node.ANY, Node.ANY);
 		
 		// Index the triples
-		for (Entry<ProvenancePredicatePair, Node> entry: map.entrySet()) {
-			ProvenancePredicatePair p3 = entry.getKey();
-			Node objectNode = entry.getValue();
-			
-			// FIXME: Instead of simply using the predicate URI below, use a
-			// string that varies according to the predicate AND provenance.
-			this.indexStatement(doc, p3, objectNode);
+		while (it.hasNext()) {
+			Quad q = it.next();
+			this.indexStatement(doc, q);
 		}
 	}
 
@@ -258,22 +253,21 @@ public class TripleStoreIndexer implements IndexingFilter {
 		return uri;
     }
 
-	private void indexStatement(NutchDocument doc, ProvenancePredicatePair p3,
-			Node obj_node) {
+	private void indexStatement(NutchDocument doc, Quad q) {
 
 		Field.Index tokenized = Field.Index.NOT_ANALYZED;
 
 		// index a single statement
-		String object = obj_node.toString();
+		Node objNode = q.getObject();
+		String object = objNode.toString();
 
 		// process the object...
-		if (obj_node.isLiteral()) {
-			object = obj_node.getLiteral().getValue().toString();
+		if (objNode.isLiteral()) {
+			object = objNode.getLiteral().getValue().toString();
 			tokenized = Field.Index.ANALYZED;
 		}
 		
-		String fieldName = null; 
-		fieldName = p3.toFieldName();
+		String fieldName = LuceneFieldNameGeneratorFromQuad.toFieldName(q);
 		// ^ This is the same as a predicate with the provenance encoded into it
 		
 		LOG.debug("Adding to document (" + fieldName + ", " + object + ").");

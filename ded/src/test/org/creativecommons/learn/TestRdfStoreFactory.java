@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
@@ -154,23 +155,25 @@ public class TestRdfStoreFactory extends TestCase {
 		assert (store.getGraphset().equals(this.graphset));
 	}
 
-	public void testGetPPP2ObjectMapForSubjectAndPredicate() {
+	public void testCreateLuceneColumnName() {
 		// Create a resource with a provenance
 		String subjectURI = "http://example.com/#subject";
 		String provenanceURI = "http://example.com/#provenance";
-		RdfStore store = RdfStoreFactory.get().forProvenance(provenanceURI);
+		RdfStoreFactory factory = RdfStoreFactory.get();
+		RdfStore store = factory.forProvenance(provenanceURI);
 		Resource r = new Resource(URI.create(subjectURI));
 		r.setTitle("my title");
 		String titlePredicate = "http://purl.org/dc/elements/1.1/title";
 		String titlePredicateAbbrev = "_dct_title";
 		store.save(r);
 		
-		HashMap<ProvenancePredicatePair, Node> map =
-			RdfStoreFactory.get().getPPP2ObjectMapForSubjectAndPredicate(subjectURI, titlePredicate);
-		ProvenancePredicatePair p3 = map.keySet().iterator().next();
-
-		assertEquals(p3.toFieldName(), 
-				RdfStoreFactory.get().getOrCreateTablePrefixFromURIAsInteger(provenanceURI) + "_" + titlePredicateAbbrev);
+		Iterator<Quad> it = factory.findQuads(Node.ANY, Node.createURI(subjectURI),
+				Node.createURI(titlePredicate), Node.ANY);
+		Quad q = it.next();
+		
+		String fieldName = LuceneFieldNameGeneratorFromQuad.toFieldName(q);
+		String expected = RdfStoreFactory.get().getOrCreateTablePrefixFromURIAsInteger(provenanceURI) + "_" + titlePredicateAbbrev;
+		assertEquals(expected, fieldName);
 	}
 
 
