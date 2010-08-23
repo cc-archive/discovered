@@ -132,66 +132,6 @@ public class RdfStoreFactory {
 	public int getOrCreateTablePrefixFromURIAsInteger(String uri) {
 		return uri.hashCode();
 	}
-//		try {
-//			dbConnection = getDatabaseConnection();
-//			createRdfStoresTableIfNeeded(dbConnection);
-//
-//			// Do we already have a table prefix? If so, return it.
-//			java.sql.PreparedStatement matchingTablePrefixes = dbConnection
-//					.prepareStatement("SELECT table_prefix FROM rdf_stores WHERE uri = ? ");
-//			matchingTablePrefixes.setString(1, uri);
-//			ResultSet cursor = matchingTablePrefixes.executeQuery();
-//			if (cursor.next()) {
-//				return cursor.getInt("table_prefix");
-//			}
-//
-//			// Prepare a SQL statement that saves a row in a table called
-//			// rdf_stores, and fill in the values
-//			java.sql.PreparedStatement statement = dbConnection
-//					.prepareStatement("INSERT INTO rdf_stores (uri) VALUES (?)");
-//			statement.setString(1, uri);
-//
-//			// Run the statement
-//			statement.executeUpdate();
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			throw new RuntimeException(
-//					"Encountered a SQL error while trying to figure out where we keep the data on "
-//							+ uri);
-//		}
-//
-//		return getOrCreateTablePrefixFromURIAsInteger(uri);
-//	}
-//
-//	public static String getOrCreateTablePrefixFromURI(String uri) {
-//		return "" + getOrCreateTablePrefixFromURIAsInteger(uri);
-//	}
-//
-//	public static String getProvenanceURIFromTablePrefix(int tablePrefix) {
-//		try {
-//			dbConnection = getDatabaseConnection();
-//			createRdfStoresTableIfNeeded(dbConnection);
-//
-//			// Do we already have a table prefix? If so, return it.
-//			java.sql.PreparedStatement matchingURIs = dbConnection
-//					.prepareStatement("SELECT uri FROM rdf_stores WHERE table_prefix = ? ");
-//			matchingURIs.setInt(1, tablePrefix);
-//			ResultSet cursor = matchingURIs.executeQuery();
-//			if (cursor.next()) {
-//				return cursor.getString("uri");
-//			}
-//			// If we get down here, something went wrong.
-//			throw new RuntimeException("Couldn't find the table prefix "
-//					+ tablePrefix + " in the rdf_stores table");
-//
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			throw new RuntimeException(
-//					"Encountered a SQL error while trying to figure out the provenance URI "
-//							+ "corresponding to the database table with prefix "
-//							+ tablePrefix);
-//		}
-//	}
 
 	public ArrayList<String> getAllKnownTripleStoreUris() {
 
