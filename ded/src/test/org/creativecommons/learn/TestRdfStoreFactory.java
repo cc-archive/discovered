@@ -14,6 +14,7 @@ import org.creativecommons.learn.oercloud.Resource;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.vocabulary.RDF;
 
+import de.fuberlin.wiwiss.ng4j.NamedGraph;
 import de.fuberlin.wiwiss.ng4j.Quad;
 import de.fuberlin.wiwiss.ng4j.impl.NamedGraphSetImpl;
 
@@ -142,9 +143,19 @@ public class TestRdfStoreFactory extends TestCase {
 				new Resource(URI.create("http://example.org/resource")));
 
 		// list the known graphs and assert our provenances are there
-		assertEquals(store.getAllKnownTripleStoreUris().size(), 3);
-		assert (store.getAllKnownTripleStoreUris()
-				.contains("http://example.org/feed2"));
+		Iterator<NamedGraph> it = store.getAllKnownTripleStoreUris();
+		boolean foundFeed2 = false;
+		int count = 0;
+		while (it.hasNext()) {
+			count++;
+			NamedGraph ng = it.next();
+			if (ng.getGraphName().getURI().equals("http://example.org/feed2")) {
+				foundFeed2 = true;
+			}
+		}
+			
+		assertEquals(3, count);
+		assertTrue(foundFeed2);
 	}
 
 	public void testGetGraphset() {

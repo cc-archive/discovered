@@ -133,16 +133,8 @@ public class RdfStoreFactory {
 		return uri.hashCode();
 	}
 
-	public ArrayList<String> getAllKnownTripleStoreUris() {
-
-		ArrayList<String> uris = new ArrayList<String>();
-		
-		Iterator<NamedGraph> graphs = this.graphset.listGraphs();
-		while (graphs.hasNext()) {
-			uris.add(graphs.next().getGraphName().toString());
-		}
-
-		return uris;
+	public Iterator<NamedGraph> getAllKnownTripleStoreUris() {
+		return this.graphset.listGraphs();
 	}
 
 	public NamedGraphSet getGraphset() {
