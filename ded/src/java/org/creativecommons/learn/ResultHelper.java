@@ -118,15 +118,26 @@ public class ResultHelper {
 			}
 			
 			if (c != null) {
-				curator_links.add("<a href=\"" + curators[i] + "\">"
-						+ c.getName() + "</a> <a href=\"" + getCuratorQueryHref(request, curators[i]) 
-						+ "\"><img src=\"../img/magnifier.png\" border=\"0\" /></a>");
+				String thisCuratorLink = "<a href=\"" + curators[i] + "\">"
+				+ c.getName() + "</a> <a href=\"" + getCuratorQueryHref(request, curators[i])
+				+ "\"><img src=\"../img/magnifier.png\" border=\"0\" /></a>";
+
+				// Add the excludecurator:xyz link too
+				thisCuratorLink += "<a href=\"" +
+					getExcludeCuratorQueryHref(request, curators[i]) + "\">";
+				thisCuratorLink += " (exclude) </a>";
+				curator_links.add(thisCuratorLink);
 			}
 		}
 
 		return (String[]) curator_links
 				.toArray(new String[curator_links.size()]);
 
+	}
+
+	private static String getExcludeCuratorQueryHref(
+			HttpServletRequest request, String curatorURI) {
+		return addQueryParameter(request, "excludecurator:\"" +  curatorURI + "\"");
 	}
 
 	public static String getLicenseImage(String license_url) {
