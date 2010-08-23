@@ -142,8 +142,6 @@ public class RdfStoreFactory {
 			uris.add(graphs.next().getGraphName().toString());
 		}
 
-		LOG.info("RdfStore.getAllKnownTripleStoreUris detected these 3-stores: " + uris);
-
 		return uris;
 	}
 
