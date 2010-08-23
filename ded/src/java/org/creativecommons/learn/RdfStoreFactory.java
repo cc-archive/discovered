@@ -40,9 +40,7 @@ public class RdfStoreFactory {
 	public static final String SITE_CONFIG_URI = "http://creativecommons.org/#site-configuration";
 
 	public RdfStoreFactory(NamedGraphSet graphset) {
-		
 		this.graphset  = graphset;
-		
 	}
 
 	public static RdfStoreFactory get() {
@@ -51,7 +49,6 @@ public class RdfStoreFactory {
 		}
 		
 		return instance;
-		
 	} // get
 	
 	private RdfStoreFactory() {
@@ -75,7 +72,6 @@ public class RdfStoreFactory {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 	
 	/**
