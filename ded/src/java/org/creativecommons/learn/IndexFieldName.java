@@ -61,15 +61,4 @@ public class IndexFieldName {
 
 	} // collapseResource
 	
-	/*
-	 * Maybe we'll need this. For now it's half-written.
-	 */
-	/*
-	public static ProvenancePredicatePair fromFieldName(String fieldName) throws SQLException {
-		String[] pieces = fieldName.split("_",1);
-		int tablePrefix = Integer.parseInt(pieces[0]);
-		String provenanceURI = RdfStore.getProvenanceURIFromTablePrefix(tablePrefix);
-		
-	}
-	*/
 }
