@@ -56,32 +56,9 @@ public class MappedFieldQueryFilter implements QueryFilter {
 		return allProvenanceURIs;		
 	}
 	
-	// FIXME: Test this. This is almost definitely wrong.
 	public static Set<String> getActiveProvenanceURIs(Query input) {
-		Set<String> curatorURIsToExclude = new HashSet<String>();
-		for (Clause c: input.getClauses()) {
-			
-			// FIXME: Use "-curator", not "excludecurator". We're just avoiding
-			// the minus sign to make things easier at this stage of
-			// development.
-			if (c.getField().equals("excludecurator")) {
-				
-				// Find the value of this field
-				if (c.isPhrase()) {
-					Phrase nutchPhrase = c.getPhrase();
-					Query.Term[] terms = nutchPhrase.getTerms();
-					PhraseQuery lucenePhrase = new PhraseQuery();
-
-					for (int j = 0; j < terms.length; j++) {
-						curatorURIsToExclude.add(terms[j].toString());
-					}
-				} else {
-					curatorURIsToExclude.add(c.getTerm().toString());
-				}
-			}
-		}
-		
-		return getActiveProvenanceURIs(curatorURIsToExclude);
+		Collection<String> excludedCurators = DocumentExclusionBasedOnCuratorQueryFilter.getCuratorsToExclude(input.getClauses());
+		return getActiveProvenanceURIs(excludedCurators);
 	}
 
 	protected org.apache.lucene.search.Query takeClauseAndCreateAMegaQueryContainingCertainProvenances(

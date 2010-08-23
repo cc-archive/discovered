@@ -24,7 +24,7 @@ public class DocumentExclusionBasedOnCuratorQueryFilter implements QueryFilter {
         LOG.info("Initialized query filter that excludes documents based on excludecurator");
     }
     
-    private HashSet<String> getCuratorsToExclude(Clause[] clauses) {
+    public static HashSet<String> getCuratorsToExclude(Clause[] clauses) {
     	HashSet<String> ret = new HashSet<String>();
 
         for (Clause c: clauses) {
@@ -60,7 +60,7 @@ public class DocumentExclusionBasedOnCuratorQueryFilter implements QueryFilter {
 			throws QueryException {
 		// Create a HashSet of all the excluded curator URIs
 		
-    	HashSet<String> curatorURIsToExclude = this.getCuratorsToExclude(input.getClauses());
+    	HashSet<String> curatorURIsToExclude = getCuratorsToExclude(input.getClauses());
 		
     	/* The curatorURIsToExclude is a set of curators where, if a document
     	 * is only curated by that curator, we should exclude it.
