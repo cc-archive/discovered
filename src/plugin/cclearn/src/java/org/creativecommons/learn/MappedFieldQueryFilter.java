@@ -51,7 +51,7 @@ public class MappedFieldQueryFilter implements QueryFilter {
 	
 	public static HashSet<String> getActiveProvenanceURIs(Collection<String> excludedCuratorURIs) {
 		HashSet<String> allProvenanceURIs = new HashSet<String>();
-		Iterator<NamedGraph> it = RdfStoreFactory.get().getAllKnownTripleStoreUris();
+		Iterator<NamedGraph> it = RdfStoreFactory.get().listProvenanceGraphs();
 		while (it.hasNext()) {
 			allProvenanceURIs.add(it.next().getGraphName().getURI());
 		}

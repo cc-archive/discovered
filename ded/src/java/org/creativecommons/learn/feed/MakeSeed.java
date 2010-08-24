@@ -106,7 +106,7 @@ public class MakeSeed {
 		if (!line.hasOption("curator")) {
 			// all resources
             
-			Iterator<NamedGraph> it = RdfStoreFactory.get().getAllKnownTripleStoreUris();
+			Iterator<NamedGraph> it = RdfStoreFactory.get().listProvenanceGraphs();
 			while (it.hasNext()) {
 				NamedGraph ng = it.next();
                 RdfStore store = RdfStoreFactory.get().forProvenance(ng.getGraphName().getURI());
@@ -120,7 +120,7 @@ public class MakeSeed {
 			String[] curators = line.getOptionValues("curator");
 
 			for (String curator_url : curators) {
-				Iterator<NamedGraph> it = RdfStoreFactory.get().getAllKnownTripleStoreUris();
+				Iterator<NamedGraph> it = RdfStoreFactory.get().listProvenanceGraphs();
 				while (it.hasNext()) {
 					NamedGraph ng = it.next();
 	                RdfStore store = RdfStoreFactory.get().forProvenance(ng.getGraphName().getURI());

@@ -133,7 +133,7 @@ public class RdfStoreFactory {
 		return uri.hashCode();
 	}
 
-	public Iterator<NamedGraph> getAllKnownTripleStoreUris() {
+	public Iterator<NamedGraph> listProvenanceGraphs() {
 		return this.graphset.listGraphs();
 	}
 

@@ -143,7 +143,7 @@ public class TestRdfStoreFactory extends TestCase {
 				new Resource(URI.create("http://example.org/resource")));
 
 		// list the known graphs and assert our provenances are there
-		Iterator<NamedGraph> it = store.getAllKnownTripleStoreUris();
+		Iterator<NamedGraph> it = store.listProvenanceGraphs();
 		boolean foundFeed2 = false;
 		int count = 0;
 		while (it.hasNext()) {
