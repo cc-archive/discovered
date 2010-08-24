@@ -15,7 +15,7 @@
   import="org.apache.hadoop.conf.*"
   import="org.apache.nutch.util.NutchConfiguration"
 
-  import="org.creativecommons.learn.TripleStore"
+  import="org.creativecommons.learn.RdfStoreFactory"
   import="org.creativecommons.learn.oercloud.*"
 
 %>
@@ -27,12 +27,12 @@
 <% Collection<Feed> feeds = null;
 
 	if (request.getParameter("c") != null) { 
-    	Curator c = TripleStore.get().load(Curator.class, request.getParameter("c")); 
+    	Curator c = RdfStoreFactory.get().forDEd().load(Curator.class, request.getParameter("c")); 
     	feeds = c.getFeeds(); 
     %>
 <h1>Feeds for <%=c.getName() %></h1>
 <% } else { 
-		feeds = TripleStore.get().loadDeep(Feed.class);%>
+		feeds = RdfStoreFactory.get().forDEd().loadDeep(Feed.class);%>
 <h1>Feeds</h1>
 <% } %>
 

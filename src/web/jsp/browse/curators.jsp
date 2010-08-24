@@ -3,7 +3,7 @@
   session="false"
   import="java.io.*"
   import="java.util.*"
-  import="org.creativecommons.learn.TripleStore"
+  import="org.creativecommons.learn.RdfStoreFactory"
   import="org.creativecommons.learn.oercloud.Curator"
 %>
 <%@ include file="/header.jsp" %>
@@ -12,7 +12,7 @@
 
 <h1>Curators</h1>
 
-<% Collection<Curator> curators = TripleStore.get().load(Curator.class); %>
+<% Collection<Curator> curators = RdfStoreFactory.get().forDEd().load(Curator.class); %>
 
 
 <ul>

@@ -15,7 +15,6 @@
   import="org.apache.hadoop.conf.*"
   import="org.apache.nutch.util.NutchConfiguration"
 
-  import="org.creativecommons.learn.TripleStore"
   import="org.creativecommons.learn.oercloud.*"
 
 %>
