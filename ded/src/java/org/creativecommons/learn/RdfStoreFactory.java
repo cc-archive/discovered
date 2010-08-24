@@ -5,11 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,9 +40,7 @@ public class RdfStoreFactory {
 	public static final String SITE_CONFIG_URI = "http://creativecommons.org/#site-configuration";
 
 	public RdfStoreFactory(NamedGraphSet graphset) {
-		
 		this.graphset  = graphset;
-		
 	}
 
 	public static RdfStoreFactory get() {
@@ -53,7 +49,6 @@ public class RdfStoreFactory {
 		}
 		
 		return instance;
-		
 	} // get
 	
 	private RdfStoreFactory() {
@@ -77,7 +72,6 @@ public class RdfStoreFactory {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 	
 	/**
@@ -138,79 +132,9 @@ public class RdfStoreFactory {
 	public int getOrCreateTablePrefixFromURIAsInteger(String uri) {
 		return uri.hashCode();
 	}
-//		try {
-//			dbConnection = getDatabaseConnection();
-//			createRdfStoresTableIfNeeded(dbConnection);
-//
-//			// Do we already have a table prefix? If so, return it.
-//			java.sql.PreparedStatement matchingTablePrefixes = dbConnection
-//					.prepareStatement("SELECT table_prefix FROM rdf_stores WHERE uri = ? ");
-//			matchingTablePrefixes.setString(1, uri);
-//			ResultSet cursor = matchingTablePrefixes.executeQuery();
-//			if (cursor.next()) {
-//				return cursor.getInt("table_prefix");
-//			}
-//
-//			// Prepare a SQL statement that saves a row in a table called
-//			// rdf_stores, and fill in the values
-//			java.sql.PreparedStatement statement = dbConnection
-//					.prepareStatement("INSERT INTO rdf_stores (uri) VALUES (?)");
-//			statement.setString(1, uri);
-//
-//			// Run the statement
-//			statement.executeUpdate();
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			throw new RuntimeException(
-//					"Encountered a SQL error while trying to figure out where we keep the data on "
-//							+ uri);
-//		}
-//
-//		return getOrCreateTablePrefixFromURIAsInteger(uri);
-//	}
-//
-//	public static String getOrCreateTablePrefixFromURI(String uri) {
-//		return "" + getOrCreateTablePrefixFromURIAsInteger(uri);
-//	}
-//
-//	public static String getProvenanceURIFromTablePrefix(int tablePrefix) {
-//		try {
-//			dbConnection = getDatabaseConnection();
-//			createRdfStoresTableIfNeeded(dbConnection);
-//
-//			// Do we already have a table prefix? If so, return it.
-//			java.sql.PreparedStatement matchingURIs = dbConnection
-//					.prepareStatement("SELECT uri FROM rdf_stores WHERE table_prefix = ? ");
-//			matchingURIs.setInt(1, tablePrefix);
-//			ResultSet cursor = matchingURIs.executeQuery();
-//			if (cursor.next()) {
-//				return cursor.getString("uri");
-//			}
-//			// If we get down here, something went wrong.
-//			throw new RuntimeException("Couldn't find the table prefix "
-//					+ tablePrefix + " in the rdf_stores table");
-//
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			throw new RuntimeException(
-//					"Encountered a SQL error while trying to figure out the provenance URI "
-//							+ "corresponding to the database table with prefix "
-//							+ tablePrefix);
-//		}
-//	}
 
-	public ArrayList<String> getAllKnownTripleStoreUris() {
-
-		ArrayList<String> uris = new ArrayList<String>();
-		
-		Iterator<NamedGraph> graphs = this.graphset.listGraphs();
-		while (graphs.hasNext()) {
-			uris.add(graphs.next().getGraphName().toString());
-		}
-
-		LOG.info("RdfStore.getAllKnownTripleStoreUris detected these 3-stores: " + uris);
-
-		return uris;
+	public Iterator<NamedGraph> getAllKnownTripleStoreUris() {
+		return this.graphset.listGraphs();
 	}
 
 	public NamedGraphSet getGraphset() {

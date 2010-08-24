@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.Iterator;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -25,6 +26,8 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
+
+import de.fuberlin.wiwiss.ng4j.NamedGraph;
 
 public class MakeSeed {
 
@@ -103,8 +106,10 @@ public class MakeSeed {
 		if (!line.hasOption("curator")) {
 			// all resources
             
-            for (String uri: RdfStoreFactory.get().getAllKnownTripleStoreUris()) {
-                RdfStore store = RdfStoreFactory.get().forProvenance(uri);
+			Iterator<NamedGraph> it = RdfStoreFactory.get().getAllKnownTripleStoreUris();
+			while (it.hasNext()) {
+				NamedGraph ng = it.next();
+                RdfStore store = RdfStoreFactory.get().forProvenance(ng.getGraphName().getURI());
 		        Model model = store.getModel();
                 writeURIsFromModel(model, output);
                 store.close();
@@ -115,8 +120,10 @@ public class MakeSeed {
 			String[] curators = line.getOptionValues("curator");
 
 			for (String curator_url : curators) {
-                for (String uri: RdfStoreFactory.get().getAllKnownTripleStoreUris()) {
-                    RdfStore store = RdfStoreFactory.get().forProvenance(uri);
+				Iterator<NamedGraph> it = RdfStoreFactory.get().getAllKnownTripleStoreUris();
+				while (it.hasNext()) {
+					NamedGraph ng = it.next();
+	                RdfStore store = RdfStoreFactory.get().forProvenance(ng.getGraphName().getURI());
                     Model model = store.getModel();
                     writeURIsForCuratorFromAModel(curator_url, model, output);
                     store.close();

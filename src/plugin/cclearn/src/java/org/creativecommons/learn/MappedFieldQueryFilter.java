@@ -5,6 +5,7 @@ package org.creativecommons.learn;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.hadoop.conf.Configuration;
@@ -20,6 +21,8 @@ import org.apache.nutch.searcher.QueryException;
 import org.apache.nutch.searcher.QueryFilter;
 import org.apache.nutch.searcher.Query.Clause;
 import org.apache.nutch.searcher.Query.Phrase;
+
+import de.fuberlin.wiwiss.ng4j.NamedGraph;
 
 /**
  * Translate query fields to search a differently-named field, as indexed by an
@@ -47,7 +50,11 @@ public class MappedFieldQueryFilter implements QueryFilter {
 	}
 	
 	public static HashSet<String> getActiveProvenanceURIs(Collection<String> excludedCuratorURIs) {
-		HashSet<String> allProvenanceURIs = new HashSet<String>(RdfStoreFactory.get().getAllKnownTripleStoreUris());
+		HashSet<String> allProvenanceURIs = new HashSet<String>();
+		Iterator<NamedGraph> it = RdfStoreFactory.get().getAllKnownTripleStoreUris();
+		while (it.hasNext()) {
+			allProvenanceURIs.add(it.next().getGraphName().getURI());
+		}
 		RdfStoreFactory factory = RdfStoreFactory.get();
 		for (String excludeMyFeeds : excludedCuratorURIs) {
 			Collection <String> feedsToExclude = factory.getProvenanceURIsFromCuratorURI(excludeMyFeeds);
