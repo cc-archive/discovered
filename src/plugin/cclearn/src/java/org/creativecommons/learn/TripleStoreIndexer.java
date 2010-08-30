@@ -224,7 +224,7 @@ public class TripleStoreIndexer implements IndexingFilter {
 		for (Feed source : resource.getSources()) {
 
 			// add the feed URL to the resource 
-			doc.add(Search.FEED_FIELD, source.getUrl());
+			doc.add(Search.FEED_FIELD, source.getUri().toString());
 
 			// if this feed has curator information attached, index it as well
 			String curator_url = "";

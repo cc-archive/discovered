@@ -126,7 +126,7 @@ public class Main {
         // Process each feed
         for (Feed feed : all_feeds) {
 
-        	System.out.println(feed.getUrl());
+        	System.out.println(feed.getUri().toString());
         	Date import_date = new Date();
 
         	// see if this feed needs to be re-imported
@@ -146,7 +146,7 @@ public class Main {
                 }
             }
             
-            System.out.println(feed.getUrl());
+            System.out.println(feed.getUri().toString());
 
         } // for each feed
 

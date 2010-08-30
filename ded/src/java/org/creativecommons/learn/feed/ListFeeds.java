@@ -15,7 +15,7 @@ public class ListFeeds {
 		Collection<Feed> feeds = RdfStoreFactory.get().forDEd().load(Feed.class);
 			
 		for (Feed f : feeds) {
-			System.out.println(f.getUrl() + " (" + f.getFeedType() + ", " + f.getCurator().getUrl() + " )");
+			System.out.println(f.getUri().toString() + " (" + f.getFeedType() + ", " + f.getCurator().getUrl() + " )");
 		}
 		
 	} // main

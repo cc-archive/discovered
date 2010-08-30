@@ -46,7 +46,7 @@ public class NsdlDc extends OaiMetadataFormat implements IResourceExtractor {
 
  * 
  */
-		RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUrl());
+		RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUri().toString());
 		
 		// Retrieve the resource metadata from the server
 		Record oai_record = server.getRecord(identifier, this.format.getPrefix());
