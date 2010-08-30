@@ -61,7 +61,7 @@
 
 <property>
   <name>plugin.includes</name>
-  <value>protocol-http|urlfilter-regex|parse-(text|html|js)|index-basic|query-(basic|site|url)|summary-basic|scoring-opic|urlnormalizer-(pass|regex|basic)|nutch-extensionpoints|cclearn|index-more|query-more|summary-lucene|creativecommons</value>
+  <value>protocol-httpclient|urlfilter-regex|parse-(text|html|js)|index-basic|query-(basic|site|url)|summary-basic|scoring-opic|urlnormalizer-(pass|regex|basic)|nutch-extensionpoints|cclearn|index-more|query-more|summary-lucene|creativecommons</value>
   <description>Regular expression naming plugin id names to
   include.  Any plugin not matching this expression is excluded.
   In any case you need at least include the nutch-extensionpoints plugin. By
