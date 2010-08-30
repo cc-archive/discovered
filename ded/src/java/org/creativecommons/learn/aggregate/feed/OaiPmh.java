@@ -132,10 +132,10 @@ public class OaiPmh {
 	}
 	
 	public void poll(Feed feed, boolean force) {
-		RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUrl());
+		RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUri().toString());
 
 		Boolean moreResults = true;
-		OaiPmhServer server = new OaiPmhServer(feed.getUrl());
+		OaiPmhServer server = new OaiPmhServer(feed.getUri().toString());
 		IdentifiersList identifiers = null;
 
 		Map<MetadataFormat, IResourceExtractor> formats;
