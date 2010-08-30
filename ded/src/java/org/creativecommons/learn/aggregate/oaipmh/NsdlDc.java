@@ -11,7 +11,6 @@ import org.dom4j.Element;
 
 import se.kb.oai.OAIException;
 import se.kb.oai.pmh.MetadataFormat;
-import se.kb.oai.pmh.OaiPmhServer;
 import se.kb.oai.pmh.Record;
 import thewebsemantic.NotFoundException;
 
@@ -22,7 +21,7 @@ public class NsdlDc extends OaiMetadataFormat implements IResourceExtractor {
 	}
 	
 	@Override
-	public void process(Feed feed, OaiPmhServer server, String identifier)
+	public void process(Feed feed, Record oai_record, String identifier)
 			throws OAIException, URISyntaxException {
 
 /*
@@ -47,9 +46,6 @@ public class NsdlDc extends OaiMetadataFormat implements IResourceExtractor {
  * 
  */
 		RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUri().toString());
-		
-		// Retrieve the resource metadata from the server
-		Record oai_record = server.getRecord(identifier, this.format.getPrefix());
 		Element metadata = oai_record.getMetadata();
 		if (metadata == null) return;
 		

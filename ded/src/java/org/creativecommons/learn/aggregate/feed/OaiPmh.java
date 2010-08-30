@@ -1,6 +1,7 @@
 package org.creativecommons.learn.aggregate.feed;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -20,6 +21,8 @@ import se.kb.oai.pmh.IdentifiersList;
 import se.kb.oai.pmh.MetadataFormat;
 import se.kb.oai.pmh.MetadataFormatsList;
 import se.kb.oai.pmh.OaiPmhServer;
+import se.kb.oai.pmh.Record;
+import se.kb.oai.pmh.RecordsList;
 import se.kb.oai.pmh.Set;
 import se.kb.oai.pmh.SetsList;
 import thewebsemantic.NotFoundException;
@@ -133,11 +136,9 @@ public class OaiPmh {
 	
 	public void poll(Feed feed, boolean force) {
 		RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUri().toString());
+		OaiPmhServer server = new OaiPmhServer(feed.getUri().toString());
 
 		Boolean moreResults = true;
-		OaiPmhServer server = new OaiPmhServer(feed.getUri().toString());
-		IdentifiersList identifiers = null;
-
 		Map<MetadataFormat, IResourceExtractor> formats;
 		Map<String, String> sets;
 
@@ -157,89 +158,67 @@ public class OaiPmh {
 		if (!force) 
 			last_import_date = iso8601.format(feed.getLastImport());
 		
+		// For each metadata format that we support, get out all the records
+		// the server has:
 		for (MetadataFormat f : formats.keySet()) {
 
+			List<Record> records = null;
 			try {
 				
-				identifiers = server.listIdentifiers(f.getPrefix(), 
-						last_import_date, null, null);
+				records = server.listRecords(f.getPrefix(), 
+						last_import_date, null, null).asList();
 			} catch (OAIException e) {
+				// Well, uh, if we hit an OAIException getting the list of records
+				// available with this metadata format, then there is nothing we
+				// can do. So then we skip this metadata format.
 				continue;
 			}
 
-			moreResults = true;
-			while (moreResults) {
-
-				for (Header header : identifiers.asList()) {
-
-					LOG.info("Retrieving " + header.getIdentifier());
-
-					// create the OaiResource if needed
-					OaiResource resource = null;
-					if (store.exists(OaiResource.class,
-							header.getIdentifier())) {
-						try {
-							resource = store.load(
-									OaiResource.class, header.getIdentifier());
-						} catch (NotFoundException e) {
-						}
-					} else {
+			for (Record record : records) {
+				Header header = record.getHeader();
+				// create the OaiResource if needed
+				OaiResource resource = null;
+				try {
+					resource = store.load(
+							OaiResource.class, header.getIdentifier());
+					} catch (NotFoundException e) {
 						resource = new OaiResource(header.getIdentifier());
-					}
-
-					// add the set as a subject heading
-					for (String set_spec : header.getSetSpecs()) {
-						if (sets.containsKey(set_spec)) {
-							resource.getSubjects().add(sets.get(set_spec));
-						}
-					}
-					
-					try {
-						store.save(resource);
-					} catch (NullPointerException e) {
-						System.out.println(resource);
-						System.out.println(resource.getId());
-						System.out.println();
-						for (String foo : resource.getSubjects()) {
-							System.out.println(foo);
-						}
-
-						throw e;
-					}
-
-					// look up the extractor for this format
-					try {
-						formats.get(f).process(feed, server,
-								header.getIdentifier());
-					} catch (OAIException e) {
-						e.printStackTrace();
-						continue;
-					} catch (Exception e) {
-						LOG.warning("An exception occured while aggregating " + f.getPrefix() + " for " + header.getIdentifier());
-						LOG.warning("> " + e.getMessage());
-						e.printStackTrace();
-					}
-
 				}
 
-				// Resumption Token handling
-				if (identifiers.getResumptionToken() != null) {
-					// continue...
-					try {
-						identifiers = server.listIdentifiers(identifiers
-								.getResumptionToken());
-						moreResults = true;
-					} catch (OAIException e) {
-						e.printStackTrace();
-						moreResults = false;
+					// add the set as a subject heading
+				for (String set_spec : header.getSetSpecs()) {
+					if (sets.containsKey(set_spec)) {
+						resource.getSubjects().add(sets.get(set_spec));
 					}
-				} else {
-					moreResults = false;
+				}
+				try {
+					store.save(resource);
+				} catch (NullPointerException e) {
+					System.out.println(resource);
+					System.out.println(resource.getId());
+					System.out.println();
+					for (String foo : resource.getSubjects()) {
+						System.out.println(foo);
+					}
+
+					throw e;
+				}
+
+				// look up the extractor for this format
+				try {
+					formats.get(f).process(feed, record,
+							header.getIdentifier());
+				} catch (OAIException e) {
+					e.printStackTrace();
+					continue;
+				} catch (Exception e) {
+					LOG.warning("An exception occured while aggregating " + f.getPrefix() + " for " + header.getIdentifier());
+					LOG.warning("> " + e.getMessage());
+					e.printStackTrace();
 				}
 			} // while more results...
 
 		} // for each format...
-		store.close();
 	} // public void poll
 
 	public static void main(String[] args) {
