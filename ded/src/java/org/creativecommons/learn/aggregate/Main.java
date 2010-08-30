@@ -126,7 +126,7 @@ public class Main {
         // Process each feed
         for (Feed feed : all_feeds) {
 
-        	System.out.println(feed.getUri().toString());
+        	System.out.println("Began processing feed: " + feed.getUri().toString());
         	Date import_date = new Date();
 
         	// see if this feed needs to be re-imported
@@ -134,7 +134,7 @@ public class Main {
             if (force || feedIsOld) {
                 try {
                     // re-import necessary
-                	System.out.println("updating...");
+                	System.out.println("Aggregate main: updating...");
 
                 	FeedUpdater updater = new FeedUpdater(feed);
                 	updater.update(force);
@@ -146,7 +146,7 @@ public class Main {
                 }
             }
             
-            System.out.println(feed.getUri().toString());
+            System.out.println("Finished processing feed: " + feed.getUri().toString());
 
         } // for each feed
 
