@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,6 +33,7 @@ public class FeedUpdater {
 	private Feed feed;
 	public static int howManyGETsSoFar;
 	private static boolean pleaseCountGETs = false;
+	private static Set<String> validFeedTypes;
 	private MetadataRetrievers metadataRetrievers;
 
 	public FeedUpdater(Feed feed) {
@@ -106,11 +109,31 @@ public class FeedUpdater {
 		
 		store.saveDeep(r);
 	} // addEntry
-
+	
+	private static Set<String> getValidFeedTypes() {
+		if (validFeedTypes == null) {
+			validFeedTypes = new HashSet<String>();
+			validFeedTypes.add("oai-pmh");
+			validFeedTypes.add("rss");
+			validFeedTypes.add("opml");
+		}
+		return validFeedTypes;
+	}
+	
+	public static boolean isFeedTypeValid(String feedType) {
+		return getValidFeedTypes().contains(feedType);
+	}
+	
 	public void update(boolean force) throws IOException {
 		// get the contents of the feed and emit events for each
 		// FIXME: each what?
 		RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUrl());
+		
+		if (! isFeedTypeValid(feed.getFeedType())) {
+			Logger.getLogger(Feed.class.getName()).warning(
+					"Feed " + feed.getUri().toString() + " has unknown feed type of " +
+					feed.getFeedType() + ". Skipping it during update.");
+		}
 
 		// OPML
 		if (feed.getFeedType().toLowerCase().equals("opml")) {
