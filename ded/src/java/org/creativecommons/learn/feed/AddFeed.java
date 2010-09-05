@@ -4,6 +4,7 @@ import java.net.URISyntaxException;
 
 import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.RdfStoreFactory;
+import org.creativecommons.learn.aggregate.FeedUpdater;
 import org.creativecommons.learn.oercloud.Curator;
 import org.creativecommons.learn.oercloud.Feed;
 
@@ -40,6 +41,10 @@ public class AddFeed {
 		}
 		catch (NotFoundException e) {
 			throw new IllegalArgumentException("You passed in a Curator about whom we have no data. You must run \"addcurator\" first (or maybe you typo'd the curator; check that argument).");
+		}
+		
+		if (! FeedUpdater.isFeedTypeValid(type)) {
+			throw new IllegalArgumentException("You passed in a feed type of " + type + " which is unknown.");
 		}
 
 		// create the new feed
