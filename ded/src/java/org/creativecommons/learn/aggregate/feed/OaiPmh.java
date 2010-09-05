@@ -161,62 +161,73 @@ public class OaiPmh {
 		// For each metadata format that we support, get out all the records
 		// the server has:
 		for (MetadataFormat f : formats.keySet()) {
+			boolean more = true;
 
-			List<Record> records = null;
+			RecordsList records = null;
 			try {
-				
 				records = server.listRecords(f.getPrefix(), 
-						last_import_date, null, null).asList();
+						last_import_date, null, null);
 			} catch (OAIException e) {
-				// Well, uh, if we hit an OAIException getting the list of records
-				// available with this metadata format, then there is nothing we
-				// can do. So then we skip this metadata format.
-				continue;
+				more = false; // I guess we cannot go any further on this MetadatFormat.
 			}
-
-			for (Record record : records) {
-				Header header = record.getHeader();
-				// create the OaiResource if needed
-				OaiResource resource = null;
-				try {
-					resource = store.load(
-							OaiResource.class, header.getIdentifier());
-					} catch (NotFoundException e) {
-						resource = new OaiResource(header.getIdentifier());
-				}
-
+			while(more) {
+				// for each record, pull the data out and save it as a Resource
+				for (Record record : records.asList()) {
+					Header header = record.getHeader();
+					// create the OaiResource if needed
+					OaiResource resource = null;
+					try {
+						resource = store.load(
+								OaiResource.class, header.getIdentifier());
+						} catch (NotFoundException e) {
+							resource = new OaiResource(header.getIdentifier());
+					}
+	
 					// add the set as a subject heading
-				for (String set_spec : header.getSetSpecs()) {
-					if (sets.containsKey(set_spec)) {
-						resource.getSubjects().add(sets.get(set_spec));
+					for (String set_spec : header.getSetSpecs()) {
+						if (sets.containsKey(set_spec)) {
+							resource.getSubjects().add(sets.get(set_spec));
+						}
 					}
-				}
-				try {
-					store.save(resource);
-				} catch (NullPointerException e) {
-					System.out.println(resource);
-					System.out.println(resource.getId());
-					System.out.println();
-					for (String foo : resource.getSubjects()) {
-						System.out.println(foo);
+					try {
+						store.save(resource);
+					} catch (NullPointerException e) {
+						System.out.println(resource);
+						System.out.println(resource.getId());
+						System.out.println();
+						for (String foo : resource.getSubjects()) {
+							System.out.println(foo);
+						}
+	
+						throw e;
 					}
-
-					throw e;
-				}
-
-				// look up the extractor for this format
-				try {
-					formats.get(f).process(feed, record,
-							header.getIdentifier());
-				} catch (OAIException e) {
-					e.printStackTrace();
-					continue;
-				} catch (Exception e) {
-					LOG.warning("An exception occured while aggregating " + f.getPrefix() + " for " + header.getIdentifier());
-					LOG.warning("> " + e.getMessage());
-					e.printStackTrace();
-				}
-			} // while more results...
+	
+					// look up the extractor for this format
+					try {
+						formats.get(f).process(feed, record,
+								header.getIdentifier());
+					} catch (OAIException e) {
+						e.printStackTrace();
+						continue;
+					} catch (Exception e) {
+						LOG.warning("An exception occured while aggregating " + f.getPrefix() + " for " + header.getIdentifier());
+						LOG.warning("> " + e.getMessage());
+						e.printStackTrace();
+					}
+					
+					// check if there are more results
+					  if (records.getResumptionToken() == null) {
+						  more = false;
+					  } else {
+							try {
+								records = server.listRecords(records.getResumptionToken());
+							} catch (OAIException e) {
+								more = false; // I guess there are no more records we will be able to get
+							}
+					  }
+				} // while more results
+				
+			}
 
 		} // for each format...
 	} // public void poll
