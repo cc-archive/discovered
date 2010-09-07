@@ -66,9 +66,9 @@ public class Opml {
 
 	public void poll(Feed feed) {
 		try {
-			RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUrl());
+			RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUri().toString());
 			// load the OPML feed as a JDOM document
-			Document opml = new SAXBuilder().build(new URL(feed.getUrl()));
+			Document opml = new SAXBuilder().build(new URL(feed.getUri().toString()));
 
 			// iterate over outline nodes
 			List<Element> nodes = XPath.selectNodes(opml, "//outline");
@@ -101,7 +101,7 @@ public class Opml {
 
 					// try to retrieve the feed so we can intelligently set the
 					// Curator
-					SyndFeed rome_feed = this.loadFeed(node_feed.getUrl());
+					SyndFeed rome_feed = this.loadFeed(node_feed.getUri().toString());
 					Curator curator = null;
 
 					if (rome_feed != null) {

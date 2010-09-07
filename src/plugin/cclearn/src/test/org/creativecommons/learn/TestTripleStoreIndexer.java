@@ -59,7 +59,7 @@ public class TestTripleStoreIndexer extends DiscoverEdTestCase {
         Literal xyz = m.createLiteral("xyz");
         r.addField(edLevel, xyz);
         r.getSources().add(f);
-        RdfStoreFactory.get().forProvenance(f.getUrl()).save(r);
+        RdfStoreFactory.get().forProvenance(f.getUri().toString()).save(r);
 
         /* third, can the triple store indexer find this custom field and its
          * values?

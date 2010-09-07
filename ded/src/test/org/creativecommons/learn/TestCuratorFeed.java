@@ -64,7 +64,7 @@ public class TestCuratorFeed extends DiscoverEdTestCase {
 		Feed feed = available_feeds.iterator().next();
 		assertEquals(feed.getCurator().getUrl(), "http://ocw.nd.edu/");
 		assertEquals(feed.getFeedType(), "rss");
-		assertEquals(feed.getUrl(), "http://ocw.nd.edu/courselist/rss");
+		assertEquals(feed.getUri().toString(), "http://ocw.nd.edu/courselist/rss");
 		store.close();
 	}
 	

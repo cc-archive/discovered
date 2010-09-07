@@ -127,7 +127,8 @@ public class FeedUpdater {
 	public void update(boolean force) throws IOException {
 		// get the contents of the feed and emit events for each
 		// FIXME: each what?
-		RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUrl());
+
+		RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUri().toString());
 		
 		if (! isFeedTypeValid(feed.getFeedType())) {
 			Logger.getLogger(Feed.class.getName()).warning(
@@ -149,7 +150,7 @@ public class FeedUpdater {
 			try {
 
 				SyndFeedInput input = new SyndFeedInput();
-				URLConnection feed_connection = new URL(feed.getUrl())
+				URLConnection feed_connection = new URL(feed.getUri().toString())
 						.openConnection();
 				feed_connection.setConnectTimeout(30000);
 				feed_connection.setReadTimeout(60000);

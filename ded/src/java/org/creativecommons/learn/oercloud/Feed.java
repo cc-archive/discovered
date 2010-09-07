@@ -37,11 +37,6 @@ public class Feed {
 		this.curator = curator;
 	}
 
-	@Deprecated
-	public String getUrl() {
-		return uri.toString();
-	}
-
 	@Id
 	public URI getUri() {
 		return uri;
@@ -76,7 +71,7 @@ public class Feed {
 			+ "PREFIX cclearn: <http://learn.creativecommons.org/ns#> \n"
 			+ "\n" + "SELECT ?s \n" + "WHERE { \n"
 			+ "?s rdf:type cclearn:Resource .\n"
-			+ "?s cclearn:source <" + this.getUrl() + ">. \n"
+			+ "?s cclearn:source <" + this.getUri().toString() + ">. \n"
 			+ "   }\n";
 		
 		return Sparql.exec(RdfStoreFactory.get().forDEd().getModel(), Resource.class, query);
