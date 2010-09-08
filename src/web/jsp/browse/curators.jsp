@@ -19,6 +19,7 @@
 	<% for (Curator c : curators) { %>
 	<li><a href="<%=request.getContextPath()%>/browse/feeds.jsp?c=<%=c.getUrl()%>"><%=c.getName() %></a>  
 		<a href="<%=c.getUrl() %>"><img src="<%=request.getContextPath()%>/img/house.png" border="0" /></a>
+    <ul><li>provided <%=c.getNumberOfResources()%> resource(s)</li></ul>
 	</li>
 	<% } %>
 </ul>
