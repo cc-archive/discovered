@@ -5,10 +5,16 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
+import org.creativecommons.learn.CCLEARN;
 import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.RdfStoreFactory;
+
+import com.hp.hpl.jena.graph.Node;
+
+import de.fuberlin.wiwiss.ng4j.Quad;
 
 import thewebsemantic.Id;
 import thewebsemantic.Namespace;
@@ -33,8 +39,20 @@ public class Curator {
 		return null;
 	}
 	
+	/*
+	 * This method is probably pretty expensive to compute. It'd be
+	 * nice to cache it, or otherwise do something smart.
+	 */
 	public int getNumberOfResources() {
-		return 0;
+		HashSet<String> resources = new HashSet<String>();
+		Iterator<Quad> it = RdfStoreFactory.get().findQuads(null, null,
+				CCLEARN.hasCurator.asNode(),
+				Node.createURI(this.getUri().toString()));
+		while (it.hasNext()) {
+			Quad next = it.next();
+			resources.add(next.getSubject().getURI());
+		}
+		return resources.size();
 	}
 
 	@RdfProperty("http://purl.org/dc/elements/1.1/title")
