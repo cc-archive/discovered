@@ -38,7 +38,9 @@
 
 <ul>
 	<% for (Feed f : feeds) { %>
-	<li><%=f.getUrl() %> (<%=f.getCurator().getName()%>)</li>
+	<li><%=f.getUri().toString() %> (<%=f.getCurator().getName()%>)
+	<ul><li>Last aggregated on: <%=f.getLastImport().toString() %></li></ul>
+	</li>
 	<% } %>
 </ul>
 
