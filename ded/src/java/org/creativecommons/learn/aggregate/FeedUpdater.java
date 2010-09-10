@@ -110,7 +110,13 @@ public class FeedUpdater {
 		store.saveDeep(r);
 	} // addEntry
 	
-	private static Set<String> getValidFeedTypes() {
+	/*
+	 * Public users of this method could get the object and 
+	 * mutate it (i.e., change what feed types are valid),
+	 * thereby changing the way FeedUpdate works. Protecting ourself
+	 * from this strikes me as not worth the bother.
+	 */
+	public static Set<String> getValidFeedTypes() {
 		if (validFeedTypes == null) {
 			validFeedTypes = new HashSet<String>();
 			validFeedTypes.add("oai-pmh");
