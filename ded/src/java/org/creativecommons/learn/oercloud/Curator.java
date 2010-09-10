@@ -8,11 +8,14 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.creativecommons.learn.CCLEARN;
 import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.RdfStoreFactory;
 
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.vocabulary.RDF;
 
 import de.fuberlin.wiwiss.ng4j.Quad;
 
@@ -26,6 +29,8 @@ public class Curator {
 
 	private URI uri = null;
 	private String name = null;
+	private final static Log LOG = LogFactory.getLog(RdfStore.class);
+
 		
 	public Curator(String url) throws URISyntaxException {
 		this.uri = new URI(url);		
@@ -44,13 +49,26 @@ public class Curator {
 	 * nice to cache it, or otherwise do something smart.
 	 */
 	public int getNumberOfResources() {
+		Collection<Feed> feeds = this.getFeeds();
+		// for all of our feeds, look in each one's graph for 
+		// statements like <?> rdf:type CCLEARN.RESOURCE
+		
+		// toss all those resources into a hashset and return the size at the end.
+		
 		HashSet<String> resources = new HashSet<String>();
-		Iterator<Quad> it = RdfStoreFactory.get().findQuads(null, null,
-				CCLEARN.hasCurator.asNode(),
-				Node.createURI(this.getUri().toString()));
-		while (it.hasNext()) {
-			Quad next = it.next();
-			resources.add(next.getSubject().getURI());
+
+		for (Feed f : feeds) {
+			LOG.info("a feed indeed");
+			Iterator<Quad> it = RdfStoreFactory.get().findQuads(
+					Node.createURI(f.getUri().toString()),
+					null,
+					RDF.type.asNode(),
+					CCLEARN.Resource.asNode());
+			while (it.hasNext()) {
+				Quad next = it.next();
+				// make sure this objec thas type 
+				resources.add(next.getSubject().getURI());
+			}
 		}
 		return resources.size();
 	}
