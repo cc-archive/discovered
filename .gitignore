@@ -25,6 +25,7 @@ conf/automaton-urlfilter.txt
 conf/capacity-scheduler.xml
 conf/core-site.xml
 conf/discovered.xml
+conf/discovered-search-prefixes.xml
 conf/hadoop-env.sh
 conf/hadoop-policy.xml
 conf/hdfs-site.xml
