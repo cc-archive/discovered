@@ -2,6 +2,7 @@ package org.creativecommons.learn.feed;
 
 import java.net.URISyntaxException;
 
+import org.apache.commons.lang.StringUtils;
 import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.RdfStoreFactory;
 import org.creativecommons.learn.aggregate.FeedUpdater;
@@ -19,15 +20,26 @@ public class AddFeed {
 	public static void main(String[] args) throws URISyntaxException {
 
 		if (args.length < 3) {
-			System.out.println("AddFeed");
-			System.out.println("usage: AddFeed [feed_type] [feed_url] [curator_url]");
-			System.out.println();
-
+			usage();
 			System.exit(1);
 		}
 		
-		addFeed(args[0], args[1], args[2]);
+		try {
+			addFeed(args[0], args[1], args[2]);
+		} catch (IllegalArgumentException problem) {
+			System.err.println(problem.getMessage() + "\n");
+			usage();
+			System.exit(1);
+		}
 		
+	}
+
+	private static void usage() {
+		System.err.println("AddFeed");
+		System.err.println("usage: AddFeed [feed_type] [feed_url] [curator_url]");
+		System.err.println();
+		System.err.print("Valid feed types are: ");
+		System.err.println(StringUtils.join(FeedUpdater.getValidFeedTypes().iterator(), " "));
 	}
 	
 	public static void addFeed(String type, String url, String curator_uri) throws URISyntaxException {
