@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.creativecommons.learn.DiscoverEdTestCase;
 import org.creativecommons.learn.RdfStore;
 import org.creativecommons.learn.RdfStoreFactory;
 
@@ -11,7 +12,7 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 import junit.framework.TestCase;
 
-public class TestResource extends TestCase {
+public class TestResource extends DiscoverEdTestCase {
 
 	public void testAddField() {
 
@@ -72,6 +73,13 @@ public class TestResource extends TestCase {
 		assertEquals(curatorURIs, expected);
 
 	}
+	public static void testResourceCanHaveApostrophesInTitle() {
+		RdfStore arbitraryStore = RdfStoreFactory.get().forDEd();
+		Resource r = new Resource(URI.create("http://example.com/#resource"));
+		r.setTitle("Apostrophe's are \"cool\"");
+		arbitraryStore.save(r);
+	}
+
 	public void testGetFieldValues() {
 
 		Resource r = new Resource(URI.create("http://example.org/foo"));
