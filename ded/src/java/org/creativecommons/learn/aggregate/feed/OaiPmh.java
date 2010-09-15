@@ -175,6 +175,7 @@ public class OaiPmh {
 				Record record = recordIterator.next();
 				Header header = record.getHeader();
 				URI resourceURI = URI.create(header.getIdentifier());
+				LOG.info("Slurping in " + resourceURI.toString() + " with format " + format.toString());
 				
 				// create the OaiResource if needed
 				OaiResource resource = null;
