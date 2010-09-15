@@ -37,7 +37,7 @@ public class OaiPmh {
 
 	private final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd");
 
-	protected Map<MetadataFormat, IResourceExtractor> getFormats(
+	private Map<MetadataFormat, IResourceExtractor> getFormats(
 			OaiPmhServer server) {
 
 		Map<MetadataFormat, IResourceExtractor> result = new HashMap<MetadataFormat, IResourceExtractor>();
