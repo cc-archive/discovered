@@ -97,7 +97,9 @@ public class OaiPmhRecordIterator implements Iterator<Record> {
 		
 		/* If nextRecords is empty, refill it before we return.
 		 * That way, calls to this.hasNext() will be accurate. */
-		this.refillRecordsList();
+		if (this.nextRecords.size() == 0) {
+			this.refillRecordsList();
+		}
 		
 		// Now we can return.
 		return ret;
