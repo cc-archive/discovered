@@ -146,7 +146,6 @@ public class OaiPmh {
 		RdfStore store = RdfStoreFactory.get().forProvenance(feed.getUri().toString());
 		OaiPmhServer server = new OaiPmhServer(feed.getUri().toString());
 
-		Boolean moreResults = true;
 		Map<MetadataFormat, IResourceExtractor> formats;
 		Map<String, String> sets;
 
