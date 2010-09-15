@@ -192,18 +192,7 @@ public class OaiPmh {
 							resource.getSubjects().add(sets.get(set_spec));
 						}
 					}
-					try {
-						store.save(resource);
-					} catch (NullPointerException e) {
-						System.out.println(resource);
-						System.out.println(resource.getId());
-						System.out.println();
-						for (String foo : resource.getSubjects()) {
-							System.out.println(foo);
-						}
-	
-						throw e;
-					}
+					store.save(resource);
 	
 					// look up the extractor for this format
 					try {
