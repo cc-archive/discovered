@@ -1,8 +1,11 @@
 package org.creativecommons.learn.aggregate.feed;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import org.creativecommons.learn.RdfStore;
@@ -156,71 +159,63 @@ public class OaiPmh {
 		// names
 		sets = getSets(server);
 
-		// get the formatted date of the last import
-		String last_import_date = null;
-		if (!force) 
-			last_import_date = iso8601.format(feed.getLastImport());
-		
 		// For each metadata format that we support, get out all the records
-		// the server has:
-		for (MetadataFormat f : formats.keySet()) {
-			boolean more = true;
-
-			RecordsList records = null;
-			try {
-				records = server.listRecords(f.getPrefix(), 
-						last_import_date, null, null);
-			} catch (OAIException e) {
-				more = false; // I guess we cannot go any further on this MetadatFormat.
-			}
-			while(more) {
-				// for each record, pull the data out and save it as a Resource
-				for (Record record : records.asList()) {
-					Header header = record.getHeader();
-					// create the OaiResource if needed
-					OaiResource resource = null;
-					try {
-						resource = store.load(
-								OaiResource.class, header.getIdentifier());
-						} catch (NotFoundException e) {
-							resource = new OaiResource(header.getIdentifier());
-					}
-	
-					// add the set as a subject heading
-					for (String set_spec : header.getSetSpecs()) {
-						if (sets.containsKey(set_spec)) {
-							resource.getSubjects().add(sets.get(set_spec));
-						}
-					}
-					store.save(resource);
-	
-					// look up the extractor for this format
-					try {
-						formats.get(f).process(feed, record,
-								header.getIdentifier());
-					} catch (OAIException e) {
-						e.printStackTrace();
-						continue;
-					} catch (Exception e) {
-						LOG.warning("An exception occured while aggregating " + f.getPrefix() + " for " + header.getIdentifier());
-						LOG.warning("> " + e.getMessage());
-						e.printStackTrace();
-					}
-					
-					// check if there are more results
-					  if (records.getResumptionToken() == null) {
-						  more = false;
-					  } else {
-							try {
-								records = server.listRecords(records.getResumptionToken());
-							} catch (OAIException e) {
-								more = false; // I guess there are no more records we will be able to get
-							}
-					  }
-				} // while more results
+		// the server has.
+		
+		// This also creates any missing OaiResource objects missing from
+		// the RdfStore.
+		for (Entry<MetadataFormat, IResourceExtractor> entry : formats.entrySet()) {
+			MetadataFormat format = entry.getKey();
+			IResourceExtractor extractor = entry.getValue();
+			
+			OaiPmhRecordIterator recordIterator = new OaiPmhRecordIterator(server,
+					format, feed.getLastImport());
+			
+			while (recordIterator.hasNext()) {
+				Record record = recordIterator.next();
+				Header header = record.getHeader();
+				URI resourceURI = URI.create(header.getIdentifier());
 				
-			}
+				// create the OaiResource if needed
+				OaiResource resource = null;
+				try {
+					resource = store.load(OaiResource.class, resourceURI.toString());
+				} catch (NotFoundException e) {
+					resource = new OaiResource(resourceURI.toString());
+				}
+	
+				// add the set as a subject heading
+				for (String set_spec : header.getSetSpecs()) {
+					if (sets.containsKey(set_spec)) {
+						resource.getSubjects().add(sets.get(set_spec));
+					}
+				}
+				
+				// Now that we have created the Resource and added the sets
+				// as subjects, save it in the store.
+				store.save(resource);
 
+				try {
+					extractor.process(feed, record, resourceURI.toString());
+				} catch (URISyntaxException e) {
+					// Well, I know the URI is valid because resourceURI is already
+					// a java.net.URI object.
+					
+					// Given that, we should refactor IResourceExtractor to take
+					// a java.net.URI.
+					
+					// For now, if this occurs, blow up aggregation.
+					throw new RuntimeException(e);
+				} catch (OAIException e) {
+					// Oh, well, we failed to process the feed + record and extract
+					// information from it. We can presume this failed for some reason
+					// having to do with the server.
+					
+					// If things go well, when we aggregate again next time, we'll pick
+					// up those data anyway. So we just squelch the exception.
+				}
+			} // while more results
+				
 		} // for each format...
 	} // public void poll
 
