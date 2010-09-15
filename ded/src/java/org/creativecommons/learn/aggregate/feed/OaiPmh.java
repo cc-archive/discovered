@@ -38,11 +38,19 @@ public class OaiPmh {
 	private final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd");
 
 	protected Map<MetadataFormat, IResourceExtractor> getFormats(
-			OaiPmhServer server) throws OAIException {
+			OaiPmhServer server) {
 
 		Map<MetadataFormat, IResourceExtractor> result = new HashMap<MetadataFormat, IResourceExtractor>();
 
-		MetadataFormatsList formats = server.listMetadataFormats();
+		MetadataFormatsList formats;
+		try {
+			formats = server.listMetadataFormats();
+		} catch (OAIException e) {
+			// Well, I guess we can't have a list of formats.
+			// Returning the empty list.
+			return result;
+		}
+			
 		for (MetadataFormat f : formats.asList()) {
 
 			if (f.getSchema().equals("http://www.oercommons.org/oerr.xsd"))
@@ -143,11 +151,7 @@ public class OaiPmh {
 		Map<String, String> sets;
 
 		// get a list of formats supported by both the server and our aggregator
-		try {
-			formats = getFormats(server);
-		} catch (OAIException e) {
-			return;
-		}
+		formats = getFormats(server);
 
 		// get a list of sets supported by the server and map them to their
 		// names
