@@ -18,6 +18,7 @@ import org.creativecommons.learn.aggregate.feed.Opml;
 import org.creativecommons.learn.oercloud.Feed;
 import org.creativecommons.learn.oercloud.Resource;
 import org.creativecommons.learn.plugin.MetadataRetrievers;
+import org.mortbay.log.Log;
 
 import com.sun.syndication.feed.module.DCModule;
 import com.sun.syndication.feed.module.DCSubject;
@@ -52,7 +53,13 @@ public class FeedUpdater {
 			throws URISyntaxException {
 
 		// XXX check if the entry exists first...
-		Resource r = new Resource(entry.getUri());
+		String uri = entry.getUri();
+		if (uri == null) {
+			// Well, that sucks. What kind of lame feed entry has no URI? Regardless, ditch it.
+			Log.warn("For some reason, I ran into a feed entry with a null URI. How bizarre. Skipping it.");
+			return;
+		}
+		Resource r = new Resource(uri);
 
 		// Back when SyndFeed parsed the feed, it read in from the feed
 		// all of the metadata it could find for this URI. Now it has
