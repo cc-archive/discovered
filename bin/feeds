@@ -211,7 +211,9 @@ elif [ "$COMMAND" = "addcurator" ] ; then
 elif [ "$COMMAND" = "setcurator" ] ; then
   CLASS=org.creativecommons.learn.feed.SetCurator
 elif [ "$COMMAND" = "aggregate" ] ; then
+  LOOP=true
   CLASS=org.creativecommons.learn.aggregate.Main
+  PRE_ARGS="-howmany 1"
 elif [ "$COMMAND" = "dump" ] ; then
   CLASS=org.creativecommons.learn.feed.DumpStore
 elif [ "$COMMAND" = "seed" ] ; then
@@ -221,5 +223,13 @@ else
 fi
 
 # run it
-exec "$JAVA" $JAVA_HEAP_MAX $NUTCH_OPTS -classpath "$CLASSPATH" $CLASS "$@"
-
+if [ -z $LOOP ] ; then
+    exec "$JAVA" $JAVA_HEAP_MAX $NUTCH_OPTS -classpath "$CLASSPATH" $CLASS "$@"
+else
+    # run the thing until it does not exit 128
+    LAST_RET=128
+    while [[ "$LAST_RET" -eq "128" ]]
+    do
+         "$JAVA" $JAVA_HEAP_MAX $NUTCH_OPTS -classpath "$CLASSPATH" $CLASS $PRE_ARGS "$@"
+    done
+fi
