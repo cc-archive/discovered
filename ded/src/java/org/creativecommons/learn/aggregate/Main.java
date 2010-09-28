@@ -138,7 +138,6 @@ public class Main {
     	
         // Process each feed
         for (Feed feed : all_feeds) {
-
         	System.out.println("Began processing feed: " + feed.getUri().toString());
         	Date import_date = new Date();
 
@@ -149,6 +148,13 @@ public class Main {
                     // re-import necessary
                 	System.out.println("Aggregate main: updating...");
 
+                	if (useHowmany && howmany <= 0) {
+                		// then the user specified that we should exit once a certain number of
+                		// feeds were aggregated.
+                		System.out.println("Exiting early due to use of -howmany flag.");
+                		System.exit(128); // Let 128 mean, "There is more work to do."
+                	}
+
                 	FeedUpdater updater = new FeedUpdater(feed);
                 	updater.update(force);
                 } catch (IOException ex) {
@@ -156,11 +162,17 @@ public class Main {
                 } finally {
                 	feed.setLastImport(import_date);
                 	RdfStoreFactory.get().forDEd().save(feed);
+
+                	// update the howMany counter
+                	if (useHowmany) {
+                    	howmany -= 1;
+                    }
+
                 }
             }
             
             System.out.println("Finished processing feed: " + feed.getUri().toString());
-
+            
         } // for each feed
 
     } // main
