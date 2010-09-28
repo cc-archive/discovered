@@ -231,5 +231,6 @@ else
     while [[ "$LAST_RET" -eq "128" ]]
     do
          "$JAVA" $JAVA_HEAP_MAX $NUTCH_OPTS -classpath "$CLASSPATH" $CLASS $PRE_ARGS "$@"
+        LAST_RET=$?
     done
 fi
