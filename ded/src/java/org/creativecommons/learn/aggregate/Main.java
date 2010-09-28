@@ -50,7 +50,12 @@ public class Main {
 				.withDescription(
 						"Only seed URLs belonging to these curator(s).")
 				.isRequired(false).create("curator");
-
+		Option howMany = OptionBuilder.withArgName("howmany")
+		        .hasArgs()
+		        .withDescription("The number of feeds to aggregate before exiting")
+		        .isRequired(false).create("howmany");
+		
+		options.addOption(howMany);
 		options.addOption(help);
 		options.addOption(force);
 		options.addOption(curator);
@@ -88,6 +93,14 @@ public class Main {
 			formatter.printHelp("aggregate", getOptions());
 
 			System.exit(0);
+		}
+		
+		boolean useHowmany = false;
+		int howmany = 0;
+		if (line.hasOption("howmany")) {
+			// figure out how many we should crawl
+			useHowmany = true;
+			howmany = Integer.parseInt(line.getOptionValue("howmany"));
 		}
     	
     	// All date calculations will be made with respect to yesterday.
